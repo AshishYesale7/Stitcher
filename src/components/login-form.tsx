@@ -16,8 +16,9 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
-import { Loader2, Phone, ShieldCheck } from 'lucide-react';
+import { Loader2, Phone, ShieldCheck, Mail, User as UserIcon } from 'lucide-react';
 import { createUserProfile } from '@/app/actions/user';
+import Link from 'next/link';
 
 declare global {
     interface Window {
@@ -45,6 +46,7 @@ export default function LoginForm({ userType }: { userType: 'customer' | 'tailor
   const [phone, setPhone] = useState('');
   const [otp, setOtp] = useState('');
   const [step, setStep] = useState<'phone' | 'otp'>('phone');
+  const [authMethod, setAuthMethod] = useState<'phone' | 'email'>('phone');
 
   const handleSuccessfulLogin = async (user: User) => {
     try {
@@ -95,7 +97,7 @@ export default function LoginForm({ userType }: { userType: 'customer' | 'tailor
     setupRecaptcha();
     const appVerifier = window.recaptchaVerifier!;
     try {
-      const confirmationResult = await signInWithPhoneNumber(auth, `+${phone}`, appVerifier);
+      const confirmationResult = await signInWithPhoneNumber(auth, `+1${phone}`, appVerifier);
       window.confirmationResult = confirmationResult;
       setStep('otp');
       toast({
@@ -136,51 +138,71 @@ export default function LoginForm({ userType }: { userType: 'customer' | 'tailor
   };
 
   return (
-    <div className="grid gap-6">
+    <div className="w-full max-w-sm space-y-6">
+       <div className="flex justify-center">
+            <div className="relative flex items-center justify-center w-24 h-24 rounded-full bg-card/60 ring-2 ring-primary/50 shadow-lg backdrop-blur-sm">
+                <UserIcon className="w-10 h-10 text-primary" />
+                <div className="absolute inset-0 rounded-full ring-2 ring-primary/50 animate-pulse"></div>
+            </div>
+        </div>
+      <div className="grid grid-cols-2 gap-2 p-1 rounded-lg bg-muted/50">
+        <Button
+            variant={authMethod === 'email' ? 'outline' : 'ghost'}
+            className={`${authMethod === 'email' ? 'bg-background' : ''}`}
+            onClick={() => setAuthMethod('email')}>
+            <Mail className="mr-2"/> Email
+        </Button>
+        <Button
+            variant={authMethod === 'phone' ? 'outline' : 'ghost'}
+            className={`${authMethod === 'phone' ? 'bg-background' : ''}`}
+            onClick={() => setAuthMethod('phone')}>
+            <Phone className="mr-2"/> Phone
+        </Button>
+      </div>
+
       <div id="recaptcha-container"></div>
         {step === 'phone' ? (
-            <form onSubmit={handlePhoneSignIn}>
-                <div className="grid gap-4">
-                    <div className="grid gap-2">
-                        <Label htmlFor="phone">Phone Number</Label>
-                        <div className="flex items-center gap-2">
-                            <span className="text-sm p-2 bg-muted rounded-l-md border border-r-0 border-input">+</span>
-                            <Input
-                                id="phone"
-                                type="tel"
-                                placeholder="1234567890"
-                                value={phone}
-                                onChange={(e) => setPhone(e.target.value)}
-                                required
-                                className="rounded-l-none"
-                            />
+            <form onSubmit={handlePhoneSignIn} className="space-y-6">
+                <div className="space-y-2">
+                    <Label htmlFor="phone" className="text-muted-foreground">Phone Number</Label>
+                    <div className="flex items-center">
+                        <div className="flex items-center gap-2 pl-3 pr-2 py-2 bg-input rounded-l-md border border-r-0 border-input">
+                            <span>🇺🇸</span>
+                            <span className="text-sm">+1</span>
                         </div>
-                    </div>
-                    <Button type="submit" disabled={isLoading}>
-                        {isLoading ? <Loader2 className="animate-spin" /> : <Phone />}
-                        Sign in with Phone
-                    </Button>
-                </div>
-            </form>
-        ) : (
-            <form onSubmit={handleOtpSubmit}>
-                <div className="grid gap-4">
-                     <div className="grid gap-2">
-                        <Label htmlFor="otp">Verification Code</Label>
                         <Input
-                            id="otp"
-                            type="text"
-                            placeholder="Enter OTP"
-                            value={otp}
-                            onChange={(e) => setOtp(e.target.value)}
+                            id="phone"
+                            type="tel"
+                            placeholder="Your phone number"
+                            value={phone}
+                            onChange={(e) => setPhone(e.target.value)}
                             required
+                            className="rounded-l-none border-l-0 text-base"
                         />
                     </div>
-                    <Button type="submit" disabled={isLoading}>
-                        {isLoading ? <Loader2 className="animate-spin" /> : <ShieldCheck />}
-                        Verify OTP
-                    </Button>
                 </div>
+                <Button type="submit" disabled={isLoading} className="w-full h-12 text-base rounded-full">
+                    {isLoading ? <Loader2 className="animate-spin" /> : 'Send OTP'}
+                </Button>
+            </form>
+        ) : (
+            <form onSubmit={handleOtpSubmit} className="space-y-6">
+                 <div className="space-y-2">
+                    <Label htmlFor="otp">Verification Code</Label>
+                    <Input
+                        id="otp"
+                        type="text"
+                        placeholder="Enter OTP"
+                        value={otp}
+                        onChange={(e) => setOtp(e.target.value)}
+                        required
+                        className="h-12 text-center text-lg tracking-[0.5em]"
+                    />
+                </div>
+                <Button type="submit" disabled={isLoading} className="w-full h-12 text-base rounded-full">
+                    {isLoading ? <Loader2 className="animate-spin" /> : <ShieldCheck />}
+                    Verify OTP
+                </Button>
             </form>
         )}
       
@@ -195,10 +217,23 @@ export default function LoginForm({ userType }: { userType: 'customer' | 'tailor
         </div>
       </div>
       
-      <Button variant="outline" type="button" disabled={isLoading} onClick={handleGoogleSignIn}>
+      <Button variant="outline" type="button" disabled={isLoading} onClick={handleGoogleSignIn} className="w-full h-12 text-base rounded-full">
         {isLoading ? <Loader2 className="animate-spin" /> : <GoogleIcon />}
-        Google
+        Sign in with Google
       </Button>
+
+      <div className="text-center text-sm text-muted-foreground">
+        <Link href="#" className="underline hover:text-primary">
+            Forgot Password?
+        </Link>
+      </div>
+
+       <div className="text-center text-sm text-muted-foreground">
+            Don't have an account?{' '}
+            <Link href="#" className="underline font-semibold hover:text-primary">
+                Sign up
+            </Link>
+       </div>
     </div>
   );
 }
