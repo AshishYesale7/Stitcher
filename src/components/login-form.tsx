@@ -10,6 +10,7 @@ import {
   RecaptchaVerifier,
   signInWithPhoneNumber,
   ConfirmationResult,
+  type User
 } from 'firebase/auth';
 import { app } from '@/lib/firebase';
 import { Button } from '@/components/ui/button';
@@ -17,7 +18,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
 import { Loader2, Phone, ShieldCheck, Mail, User as UserIcon, ChevronsUpDown } from 'lucide-react';
-import { createUserProfile, type UserProfilePayload } from '@/app/actions/user';
+import { createUserProfile } from '@/app/actions/user';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from '@/components/ui/command';
 import { countries, type Country } from '@/lib/countries';
@@ -79,9 +80,43 @@ export default function LoginForm({ userType }: { userType: 'customer' | 'tailor
     return () => clearTimeout(timer);
   }, [resendCooldown]);
 
-  const handleSuccessfulLogin = async (user: UserProfilePayload) => {
+  useEffect(() => {
+    if (step === 'otp' && 'OTPCredential' in window) {
+      const ac = new AbortController();
+
+      navigator.credentials.get({
+        otp: { transport:['sms'] },
+        signal: ac.signal
+      }).then(otpCredential => {
+        if (otpCredential) {
+          setOtp(otpCredential.code);
+          toast({
+            title: "OTP Detected",
+            description: "We've automatically filled the OTP for you.",
+          });
+          // To auto-submit, we could call a submit handler here.
+          // For now, we just fill the field.
+        }
+      }).catch(err => {
+        console.error("WebOTP API error:", err);
+      });
+
+      return () => {
+        ac.abort();
+      };
+    }
+  }, [step, toast]);
+
+
+  const handleSuccessfulLogin = async (user: User) => {
     try {
-      await createUserProfile(user, userType);
+      await createUserProfile({
+        uid: user.uid,
+        email: user.email,
+        displayName: user.displayName,
+        photoURL: user.photoURL,
+        phoneNumber: user.phoneNumber,
+      }, userType);
       router.push(`/${userType}/dashboard`);
     } catch (error) {
        console.error("Profile Creation Error:", error);
@@ -99,24 +134,16 @@ export default function LoginForm({ userType }: { userType: 'customer' | 'tailor
     const provider = new GoogleAuthProvider();
     try {
       const result = await signInWithPopup(auth, provider);
-      await handleSuccessfulLogin({
-        uid: result.user.uid,
-        email: result.user.email,
-        displayName: result.user.displayName,
-        photoURL: result.user.photoURL,
-        phoneNumber: result.user.phoneNumber,
-      });
+      await handleSuccessfulLogin(result.user);
     } catch (error: any) {
-      if (error.code === 'auth/popup-closed-by-user') {
-        setIsLoading(false);
-        return;
+      if (error.code !== 'auth/popup-closed-by-user') {
+        console.error("Google Sign-In Error:", error);
+        toast({
+          variant: "destructive",
+          title: "Google Sign-In Failed",
+          description: "Could not sign in with Google. Please try again.",
+        });
       }
-      console.error("Google Sign-In Error:", error);
-      toast({
-        variant: "destructive",
-        title: "Google Sign-In Failed",
-        description: "Could not sign in with Google. Please try again.",
-      });
       setIsLoading(false);
     }
   };
@@ -124,10 +151,12 @@ export default function LoginForm({ userType }: { userType: 'customer' | 'tailor
   const handlePhoneSignIn = async () => {
     setIsLoading(true);
     try {
-        window.recaptchaVerifier = new RecaptchaVerifier(auth, 'recaptcha-container', {
-            'size': 'invisible',
-            'callback': () => {},
-        });
+        if (!window.recaptchaVerifier) {
+            window.recaptchaVerifier = new RecaptchaVerifier(auth, 'recaptcha-container', {
+                'size': 'invisible',
+                'callback': () => {},
+            });
+        }
         
         const fullPhoneNumber = `${selectedCountry.dial_code}${phone}`;
         const confirmationResult = await signInWithPhoneNumber(auth, fullPhoneNumber, window.recaptchaVerifier);
@@ -172,13 +201,7 @@ export default function LoginForm({ userType }: { userType: 'customer' | 'tailor
     try {
       const result = await window.confirmationResult.confirm(otp);
       if (result?.user) {
-        await handleSuccessfulLogin({
-            uid: result.user.uid,
-            email: result.user.email,
-            displayName: result.user.displayName,
-            photoURL: result.user.photoURL,
-            phoneNumber: result.user.phoneNumber,
-        });
+        await handleSuccessfulLogin(result.user);
       } else {
         throw new Error("User not found after OTP confirmation.");
       }
@@ -270,6 +293,7 @@ export default function LoginForm({ userType }: { userType: 'customer' | 'tailor
                     onChange={(e) => setOtp(e.target.value)}
                     required
                     className="h-12 text-center text-lg tracking-[0.5em] text-foreground"
+                    autoComplete="one-time-code"
                 />
             </div>
             <div className="flex justify-between items-center -mt-4">
@@ -353,5 +377,3 @@ export default function LoginForm({ userType }: { userType: 'customer' | 'tailor
     </div>
   );
 }
-
-    
