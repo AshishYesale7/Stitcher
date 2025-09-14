@@ -255,24 +255,21 @@
     }
     
     .dashboard-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr));
+      gap: 2rem;
       width: 100%;
-      display: flex;
-      justify-content: center;
-      flex-wrap: wrap;
       max-width: 80em;
       margin-inline: auto;
-      gap: 3.25rem;
       position: relative;
       z-index: 10;
-      align-items: center;
     }
 
     .card {
       position: relative;
       z-index: 555;
-      max-width: 20rem;
+      width: 100%;
       min-height: 20rem;
-      width: 90%;
       display: grid;
       place-content: center;
       place-items: center;
