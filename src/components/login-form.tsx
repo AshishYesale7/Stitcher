@@ -147,16 +147,18 @@ export default function LoginForm({ userType }: { userType: 'customer' | 'tailor
         </div>
       <div className="grid grid-cols-2 gap-2 p-1 rounded-lg bg-muted/50">
         <Button
-            variant={authMethod === 'email' ? 'outline' : 'ghost'}
-            className={`${authMethod === 'email' ? 'bg-background' : ''}`}
-            onClick={() => setAuthMethod('email')}>
-            <Mail className="mr-2"/> Email
+          variant={authMethod === 'email' ? 'outline' : 'ghost'}
+          className={authMethod === 'email' ? 'bg-background' : ''}
+          onClick={() => setAuthMethod('email')}
+        >
+          <Mail className="mr-2" /> Email
         </Button>
         <Button
-            variant={authMethod === 'phone' ? 'outline' : 'ghost'}
-            className={`${authMethod === 'phone' ? 'bg-background' : ''}`}
-            onClick={() => setAuthMethod('phone')}>
-            <Phone className="mr-2"/> Phone
+          variant={authMethod === 'phone' ? 'outline' : 'ghost'}
+          className={authMethod === 'phone' ? 'bg-background' : ''}
+          onClick={() => setAuthMethod('phone')}
+        >
+          <Phone className="mr-2" /> Phone
         </Button>
       </div>
 
