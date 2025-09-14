@@ -9,6 +9,7 @@ import {
   RecaptchaVerifier,
   signInWithPhoneNumber,
   ConfirmationResult,
+  User,
 } from 'firebase/auth';
 import { app } from '@/lib/firebase';
 import { Button } from '@/components/ui/button';
@@ -16,6 +17,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
 import { Loader2, Phone, ShieldCheck } from 'lucide-react';
+import { createUserProfile } from '@/app/actions/user';
 
 declare global {
     interface Window {
@@ -44,6 +46,21 @@ export default function LoginForm({ userType }: { userType: 'customer' | 'tailor
   const [otp, setOtp] = useState('');
   const [step, setStep] = useState<'phone' | 'otp'>('phone');
 
+  const handleSuccessfulLogin = async (user: User) => {
+    try {
+      await createUserProfile(user, userType);
+      router.push(`/${userType}/dashboard`);
+    } catch (error) {
+       console.error("Profile Creation Error:", error);
+       toast({
+        variant: "destructive",
+        title: "Profile Creation Failed",
+        description: "Could not create your user profile. Please try again.",
+      });
+      setIsLoading(false);
+    }
+  }
+
   const setupRecaptcha = () => {
     if (!window.recaptchaVerifier) {
       window.recaptchaVerifier = new RecaptchaVerifier(auth, 'recaptcha-container', {
@@ -59,8 +76,8 @@ export default function LoginForm({ userType }: { userType: 'customer' | 'tailor
     setIsLoading(true);
     const provider = new GoogleAuthProvider();
     try {
-      await signInWithPopup(auth, provider);
-      router.push(`/${userType}/dashboard`);
+      const result = await signInWithPopup(auth, provider);
+      await handleSuccessfulLogin(result.user);
     } catch (error) {
       console.error("Google Sign-In Error:", error);
       toast({
@@ -101,16 +118,19 @@ export default function LoginForm({ userType }: { userType: 'customer' | 'tailor
     e.preventDefault();
     setIsLoading(true);
     try {
-      await window.confirmationResult?.confirm(otp);
-      router.push(`/${userType}/dashboard`);
+      const result = await window.confirmationResult?.confirm(otp);
+      if (result?.user) {
+        await handleSuccessfulLogin(result.user);
+      } else {
+        throw new Error("User not found after OTP confirmation.");
+      }
     } catch (error) {
         console.error("OTP Verification Error:", error);
         toast({
             variant: "destructive",
             title: "OTP Verification Failed",
-            description: "The OTP you entered is incorrect. Please try again.",
+            description: "The OTP you entered is incorrect or something went wrong.",
         });
-    } finally {
         setIsLoading(false);
     }
   };
