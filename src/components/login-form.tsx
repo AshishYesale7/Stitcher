@@ -1,7 +1,7 @@
 
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
 import {
   getAuth,
@@ -10,15 +10,18 @@ import {
   RecaptchaVerifier,
   signInWithPhoneNumber,
   ConfirmationResult,
-  User,
+  type User,
 } from 'firebase/auth';
 import { app } from '@/lib/firebase';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
-import { Loader2, Phone, ShieldCheck, Mail, User as UserIcon } from 'lucide-react';
+import { Loader2, Phone, ShieldCheck, Mail, User as UserIcon, Search, ChevronsUpDown } from 'lucide-react';
 import { createUserProfile } from '@/app/actions/user';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from '@/components/ui/command';
+import { countries, type Country } from '@/lib/countries';
 
 declare global {
     interface Window {
@@ -48,6 +51,26 @@ export default function LoginForm({ userType }: { userType: 'customer' | 'tailor
   const [step, setStep] = useState<'phone' | 'otp'>('phone');
   const [authMethod, setAuthMethod] = useState<'phone' | 'email'>('phone');
   const [resendCooldown, setResendCooldown] = useState(0);
+
+  const [popoverOpen, setPopoverOpen] = useState(false);
+  const [selectedCountry, setSelectedCountry] = useState<Country>(
+    countries.find(c => c.code === 'IN')!
+  );
+
+  useEffect(() => {
+    fetch('http://ip-api.com/json/?fields=countryCode')
+        .then(res => res.json())
+        .then(data => {
+            const country = countries.find(c => c.code === data.countryCode);
+            if (country) {
+                setSelectedCountry(country);
+            }
+        })
+        .catch(() => {
+            // Fallback to India if the API fails
+            setSelectedCountry(countries.find(c => c.code === 'IN')!);
+        });
+  }, []);
 
   useEffect(() => {
     let timer: NodeJS.Timeout;
@@ -86,7 +109,6 @@ export default function LoginForm({ userType }: { userType: 'customer' | 'tailor
       await handleSuccessfulLogin(result.user);
     } catch (error: any) {
       if (error.code === 'auth/popup-closed-by-user') {
-        // User closed the popup, so we just stop loading and do nothing.
         setIsLoading(false);
         return;
       }
@@ -108,13 +130,14 @@ export default function LoginForm({ userType }: { userType: 'customer' | 'tailor
             'callback': () => {},
         });
         
-        const confirmationResult = await signInWithPhoneNumber(auth, `+91${phone}`, recaptchaVerifier);
+        const fullPhoneNumber = `${selectedCountry.dial_code}${phone}`;
+        const confirmationResult = await signInWithPhoneNumber(auth, fullPhoneNumber, recaptchaVerifier);
         window.confirmationResult = confirmationResult;
         setStep('otp');
         setResendCooldown(30);
         toast({
             title: "OTP Sent",
-            description: "We've sent a verification code to your phone.",
+            description: `We've sent a verification code to ${fullPhoneNumber}.`,
         });
     } catch (error) {
       console.error("Phone Sign-In Error:", error);
@@ -160,6 +183,9 @@ export default function LoginForm({ userType }: { userType: 'customer' | 'tailor
         if (error.code === 'auth/code-expired') {
           description = 'The OTP has expired. Please request a new one.';
         }
+        if (error.code === 'auth/invalid-verification-code') {
+          description = 'The verification code is invalid. Please try again.';
+        }
         toast({
             variant: "destructive",
             title: "OTP Verification Failed",
@@ -176,10 +202,40 @@ export default function LoginForm({ userType }: { userType: 'customer' | 'tailor
                 <div className="space-y-2">
                     <Label htmlFor="phone" className="text-muted-foreground">Phone Number</Label>
                     <div className="flex items-center">
-                        <div className="flex items-center gap-2 pl-3 pr-2 py-2 bg-input rounded-l-md border border-r-0 border-input text-foreground">
-                            <span>🇮🇳</span>
-                            <span className="text-sm text-foreground">+91</span>
-                        </div>
+                         <Popover open={popoverOpen} onOpenChange={setPopoverOpen}>
+                            <PopoverTrigger asChild>
+                                <Button
+                                    variant="outline"
+                                    role="combobox"
+                                    className="w-[130px] justify-between rounded-r-none border-r-0"
+                                >
+                                    <span className="truncate">{selectedCountry.flag} {selectedCountry.dial_code}</span>
+                                    <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                                </Button>
+                            </PopoverTrigger>
+                            <PopoverContent className="w-[300px] p-0">
+                                <Command>
+                                    <CommandInput placeholder="Search country..." />
+                                    <CommandList>
+                                        <CommandEmpty>No country found.</CommandEmpty>
+                                        <CommandGroup>
+                                            {countries.map((country) => (
+                                                <CommandItem
+                                                    key={country.code}
+                                                    value={`${country.name} (${country.dial_code})`}
+                                                    onSelect={() => {
+                                                        setSelectedCountry(country);
+                                                        setPopoverOpen(false);
+                                                    }}
+                                                >
+                                                    {country.flag} {country.name} ({country.dial_code})
+                                                </CommandItem>
+                                            ))}
+                                        </CommandGroup>
+                                    </CommandList>
+                                </Command>
+                            </PopoverContent>
+                        </Popover>
                         <Input
                             id="phone"
                             type="tel"
@@ -187,7 +243,7 @@ export default function LoginForm({ userType }: { userType: 'customer' | 'tailor
                             value={phone}
                             onChange={(e) => setPhone(e.target.value)}
                             required
-                            className="rounded-l-none border-l-0 text-base text-foreground"
+                            className="rounded-l-none text-base text-foreground"
                         />
                     </div>
                 </div>
@@ -211,7 +267,16 @@ export default function LoginForm({ userType }: { userType: 'customer' | 'tailor
                     className="h-12 text-center text-lg tracking-[0.5em]"
                 />
             </div>
-            <div className="flex justify-end -mt-4">
+            <div className="flex justify-between items-center -mt-4">
+                <Button
+                    type="button"
+                    variant="link"
+                    onClick={() => setStep('phone')}
+                    disabled={isLoading}
+                    className="text-sm"
+                >
+                  Back
+                </Button>
                 <Button 
                     type="button" 
                     variant="link" 
@@ -283,5 +348,3 @@ export default function LoginForm({ userType }: { userType: 'customer' | 'tailor
     </div>
   );
 }
-
-    
