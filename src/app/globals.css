@@ -436,6 +436,7 @@
       border-radius: 2em;
       padding: 0.625rem 1.5rem;
       transition: background 0.2s ease-in-out;
+      font-size: 0.875rem;
     }
     
     .card.green {
