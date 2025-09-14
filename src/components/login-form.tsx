@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import {
   getAuth,
@@ -47,21 +47,8 @@ export default function LoginForm({ userType }: { userType: 'customer' | 'tailor
   const [step, setStep] = useState<'phone' | 'otp'>('phone');
   const [authMethod, setAuthMethod] = useState<'phone' | 'email'>('phone');
 
-  useEffect(() => {
-    // Only run on the client
-    if (typeof window !== 'undefined' && !window.recaptchaVerifier) {
-        window.recaptchaVerifier = new RecaptchaVerifier(auth, 'recaptcha-container', {
-            'size': 'invisible',
-            'callback': (response: any) => {
-              // reCAPTCHA solved, allow signInWithPhoneNumber.
-            },
-        });
-    }
-  }, []);
-
   const handleSuccessfulLogin = async (user: User) => {
     try {
-      // Pass serializable data to the server action
       await createUserProfile({
         uid: user.uid,
         email: user.email,
@@ -88,7 +75,6 @@ export default function LoginForm({ userType }: { userType: 'customer' | 'tailor
       const result = await signInWithPopup(auth, provider);
       await handleSuccessfulLogin(result.user);
     } catch (error: any) {
-      // Don't show an error toast if the user closes the popup
       if (error.code === 'auth/popup-closed-by-user') {
         setIsLoading(false);
         return;
@@ -106,27 +92,22 @@ export default function LoginForm({ userType }: { userType: 'customer' | 'tailor
   const handlePhoneSignIn = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setIsLoading(true);
-    
-    if (!window.recaptchaVerifier) {
-        console.error("Recaptcha verifier not initialized.");
-        toast({
-            variant: "destructive",
-            title: "Recaptcha Error",
-            description: "Please refresh the page and try again.",
-        });
-        setIsLoading(false);
-        return;
-    }
 
-    const appVerifier = window.recaptchaVerifier;
     try {
-      const confirmationResult = await signInWithPhoneNumber(auth, `+91${phone}`, appVerifier);
-      window.confirmationResult = confirmationResult;
-      setStep('otp');
-      toast({
-        title: "OTP Sent",
-        description: "We've sent a verification code to your phone.",
-      });
+        const recaptchaVerifier = new RecaptchaVerifier(auth, 'recaptcha-container', {
+            'size': 'invisible',
+            'callback': (response: any) => {
+              // reCAPTCHA solved, allow signInWithPhoneNumber.
+            },
+        });
+        
+        const confirmationResult = await signInWithPhoneNumber(auth, `+91${phone}`, recaptchaVerifier);
+        window.confirmationResult = confirmationResult;
+        setStep('otp');
+        toast({
+            title: "OTP Sent",
+            description: "We've sent a verification code to your phone.",
+        });
     } catch (error) {
       console.error("Phone Sign-In Error:", error);
       toast({
@@ -134,12 +115,6 @@ export default function LoginForm({ userType }: { userType: 'customer' | 'tailor
         title: "Phone Sign-In Failed",
         description: "Could not send OTP. Please check the number and try again.",
       });
-      // Reset reCAPTCHA on error
-      if (typeof grecaptcha !== 'undefined' && window.recaptchaVerifier) {
-        window.recaptchaVerifier.render().then(function(widgetId) {
-            grecaptcha.reset(widgetId);
-        });
-      }
     } finally {
         setIsLoading(false);
     }
