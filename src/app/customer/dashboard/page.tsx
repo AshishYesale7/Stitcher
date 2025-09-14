@@ -1,5 +1,4 @@
-import { MoreVertical, Plus } from 'lucide-react';
-import Image from 'next/image';
+import { Search, Package, Notebook, User } from 'lucide-react';
 import Link from 'next/link';
 
 export default function CustomerDashboardPage() {
@@ -11,6 +10,7 @@ export default function CustomerDashboardPage() {
           
           <div className="card-body">
             <h3>Your Tailors</h3>
+            <Search className="w-12 h-12 mx-auto my-2 text-white" />
             <p>Find new tailors</p>
             <div className="progress">
               
@@ -26,6 +26,7 @@ export default function CustomerDashboardPage() {
           
           <div className="card-body">
             <h3>Order Tracking</h3>
+            <Package className="w-12 h-12 mx-auto my-2 text-white" />
             <p>Active orders</p>
             <div className="progress">
               
@@ -41,6 +42,7 @@ export default function CustomerDashboardPage() {
           
           <div className="card-body">
             <h3>Book Order</h3>
+            <Notebook className="w-12 h-12 mx-auto my-2 text-white" />
             <p>Create a new order</p>
             <div className="progress">
               
@@ -56,6 +58,7 @@ export default function CustomerDashboardPage() {
           
           <div className="card-body">
             <h3>Profile</h3>
+            <User className="w-12 h-12 mx-auto my-2 text-white" />
             <p>Manage your account</p>
             <div className="progress">
               
