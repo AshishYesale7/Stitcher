@@ -49,7 +49,6 @@ export default function LoginForm({ userType }: { userType: 'customer' | 'tailor
   const [phone, setPhone] = useState('');
   const [otp, setOtp] = useState('');
   const [step, setStep] = useState<'phone' | 'otp'>('phone');
-  const [authMethod, setAuthMethod] = useState<'phone' | 'email'>('phone');
   const [resendCooldown, setResendCooldown] = useState(0);
 
   const [popoverOpen, setPopoverOpen] = useState(false);
@@ -322,13 +321,6 @@ export default function LoginForm({ userType }: { userType: 'customer' | 'tailor
     );
   }
 
-  const renderEmailAuth = () => (
-    <div className="text-center text-muted-foreground space-y-4 py-12">
-        <Mail className="mx-auto w-10 h-10"/>
-        <p>Email authentication is coming soon.</p>
-    </div>
-  );
-
   return (
     <div className="w-full max-w-sm space-y-6">
        <div className="flex justify-center">
@@ -337,26 +329,10 @@ export default function LoginForm({ userType }: { userType: 'customer' | 'tailor
                 <div className="absolute inset-0 rounded-full ring-2 ring-primary/50 animate-pulse"></div>
             </div>
         </div>
-      <div className="grid grid-cols-2 gap-2 p-1 rounded-lg bg-muted/50">
-        <Button
-          variant={authMethod === 'email' ? 'outline' : 'ghost'}
-          className={authMethod === 'email' ? 'bg-background' : ''}
-          onClick={() => setAuthMethod('email')}
-        >
-          <Mail className="mr-2" /> Email
-        </Button>
-        <Button
-          variant={authMethod === 'phone' ? 'outline' : 'ghost'}
-          className={authMethod === 'phone' ? 'bg-background' : ''}
-          onClick={() => setAuthMethod('phone')}
-        >
-          <Phone className="mr-2" /> Phone
-        </Button>
-      </div>
-
+      
       <div id="recaptcha-container"></div>
       
-      {authMethod === 'phone' ? renderPhoneAuth() : renderEmailAuth()}
+      {renderPhoneAuth()}
       
       <div className="relative">
         <div className="absolute inset-0 flex items-center">
@@ -376,4 +352,5 @@ export default function LoginForm({ userType }: { userType: 'customer' | 'tailor
   );
 }
 
+    
     
