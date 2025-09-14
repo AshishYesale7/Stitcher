@@ -177,7 +177,7 @@ export default function LoginForm({ userType }: { userType: 'customer' | 'tailor
                             value={phone}
                             onChange={(e) => setPhone(e.target.value)}
                             required
-                            className="rounded-l-none border-l-0 text-base"
+                            className="rounded-l-none border-l-0 text-base text-foreground"
                         />
                     </div>
                 </div>
