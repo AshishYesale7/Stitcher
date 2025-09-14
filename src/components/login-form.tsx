@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState } from 'react';
@@ -170,7 +171,7 @@ export default function LoginForm({ userType }: { userType: 'customer' | 'tailor
                     <div className="flex items-center">
                         <div className="flex items-center gap-2 pl-3 pr-2 py-2 bg-input rounded-l-md border border-r-0 border-input text-foreground">
                             <span>🇮🇳</span>
-                            <span className="text-sm">+91</span>
+                            <span className="text-sm text-foreground">+91</span>
                         </div>
                         <Input
                             id="phone"
