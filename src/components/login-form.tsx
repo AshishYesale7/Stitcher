@@ -267,7 +267,7 @@ export default function LoginForm({ userType }: { userType: 'customer' | 'tailor
         </div>
       </div>
       
-      <Button variant="outline" type="button" disabled={isLoading} onClick={handleGoogleSignIn} className="w-full h-12 text-base rounded-full">
+      <Button variant="outline" type="button" disabled={isLoading} onClick={handleGoogleSignIn} className="w-full h-12 text-base rounded-full text-foreground">
         {isLoading ? <Loader2 className="animate-spin" /> : <><GoogleIcon /> <span className="text-foreground">Sign in with Google</span></>}
       </Button>
     </div>
