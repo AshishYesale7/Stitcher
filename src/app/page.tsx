@@ -36,13 +36,16 @@ export default function Home() {
             <p>Fit, Found.</p>
           </div>
 
-          <Link href="/customer/dashboard" className="button first">
-            <button>For Customers</button><span></span>
-          </Link>
-          
-          <Link href="/tailor/dashboard" className="button sec">
-            <button>For Tailors</button><span></span>
-          </Link>
+          <div className="button-container">
+            <Link href="/customer/dashboard" className="button first">
+              <button>For Customers</button><span></span>
+            </Link>
+            
+            <Link href="/tailor/dashboard" className="button sec">
+              <button>For Tailors</button><span></span>
+            </Link>
+          </div>
+
 
           <svg className="top-right" width="219" height="147" viewBox="0 0 219 147" fill="none" xmlns="http://www.w3.org/2000/svg">
             <rect opacity="0.18" x="10.4252" y="75.8326" width="7.50168" height="7.50168" transform="rotate(110.283 10.4252 75.8326)" fill="#686868" stroke="white" strokeWidth="1.22683" />

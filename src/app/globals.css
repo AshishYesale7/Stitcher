@@ -145,11 +145,15 @@
     align-self: flex-end;
   }
 
+  .button-container {
+    @apply absolute bottom-[10%] flex gap-8;
+    z-index: 9999;
+  }
+  
   .button {
-    @apply flex flex-col justify-center items-center absolute no-underline h-[50px] w-[160px];
+    @apply flex flex-col justify-center items-center no-underline h-[50px] w-[160px] relative;
     color: inherit;
     cursor: pointer;
-    z-index: 9999;
   }
 
   .button > button {
@@ -182,16 +186,6 @@
 
   .button:hover > button {
     transform: translateY(5px);
-  }
-
-  .button.first {
-    top: 25%;
-    right: 20%;
-  }
-
-  .button.sec {
-    bottom: 20%;
-    left: 20%;
   }
 
   .button.sec > button {
@@ -248,14 +242,8 @@
       align-items: center;
     }
 
-    .button.first {
-      top: 20%;
-      right: 10%;
-    }
-
-    .button.sec {
-      bottom: 15%;
-      left: 10%;
+    .button-container {
+      @apply flex-col;
     }
   }
 
