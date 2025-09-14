@@ -218,6 +218,56 @@
     display: none;
     fill: var(--text);
   }
+
+  .dashboard-card {
+    position: relative;
+    overflow: hidden;
+  }
+
+  .dashboard-card::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: cover;
+    opacity: 0.3;
+    z-index: 0;
+    animation: rotate 10s linear infinite;
+  }
+  
+  .dashboard-card > * {
+      position: relative;
+      z-index: 1;
+  }
+
+  .your-tailors-card::before {
+    background-image: radial-gradient(circle, #00FAD9, transparent 50%);
+  }
+
+  .order-tracking-card::before {
+    background-image: radial-gradient(circle, #FFB800, transparent 50%);
+  }
+
+  .book-order-card::before {
+    background-image: radial-gradient(circle, #FF4D4D, transparent 50%);
+  }
+
+  .profile-card::before {
+    background-image: radial-gradient(circle, #4D4DFF, transparent 50%);
+  }
+
+  @keyframes rotate {
+    from {
+      transform: rotate(0deg);
+    }
+    to {
+      transform: rotate(360deg);
+    }
+  }
   
   @media screen and (max-width: 1000px) {
     .title {
@@ -247,4 +297,10 @@
     }
   }
 
+}
+
+@layer components {
+    .progress-bar-indicator {
+        @apply bg-[#FFB800];
+    }
 }
