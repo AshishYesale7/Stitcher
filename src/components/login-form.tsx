@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import {
   getAuth,
@@ -18,7 +18,6 @@ import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
 import { Loader2, Phone, ShieldCheck, Mail, User as UserIcon } from 'lucide-react';
 import { createUserProfile } from '@/app/actions/user';
-import Link from 'next/link';
 
 declare global {
     interface Window {
@@ -48,6 +47,18 @@ export default function LoginForm({ userType }: { userType: 'customer' | 'tailor
   const [step, setStep] = useState<'phone' | 'otp'>('phone');
   const [authMethod, setAuthMethod] = useState<'phone' | 'email'>('phone');
 
+  useEffect(() => {
+    // Only run on the client
+    if (typeof window !== 'undefined') {
+        window.recaptchaVerifier = new RecaptchaVerifier(auth, 'recaptcha-container', {
+            'size': 'invisible',
+            'callback': (response: any) => {
+              // reCAPTCHA solved, allow signInWithPhoneNumber.
+            },
+        });
+    }
+  }, []);
+
   const handleSuccessfulLogin = async (user: User) => {
     try {
       await createUserProfile(user, userType);
@@ -62,17 +73,6 @@ export default function LoginForm({ userType }: { userType: 'customer' | 'tailor
       setIsLoading(false);
     }
   }
-
-  const setupRecaptcha = () => {
-    if (!window.recaptchaVerifier) {
-      window.recaptchaVerifier = new RecaptchaVerifier(auth, 'recaptcha-container', {
-        'size': 'invisible',
-        'callback': (response: any) => {
-          // reCAPTCHA solved, allow signInWithPhoneNumber.
-        },
-      });
-    }
-  };
 
   const handleGoogleSignIn = async () => {
     setIsLoading(true);
@@ -94,8 +94,19 @@ export default function LoginForm({ userType }: { userType: 'customer' | 'tailor
   const handlePhoneSignIn = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setIsLoading(true);
-    setupRecaptcha();
-    const appVerifier = window.recaptchaVerifier!;
+    
+    if (!window.recaptchaVerifier) {
+        console.error("Recaptcha verifier not initialized.");
+        toast({
+            variant: "destructive",
+            title: "Recaptcha Error",
+            description: "Please refresh the page and try again.",
+        });
+        setIsLoading(false);
+        return;
+    }
+
+    const appVerifier = window.recaptchaVerifier;
     try {
       const confirmationResult = await signInWithPhoneNumber(auth, `+91${phone}`, appVerifier);
       window.confirmationResult = confirmationResult;
@@ -109,7 +120,13 @@ export default function LoginForm({ userType }: { userType: 'customer' | 'tailor
       toast({
         variant: "destructive",
         title: "Phone Sign-In Failed",
-        description: "Could not send OTP. Please check the phone number and try again.",
+        description: "Could not send OTP. Please check the number and try again.",
+      });
+      // Reset reCAPTCHA on error
+      window.recaptchaVerifier.render().then(function(widgetId) {
+        if (typeof grecaptcha !== 'undefined' && widgetId !== undefined) {
+           grecaptcha.reset(widgetId);
+        }
       });
     } finally {
         setIsLoading(false);
@@ -118,9 +135,20 @@ export default function LoginForm({ userType }: { userType: 'customer' | 'tailor
 
   const handleOtpSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    if (!window.confirmationResult) {
+        console.error("No confirmation result available.");
+        toast({
+            variant: "destructive",
+            title: "Verification Failed",
+            description: "Please request a new OTP.",
+        });
+        setStep('phone');
+        return;
+    }
+
     setIsLoading(true);
     try {
-      const result = await window.confirmationResult?.confirm(otp);
+      const result = await window.confirmationResult.confirm(otp);
       if (result?.user) {
         await handleSuccessfulLogin(result.user);
       } else {
@@ -131,11 +159,68 @@ export default function LoginForm({ userType }: { userType: 'customer' | 'tailor
         toast({
             variant: "destructive",
             title: "OTP Verification Failed",
-            description: "The OTP you entered is incorrect or something went wrong.",
+            description: "The OTP is incorrect. Please try again.",
         });
         setIsLoading(false);
     }
   };
+
+  const renderPhoneAuth = () => {
+    if (step === 'phone') {
+        return (
+            <form onSubmit={handlePhoneSignIn} className="space-y-6">
+                <div className="space-y-2">
+                    <Label htmlFor="phone" className="text-muted-foreground">Phone Number</Label>
+                    <div className="flex items-center">
+                        <div className="flex items-center gap-2 pl-3 pr-2 py-2 bg-input rounded-l-md border border-r-0 border-input text-foreground">
+                            <span>🇮🇳</span>
+                            <span className="text-sm text-foreground">+91</span>
+                        </div>
+                        <Input
+                            id="phone"
+                            type="tel"
+                            placeholder="Your phone number"
+                            value={phone}
+                            onChange={(e) => setPhone(e.target.value)}
+                            required
+                            className="rounded-l-none border-l-0 text-base text-foreground"
+                        />
+                    </div>
+                </div>
+                <Button type="submit" disabled={isLoading} className="w-full h-12 text-base rounded-full">
+                    {isLoading ? <Loader2 className="animate-spin" /> : 'Send OTP'}
+                </Button>
+            </form>
+        )
+    }
+    return (
+        <form onSubmit={handleOtpSubmit} className="space-y-6">
+             <div className="space-y-2">
+                <Label htmlFor="otp">Verification Code</Label>
+                <Input
+                    id="otp"
+                    type="text"
+                    placeholder="Enter OTP"
+                    value={otp}
+                    onChange={(e) => setOtp(e.target.value)}
+                    required
+                    className="h-12 text-center text-lg tracking-[0.5em]"
+                />
+            </div>
+            <Button type="submit" disabled={isLoading} className="w-full h-12 text-base rounded-full">
+                {isLoading ? <Loader2 className="animate-spin" /> : <ShieldCheck />}
+                Verify OTP
+            </Button>
+        </form>
+    );
+  }
+
+  const renderEmailAuth = () => (
+    <div className="text-center text-muted-foreground space-y-4 py-12">
+        <Mail className="mx-auto w-10 h-10"/>
+        <p>Email authentication is coming soon.</p>
+    </div>
+  );
 
   return (
     <div className="w-full max-w-sm space-y-6">
@@ -163,50 +248,8 @@ export default function LoginForm({ userType }: { userType: 'customer' | 'tailor
       </div>
 
       <div id="recaptcha-container"></div>
-        {step === 'phone' ? (
-            <form onSubmit={handlePhoneSignIn} className="space-y-6">
-                <div className="space-y-2">
-                    <Label htmlFor="phone" className="text-muted-foreground">Phone Number</Label>
-                    <div className="flex items-center">
-                        <div className="flex items-center gap-2 pl-3 pr-2 py-2 bg-input rounded-l-md border border-r-0 border-input text-foreground">
-                            <span>🇮🇳</span>
-                            <span className="text-sm text-foreground">+91</span>
-                        </div>
-                        <Input
-                            id="phone"
-                            type="tel"
-                            placeholder="Your phone number"
-                            value={phone}
-                            onChange={(e) => setPhone(e.target.value)}
-                            required
-                            className="rounded-l-none border-l-0 text-base text-foreground"
-                        />
-                    </div>
-                </div>
-                <Button type="submit" disabled={isLoading} className="w-full h-12 text-base rounded-full">
-                    {isLoading ? <Loader2 className="animate-spin" /> : 'Send OTP'}
-                </Button>
-            </form>
-        ) : (
-            <form onSubmit={handleOtpSubmit} className="space-y-6">
-                 <div className="space-y-2">
-                    <Label htmlFor="otp">Verification Code</Label>
-                    <Input
-                        id="otp"
-                        type="text"
-                        placeholder="Enter OTP"
-                        value={otp}
-                        onChange={(e) => setOtp(e.target.value)}
-                        required
-                        className="h-12 text-center text-lg tracking-[0.5em]"
-                    />
-                </div>
-                <Button type="submit" disabled={isLoading} className="w-full h-12 text-base rounded-full">
-                    {isLoading ? <Loader2 className="animate-spin" /> : <ShieldCheck />}
-                    Verify OTP
-                </Button>
-            </form>
-        )}
+      
+      {authMethod === 'phone' ? renderPhoneAuth() : renderEmailAuth()}
       
       <div className="relative">
         <div className="absolute inset-0 flex items-center">
