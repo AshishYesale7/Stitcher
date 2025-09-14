@@ -10,8 +10,8 @@ import {
   RecaptchaVerifier,
   signInWithPhoneNumber,
   ConfirmationResult,
-  type User
 } from 'firebase/auth';
+import type { User } from 'firebase/auth';
 import { app } from '@/lib/firebase';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -210,6 +210,7 @@ export default function LoginForm({ userType }: { userType: 'customer' | 'tailor
         }
         if (error.code === 'auth/invalid-verification-code') {
           description = 'The verification code is invalid. Please try again.';
+          setOtp('');
         }
         toast({
             variant: "destructive",
