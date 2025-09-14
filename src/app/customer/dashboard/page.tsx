@@ -9,7 +9,7 @@ export default function CustomerDashboardPage() {
       <section className="dashboard-grid">
         <div className="card green">
           <div className="card-header">
-            <div className="date">Feb 2, 2024</div>
+            
             <MoreVertical className="h-6 w-6 text-white cursor-pointer" />
           </div>
           <div className="card-body">
@@ -27,7 +27,7 @@ export default function CustomerDashboardPage() {
 
         <div className="card orange">
           <div className="card-header">
-            <div className="date">Feb 5, 2024</div>
+            
             <MoreVertical className="h-6 w-6 text-white cursor-pointer" />
           </div>
           <div className="card-body">
@@ -45,7 +45,7 @@ export default function CustomerDashboardPage() {
 
         <div className="card red">
           <div className="card-header">
-            <div className="date">Mar 3, 2024</div>
+            
             <MoreVertical className="h-6 w-6 text-white cursor-pointer" />
           </div>
           <div className="card-body">
@@ -63,7 +63,7 @@ export default function CustomerDashboardPage() {
 
         <div className="card blue">
           <div className="card-header">
-            <div className="date">Mar 8, 2024</div>
+            
             <MoreVertical className="h-6 w-6 text-white cursor-pointer" />
           </div>
           <div className="card-body">
