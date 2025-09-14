@@ -65,5 +65,9 @@
   }
   body {
     @apply bg-background text-foreground font-body;
+    background-image: url('https://md-aqil.github.io/md-aqil/img/Banner-bg.png');
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
   }
 }
