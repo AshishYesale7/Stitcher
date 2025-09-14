@@ -61,7 +61,14 @@ export default function LoginForm({ userType }: { userType: 'customer' | 'tailor
 
   const handleSuccessfulLogin = async (user: User) => {
     try {
-      await createUserProfile(user, userType);
+      // Pass serializable data to the server action
+      await createUserProfile({
+        uid: user.uid,
+        email: user.email,
+        displayName: user.displayName,
+        photoURL: user.photoURL,
+        phoneNumber: user.phoneNumber,
+      }, userType);
       router.push(`/${userType}/dashboard`);
     } catch (error) {
        console.error("Profile Creation Error:", error);

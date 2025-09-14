@@ -2,42 +2,49 @@
 
 import { doc, setDoc, getFirestore, serverTimestamp } from 'firebase/firestore';
 import { app } from '@/lib/firebase';
-import type { User } from 'firebase/auth';
 
 const db = getFirestore(app);
 
 type UserRole = 'customer' | 'tailor';
 
+type UserProfilePayload = {
+  uid: string;
+  email: string | null;
+  displayName: string | null;
+  photoURL: string | null;
+  phoneNumber: string | null;
+};
+
 /**
- * Creates a user profile document in Firestore.
- * @param user The Firebase Auth user object.
+ * Creates or updates a user profile document in Firestore.
+ * @param userData The user's profile data.
  * @param role The role of the user ('customer' or 'tailor').
  */
-export async function createUserProfile(user: User, role: UserRole) {
-  if (!user) {
-    throw new Error('User object is required.');
+export async function createUserProfile(userData: UserProfilePayload, role: UserRole) {
+  if (!userData.uid) {
+    throw new Error('User UID is required.');
   }
   if (!role) {
     throw new Error('User role is required.');
   }
 
   const collectionName = role === 'customer' ? 'customers' : 'tailors';
-  const userRef = doc(db, collectionName, user.uid);
+  const userRef = doc(db, collectionName, userData.uid);
 
   try {
     // Use setDoc with merge: true to create or update without overwriting
     // if the document already exists from a different sign-in method.
     await setDoc(userRef, {
-      uid: user.uid,
-      email: user.email,
-      displayName: user.displayName,
-      photoURL: user.photoURL,
-      phoneNumber: user.phoneNumber,
+      uid: userData.uid,
+      email: userData.email,
+      displayName: userData.displayName,
+      photoURL: userData.photoURL,
+      phoneNumber: userData.phoneNumber,
       createdAt: serverTimestamp(),
       role: role,
     }, { merge: true });
 
-    console.log(`User profile created/updated for ${user.uid} in ${collectionName}`);
+    console.log(`User profile created/updated for ${userData.uid} in ${collectionName}`);
   } catch (error) {
     console.error('Error creating user profile:', error);
     // Depending on requirements, you might want to throw the error
