@@ -2,11 +2,24 @@
 
 Welcome to Stitcher, a modern platform designed to seamlessly connect customers with skilled tailors. Our vision is to eliminate the hassle of finding the right tailor and to provide a smooth, transparent, and enjoyable experience for creating custom-fit clothing.
 
+[![Deploy to Netlify](https://www.netlify.com/img/deploy/button.svg)](https://app.netlify.com/start/deploy?repository=https://github.com/your-username/your-repo-name&env=NEXT_PUBLIC_FIREBASE_API_KEY,NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN,NEXT_PUBLIC_FIREBASE_PROJECT_ID,NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET,NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID,NEXT_PUBLIC_FIREBASE_APP_ID,GEMINI_API_KEY)
+
 ## Our Vision
 
 In a world of fast fashion, we believe in the value of personalization and craftsmanship. Stitcher aims to be the go-to digital destination for anyone looking to get clothes made to their exact specifications. We empower customers to find the perfect artisan for their needs and provide tailors with the tools to manage their business and reach a wider audience.
 
 ---
+
+## Deployment
+
+You can deploy this project to Netlify with one click.
+
+1.  Click the "Deploy to Netlify" button above.
+2.  Follow the instructions to connect your GitHub account.
+3.  Fill in the required environment variables with your credentials from Firebase and Google AI Studio.
+4.  Click "Deploy site".
+
+Netlify will automatically build and deploy your application.
 
 ## Current Development Status
 
