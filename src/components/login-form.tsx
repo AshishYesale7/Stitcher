@@ -166,7 +166,7 @@ export default function LoginForm({ userType }: { userType: 'customer' | 'tailor
                 <div className="space-y-2">
                     <Label htmlFor="phone" className="text-muted-foreground">Phone Number</Label>
                     <div className="flex items-center">
-                        <div className="flex items-center gap-2 pl-3 pr-2 py-2 bg-input rounded-l-md border border-r-0 border-input">
+                        <div className="flex items-center gap-2 pl-3 pr-2 py-2 bg-input rounded-l-md border border-r-0 border-input text-foreground">
                             <span>🇮🇳</span>
                             <span className="text-sm">+91</span>
                         </div>
