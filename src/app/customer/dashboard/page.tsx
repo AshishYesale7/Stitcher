@@ -21,15 +21,6 @@ export default function CustomerDashboardPage() {
             </div>
           </div>
           <div className="card-footer">
-            <ul>
-              <li><Image src="https://picsum.photos/seed/user1/40/40" alt="user" width={30} height={30} /></li>
-              <li><Image src="https://picsum.photos/seed/user2/40/40" alt="user" width={30} height={30} /></li>
-              <li>
-                <Link href="#" className="btn-add">
-                  <Plus className="h-4 w-4" />
-                </Link>
-              </li>
-            </ul>
             <Link href="/customer/tailors" className="btn-countdown">Find Tailors</Link>
           </div>
         </div>
@@ -48,15 +39,6 @@ export default function CustomerDashboardPage() {
             </div>
           </div>
           <div className="card-footer">
-            <ul>
-              <li><Image src="https://picsum.photos/seed/user3/40/40" alt="user" width={30} height={30} /></li>
-              <li><Image src="https://picsum.photos/seed/user4/40/40" alt="user" width={30} height={30} /></li>
-              <li>
-                <Link href="#" className="btn-add">
-                  <Plus className="h-4 w-4" />
-                </Link>
-              </li>
-            </ul>
             <Link href="/customer/orders" className="btn-countdown">Track Orders</Link>
           </div>
         </div>
@@ -75,15 +57,6 @@ export default function CustomerDashboardPage() {
             </div>
           </div>
           <div className="card-footer">
-            <ul>
-              <li><Image src="https://picsum.photos/seed/user5/40/40" alt="user" width={30} height={30} /></li>
-              <li><Image src="https://picsum.photos/seed/user6/40/40" alt="user" width={30} height={30} /></li>
-              <li>
-                <Link href="#" className="btn-add">
-                  <Plus className="h-4 w-4" />
-                </Link>
-              </li>
-            </ul>
             <Link href="/customer/book-order" className="btn-countdown">Book Now</Link>
           </div>
         </div>
@@ -102,15 +75,6 @@ export default function CustomerDashboardPage() {
             </div>
           </div>
           <div className="card-footer">
-            <ul>
-              <li><Image src="https://picsum.photos/seed/user7/40/40" alt="user" width={30} height={30} /></li>
-              <li><Image src="https://picsum.photos/seed/user8/40/40" alt="user" width={30} height={30} /></li>
-               <li>
-                <Link href="#" className="btn-add">
-                  <Plus className="h-4 w-4" />
-                </Link>
-              </li>
-            </ul>
             <Link href="/customer/profile" className="btn-countdown">View Profile</Link>
           </div>
         </div>
