@@ -1,6 +1,7 @@
+
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import {
   getAuth,
@@ -46,8 +47,17 @@ export default function LoginForm({ userType }: { userType: 'customer' | 'tailor
   const [otp, setOtp] = useState('');
   const [step, setStep] = useState<'phone' | 'otp'>('phone');
   const [authMethod, setAuthMethod] = useState<'phone' | 'email'>('phone');
+  const [resendCooldown, setResendCooldown] = useState(0);
 
-  const handleSuccessfulLogin = async (user: User) => {
+  useEffect(() => {
+    let timer: NodeJS.Timeout;
+    if (resendCooldown > 0) {
+      timer = setTimeout(() => setResendCooldown(resendCooldown - 1), 1000);
+    }
+    return () => clearTimeout(timer);
+  }, [resendCooldown]);
+
+  const handleSuccessfulLogin = async (user: Pick<User, 'uid' | 'email' | 'displayName' | 'photoURL' | 'phoneNumber'>) => {
     try {
       await createUserProfile({
         uid: user.uid,
@@ -76,6 +86,7 @@ export default function LoginForm({ userType }: { userType: 'customer' | 'tailor
       await handleSuccessfulLogin(result.user);
     } catch (error: any) {
       if (error.code === 'auth/popup-closed-by-user') {
+        // User closed the popup, so we just stop loading and do nothing.
         setIsLoading(false);
         return;
       }
@@ -89,21 +100,18 @@ export default function LoginForm({ userType }: { userType: 'customer' | 'tailor
     }
   };
 
-  const handlePhoneSignIn = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
+  const handlePhoneSignIn = async () => {
     setIsLoading(true);
-
     try {
         const recaptchaVerifier = new RecaptchaVerifier(auth, 'recaptcha-container', {
             'size': 'invisible',
-            'callback': (response: any) => {
-              // reCAPTCHA solved, allow signInWithPhoneNumber.
-            },
+            'callback': () => {},
         });
         
         const confirmationResult = await signInWithPhoneNumber(auth, `+91${phone}`, recaptchaVerifier);
         window.confirmationResult = confirmationResult;
         setStep('otp');
+        setResendCooldown(30);
         toast({
             title: "OTP Sent",
             description: "We've sent a verification code to your phone.",
@@ -119,6 +127,11 @@ export default function LoginForm({ userType }: { userType: 'customer' | 'tailor
         setIsLoading(false);
     }
   };
+  
+  const handlePhoneFormSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    handlePhoneSignIn();
+  }
 
   const handleOtpSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -141,12 +154,16 @@ export default function LoginForm({ userType }: { userType: 'customer' | 'tailor
       } else {
         throw new Error("User not found after OTP confirmation.");
       }
-    } catch (error) {
+    } catch (error: any) {
         console.error("OTP Verification Error:", error);
+        let description = "The OTP is incorrect. Please try again.";
+        if (error.code === 'auth/code-expired') {
+          description = 'The OTP has expired. Please request a new one.';
+        }
         toast({
             variant: "destructive",
             title: "OTP Verification Failed",
-            description: "The OTP is incorrect. Please try again.",
+            description: description,
         });
         setIsLoading(false);
     }
@@ -155,7 +172,7 @@ export default function LoginForm({ userType }: { userType: 'customer' | 'tailor
   const renderPhoneAuth = () => {
     if (step === 'phone') {
         return (
-            <form onSubmit={handlePhoneSignIn} className="space-y-6">
+            <form onSubmit={handlePhoneFormSubmit} className="space-y-6">
                 <div className="space-y-2">
                     <Label htmlFor="phone" className="text-muted-foreground">Phone Number</Label>
                     <div className="flex items-center">
@@ -193,6 +210,17 @@ export default function LoginForm({ userType }: { userType: 'customer' | 'tailor
                     required
                     className="h-12 text-center text-lg tracking-[0.5em]"
                 />
+            </div>
+            <div className="flex justify-end -mt-4">
+                <Button 
+                    type="button" 
+                    variant="link" 
+                    onClick={handlePhoneSignIn}
+                    disabled={isLoading || resendCooldown > 0}
+                    className="text-sm"
+                >
+                    {resendCooldown > 0 ? `Resend OTP in ${resendCooldown}s` : 'Resend OTP'}
+                </Button>
             </div>
             <Button type="submit" disabled={isLoading} className="w-full h-12 text-base rounded-full">
                 {isLoading ? <Loader2 className="animate-spin" /> : <ShieldCheck />}
@@ -255,3 +283,5 @@ export default function LoginForm({ userType }: { userType: 'customer' | 'tailor
     </div>
   );
 }
+
+    
