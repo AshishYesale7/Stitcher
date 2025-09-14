@@ -1,8 +1,14 @@
+
+'use client';
+
 import LoginForm from '@/components/login-form';
 import Logo from '@/components/logo';
+import { useAuthRedirect } from '@/hooks/useAuthRedirect';
 import Link from 'next/link';
 
 export default function TailorLoginPage() {
+  useAuthRedirect();
+
   return (
     <div className="flex min-h-screen flex-col items-center justify-center bg-background p-4">
       <div className="w-full max-w-sm">

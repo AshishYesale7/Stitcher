@@ -1,3 +1,6 @@
+
+'use client';
+
 import Link from 'next/link';
 import Logo from '@/components/logo';
 import {
@@ -7,8 +10,11 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { Button } from '@/components/ui/button';
+import { useAuthRedirect } from '@/hooks/useAuthRedirect';
 
 export default function Home() {
+  useAuthRedirect();
+
   return (
     <>
       <div className="grid">
