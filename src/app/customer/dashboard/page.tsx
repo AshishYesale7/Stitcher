@@ -17,7 +17,7 @@ export default function CustomerDashboardPage() {
             <p>Find new tailors</p>
             <div className="progress">
               
-              <span>90%</span>
+              
             </div>
           </div>
           <div className="card-footer">
@@ -44,7 +44,7 @@ export default function CustomerDashboardPage() {
             <p>Active orders</p>
             <div className="progress">
               
-              <span>30%</span>
+              
             </div>
           </div>
           <div className="card-footer">
@@ -71,7 +71,7 @@ export default function CustomerDashboardPage() {
             <p>Create a new order</p>
             <div className="progress">
               
-              <span>50%</span>
+              
             </div>
           </div>
           <div className="card-footer">
@@ -98,7 +98,7 @@ export default function CustomerDashboardPage() {
             <p>Manage your account</p>
             <div className="progress">
               
-              <span>20%</span>
+              
             </div>
           </div>
           <div className="card-footer">
