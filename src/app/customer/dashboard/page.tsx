@@ -8,10 +8,7 @@ export default function CustomerDashboardPage() {
       <h1 className="text-3xl font-bold font-headline tracking-tight text-foreground mb-8">Dashboard</h1>
       <section className="dashboard-grid">
         <div className="card green">
-          <div className="card-header">
-            
-            <MoreVertical className="h-6 w-6 text-white cursor-pointer" />
-          </div>
+          
           <div className="card-body">
             <h3>Your Tailors</h3>
             <p>Find new tailors</p>
@@ -26,10 +23,7 @@ export default function CustomerDashboardPage() {
         </div>
 
         <div className="card orange">
-          <div className="card-header">
-            
-            <MoreVertical className="h-6 w-6 text-white cursor-pointer" />
-          </div>
+          
           <div className="card-body">
             <h3>Order Tracking</h3>
             <p>Active orders</p>
@@ -44,10 +38,7 @@ export default function CustomerDashboardPage() {
         </div>
 
         <div className="card red">
-          <div className="card-header">
-            
-            <MoreVertical className="h-6 w-6 text-white cursor-pointer" />
-          </div>
+          
           <div className="card-body">
             <h3>Book Order</h3>
             <p>Create a new order</p>
@@ -62,10 +53,7 @@ export default function CustomerDashboardPage() {
         </div>
 
         <div className="card blue">
-          <div className="card-header">
-            
-            <MoreVertical className="h-6 w-6 text-white cursor-pointer" />
-          </div>
+          
           <div className="card-body">
             <h3>Profile</h3>
             <p>Manage your account</p>
