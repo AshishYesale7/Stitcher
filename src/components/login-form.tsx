@@ -80,7 +80,12 @@ export default function LoginForm({ userType }: { userType: 'customer' | 'tailor
     try {
       const result = await signInWithPopup(auth, provider);
       await handleSuccessfulLogin(result.user);
-    } catch (error) {
+    } catch (error: any) {
+      // Don't show an error toast if the user closes the popup
+      if (error.code === 'auth/popup-closed-by-user') {
+        setIsLoading(false);
+        return;
+      }
       console.error("Google Sign-In Error:", error);
       toast({
         variant: "destructive",
