@@ -5,7 +5,7 @@ import Link from 'next/link';
 export default function CustomerDashboardPage() {
   return (
     <div className="p-4 sm:p-6 lg:p-8">
-      <h1 className="text-3xl font-bold font-headline tracking-tight text-white mb-8">Dashboard</h1>
+      <h1 className="text-3xl font-bold font-headline tracking-tight text-foreground mb-8">Dashboard</h1>
       <section className="dashboard-grid">
         <div className="card green">
           <div className="card-header">
