@@ -6,12 +6,12 @@ import DashboardHeader from '@/components/dashboard-header';
 export default function CustomerLayout({ children }: { children: ReactNode }) {
   return (
     <SidebarProvider>
-      <Sidebar>
+      <Sidebar collapsible="offcanvas">
         <CustomerSidebar />
       </Sidebar>
       <SidebarInset>
         <DashboardHeader />
-        <main className="p-4 sm:p-6 lg:p-8">
+        <main>
           {children}
         </main>
       </SidebarInset>

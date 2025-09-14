@@ -3,7 +3,7 @@ import './globals.css';
 import { Toaster } from "@/components/ui/toaster";
 
 export const metadata: Metadata = {
-  title: 'StitchLink',
+  title: 'Stitcher',
   description: 'Connecting you with the perfect tailor.',
 };
 

@@ -10,7 +10,7 @@ export default function Home() {
       <header className="px-4 lg:px-6 h-16 flex items-center shadow-sm">
         <Link href="/" className="flex items-center justify-center gap-2" prefetch={false}>
           <Logo />
-          <span className="text-2xl font-bold font-headline text-primary">StitchLink</span>
+          <span className="text-2xl font-bold font-headline text-primary">Stitcher</span>
         </Link>
       </header>
       <main className="flex-1">
@@ -21,7 +21,7 @@ export default function Home() {
                 Your Perfect Fit, Found.
               </h1>
               <p className="max-w-[700px] text-muted-foreground md:text-xl">
-                StitchLink connects you with skilled tailors to bring your custom clothing ideas to life. For tailors, it's the ultimate tool to manage and grow your business.
+                Stitcher connects you with skilled tailors to bring your custom clothing ideas to life. For tailors, it's the ultimate tool to manage and grow your business.
               </p>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-8 w-full max-w-4xl mt-8">
                 <Card className="flex flex-col text-left hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
@@ -72,7 +72,7 @@ export default function Home() {
         </section>
       </main>
       <footer className="flex flex-col gap-2 sm:flex-row py-6 w-full shrink-0 items-center px-4 md:px-6 border-t">
-        <p className="text-xs text-muted-foreground">&copy; 2024 StitchLink. All rights reserved.</p>
+        <p className="text-xs text-muted-foreground">&copy; 2024 Stitcher. All rights reserved.</p>
       </footer>
     </div>
   );
