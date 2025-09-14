@@ -22,8 +22,14 @@ const iconComponents: { [key: string]: React.ElementType } = {
 
 export default function CustomerDashboardPage() {
   return (
-    <div className="p-4 sm:p-6 lg:p-8">
-      <div className="grid grid-cols-2 gap-4">
+    <div className="space-y-8 p-4 sm:p-6 lg:p-8">
+       <div>
+        <h1 className="text-3xl font-bold font-headline tracking-tight">Customer Dashboard</h1>
+        <p className="text-muted-foreground mt-1">
+          Navigate through your options below.
+        </p>
+      </div>
+      <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
         {menuItems.map((item) => {
           const Icon = iconComponents[item.label];
           return (
