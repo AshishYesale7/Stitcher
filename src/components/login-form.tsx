@@ -97,7 +97,7 @@ export default function LoginForm({ userType }: { userType: 'customer' | 'tailor
     setupRecaptcha();
     const appVerifier = window.recaptchaVerifier!;
     try {
-      const confirmationResult = await signInWithPhoneNumber(auth, `+1${phone}`, appVerifier);
+      const confirmationResult = await signInWithPhoneNumber(auth, `+91${phone}`, appVerifier);
       window.confirmationResult = confirmationResult;
       setStep('otp');
       toast({
@@ -167,8 +167,8 @@ export default function LoginForm({ userType }: { userType: 'customer' | 'tailor
                     <Label htmlFor="phone" className="text-muted-foreground">Phone Number</Label>
                     <div className="flex items-center">
                         <div className="flex items-center gap-2 pl-3 pr-2 py-2 bg-input rounded-l-md border border-r-0 border-input">
-                            <span>🇺🇸</span>
-                            <span className="text-sm">+1</span>
+                            <span>🇮🇳</span>
+                            <span className="text-sm">+91</span>
                         </div>
                         <Input
                             id="phone"
