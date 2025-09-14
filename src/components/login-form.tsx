@@ -10,7 +10,6 @@ import {
   RecaptchaVerifier,
   signInWithPhoneNumber,
   ConfirmationResult,
-  type User as FirebaseUser,
 } from 'firebase/auth';
 import { app } from '@/lib/firebase';
 import { Button } from '@/components/ui/button';
@@ -270,7 +269,7 @@ export default function LoginForm({ userType }: { userType: 'customer' | 'tailor
                     value={otp}
                     onChange={(e) => setOtp(e.target.value)}
                     required
-                    className="h-12 text-center text-lg tracking-[0.5em]"
+                    className="h-12 text-center text-lg tracking-[0.5em] text-foreground"
                 />
             </div>
             <div className="flex justify-between items-center -mt-4">
