@@ -2,6 +2,8 @@ export default function Logo() {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
+      width="24"
+      height="24"
       viewBox="0 0 24 24"
       fill="none"
       stroke="currentColor"
@@ -10,11 +12,11 @@ export default function Logo() {
       strokeLinejoin="round"
       className="h-6 w-6"
     >
-      <path d="M12 22v-5" />
-      <path d="M15.24 12.24a5 5 0 0 0-7.48 0" />
-      <path d="M17.47 9.53a8 8 0 0 0-11.94 0" />
-      <path d="M19.34 6.66A10.5 10.5 0 0 0 4.66 6.66" />
-      <path d="M12 2a2 2 0 0 1 2 2v2a2 2 0 0 1-4 0V4a2 2 0 0 1 2-2z" />
+      <circle cx="6" cy="6" r="3" />
+      <circle cx="6" cy="18" r="3" />
+      <line x1="20" x2="8.12" y1="4" y2="15.88" />
+      <line x1="14.47" x2="20" y1="14.47" y2="20" />
+      <line x1="8.12" x2="12" y1="8.12" y2="12" />
     </svg>
   );
 }
