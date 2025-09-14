@@ -269,7 +269,7 @@
       position: relative;
       z-index: 555;
       width: 100%;
-      min-height: 20rem;
+      min-height: 16rem;
       display: grid;
       place-content: center;
       place-items: center;
@@ -326,7 +326,7 @@
 
     .card-body h3 {
       color: #fff;
-      font-size: 1.375rem;
+      font-size: 1.25rem;
       margin-top: 0.625em;
       margin-bottom: 0.188em;
       text-transform: capitalize;
@@ -335,7 +335,7 @@
 
     .card-body p {
       color: #ddd;
-      font-size: 1rem;
+      font-size: 0.875rem;
       letter-spacing: 0.031rem;
     }
 
