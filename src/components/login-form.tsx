@@ -81,7 +81,8 @@ export default function LoginForm({ userType }: { userType: 'customer' | 'tailor
   }, [resendCooldown]);
 
   useEffect(() => {
-    if (step === 'otp' && 'OTPCredential' in window) {
+    const isMobile = /Mobi/i.test(window.navigator.userAgent);
+    if (step === 'otp' && 'OTPCredential' in window && isMobile) {
       const ac = new AbortController();
 
       navigator.credentials.get({
@@ -94,8 +95,6 @@ export default function LoginForm({ userType }: { userType: 'customer' | 'tailor
             title: "OTP Detected",
             description: "We've automatically filled the OTP for you.",
           });
-          // To auto-submit, we could call a submit handler here.
-          // For now, we just fill the field.
         }
       }).catch(err => {
         console.error("WebOTP API error:", err);
@@ -151,12 +150,10 @@ export default function LoginForm({ userType }: { userType: 'customer' | 'tailor
   const handlePhoneSignIn = async () => {
     setIsLoading(true);
     try {
-        if (!window.recaptchaVerifier) {
-            window.recaptchaVerifier = new RecaptchaVerifier(auth, 'recaptcha-container', {
-                'size': 'invisible',
-                'callback': () => {},
-            });
-        }
+        window.recaptchaVerifier = new RecaptchaVerifier(auth, 'recaptcha-container', {
+            'size': 'invisible',
+            'callback': () => {},
+        });
         
         const fullPhoneNumber = `${selectedCountry.dial_code}${phone}`;
         const confirmationResult = await signInWithPhoneNumber(auth, fullPhoneNumber, window.recaptchaVerifier);
@@ -377,3 +374,5 @@ export default function LoginForm({ userType }: { userType: 'customer' | 'tailor
     </div>
   );
 }
+
+    
