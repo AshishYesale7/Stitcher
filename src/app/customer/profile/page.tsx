@@ -1,9 +1,30 @@
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Plus, Star, MessageSquare, MoreVertical, User, Mail, Phone, MapPin } from "lucide-react";
+import { Plus, Star, MessageSquare, MoreVertical, User, Mail, Phone, MapPin, Edit, Save } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Slider } from "@/components/ui/slider";
+
+function MeasurementSlider({ label, value, unit, onValueChange }: { label: string, value: number, unit: string, onValueChange: (value: number[]) => void }) {
+  return (
+    <div className="space-y-3">
+      <div className="flex justify-between items-center">
+        <Label className="text-sm font-medium">{label}</Label>
+        <span className="text-sm font-semibold text-primary">{value} {unit}</span>
+      </div>
+      <Slider
+        defaultValue={[value]}
+        max={unit === 'cm' ? 220 : 150}
+        min={unit === 'cm' ? 120 : 40}
+        step={1}
+        onValueChange={onValueChange}
+      />
+    </div>
+  );
+}
 
 export default function CustomerProfilePage() {
   const user = {
@@ -21,6 +42,15 @@ export default function CustomerProfilePage() {
     { name: "Miguel Cunha Ferreira", time: "7 min ago", avatar: "https://picsum.photos/seed/friend3/40/40" },
     { name: "Eric Yuriev", time: "12 min ago", avatar: "https://picsum.photos/seed/friend4/40/40" },
   ];
+
+  // In a real app, you'd use useState for this
+  let isEditing = false;
+  let measurements = {
+      height: 175,
+      weight: 70,
+      chest: 98,
+      waist: 82,
+  };
 
   return (
     <div className="min-h-screen bg-background">
@@ -42,12 +72,67 @@ export default function CustomerProfilePage() {
       </div>
 
       <div className="p-4 sm:p-6 lg:p-8">
-        <Tabs defaultValue="friends" className="w-full mt-8">
-          <TabsList className="grid w-full grid-cols-3">
-            <TabsTrigger value="timeline">Timeline</TabsTrigger>
+        <Tabs defaultValue="about" className="w-full mt-8">
+          <TabsList className="grid w-full grid-cols-4">
+            <TabsTrigger value="about">About</TabsTrigger>
+            <TabsTrigger value="measurements">Measurements</TabsTrigger>
             <TabsTrigger value="friends">Friend List</TabsTrigger>
             <TabsTrigger value="top-rated">Top Rated</TabsTrigger>
           </TabsList>
+          <TabsContent value="about" className="mt-6">
+            <Card>
+                <CardHeader>
+                    <div className="flex justify-between items-center">
+                        <CardTitle>About Alex</CardTitle>
+                        <Button variant="ghost" size="icon">
+                            {isEditing ? <Save className="h-4 w-4" /> : <Edit className="h-4 w-4" />}
+                            <span className="sr-only">{isEditing ? "Save" : "Edit"}</span>
+                        </Button>
+                    </div>
+                    <CardDescription>Your personal information.</CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-6">
+                    <div className="flex items-center gap-4">
+                        <Mail className="h-5 w-5 text-muted-foreground" />
+                        <div className="flex-1">
+                            <Label htmlFor="email" className="text-xs text-muted-foreground">Email</Label>
+                            <Input id="email" defaultValue={user.email} readOnly={!isEditing} className="border-0 px-0 h-auto focus-visible:ring-0" />
+                        </div>
+                    </div>
+                     <div className="flex items-center gap-4">
+                        <Phone className="h-5 w-5 text-muted-foreground" />
+                        <div className="flex-1">
+                            <Label htmlFor="phone" className="text-xs text-muted-foreground">Phone</Label>
+                            <Input id="phone" defaultValue={user.phone} readOnly={!isEditing} className="border-0 px-0 h-auto focus-visible:ring-0" />
+                        </div>
+                    </div>
+                     <div className="flex items-center gap-4">
+                        <MapPin className="h-5 w-5 text-muted-foreground" />
+                        <div className="flex-1">
+                            <Label htmlFor="address" className="text-xs text-muted-foreground">Address</Label>
+                            <Input id="address" defaultValue={user.address} readOnly={!isEditing} className="border-0 px-0 h-auto focus-visible:ring-0" />
+                        </div>
+                    </div>
+                </CardContent>
+            </Card>
+          </TabsContent>
+          <TabsContent value="measurements" className="mt-6">
+            <Card>
+                <CardHeader>
+                    <CardTitle>Body Measurements</CardTitle>
+                    <CardDescription>Keep your measurements up to date for a perfect fit.</CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-6">
+                   <MeasurementSlider label="Height" value={measurements.height} unit="cm" onValueChange={(val) => measurements.height = val[0]} />
+                   <MeasurementSlider label="Weight" value={measurements.weight} unit="kg" onValueChange={(val) => measurements.weight = val[0]} />
+                   <MeasurementSlider label="Chest" value={measurements.chest} unit="cm" onValueChange={(val) => measurements.chest = val[0]} />
+                   <MeasurementSlider label="Waist" value={measurements.waist} unit="cm" onValueChange={(val) => measurements.waist = val[0]} />
+                   <div className="pt-4 flex justify-end">
+                       <Button><Save className="mr-2 h-4 w-4"/> Save Measurements</Button>
+                   </div>
+                </CardContent>
+            </Card>
+          </TabsContent>
           <TabsContent value="friends" className="mt-6">
             <Card>
               <CardContent className="p-0">
@@ -83,13 +168,6 @@ export default function CustomerProfilePage() {
                 </div>
               </CardContent>
             </Card>
-          </TabsContent>
-          <TabsContent value="timeline">
-             <Card>
-                <CardContent className="p-6">
-                    <p>Timeline content coming soon.</p>
-                </CardContent>
-             </Card>
           </TabsContent>
           <TabsContent value="top-rated">
              <Card>
