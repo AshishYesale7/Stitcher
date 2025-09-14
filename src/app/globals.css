@@ -256,10 +256,10 @@
     
     .dashboard-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr));
+      grid-template-columns: repeat(2, 1fr);
       gap: 2rem;
       width: 100%;
-      max-width: 80em;
+      max-width: 42rem;
       margin-inline: auto;
       position: relative;
       z-index: 10;
