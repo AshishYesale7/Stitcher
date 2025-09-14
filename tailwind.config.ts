@@ -22,6 +22,7 @@ export default {
         code: ['monospace'],
       },
       colors: {
+        'milk-white': '#f2e2b3',
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
         ring: "hsl(var(--ring))",

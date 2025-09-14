@@ -10,7 +10,7 @@ export default function Home() {
       <header className="px-4 lg:px-6 h-16 flex items-center shadow-sm">
         <Link href="/" className="flex items-center justify-center gap-2" prefetch={false}>
           <Logo />
-          <span className="text-2xl font-bold font-headline text-primary">Stitcher</span>
+          <span className="text-2xl font-bold font-headline text-milk-white">Stitcher</span>
         </Link>
       </header>
       <main className="flex-1">
