@@ -97,8 +97,10 @@
   }
 
   .sitename {
+    @apply text-2xl;
     font-weight: bold;
     margin-right: auto;
+    color: #000000;
   }
 
   .grid {
