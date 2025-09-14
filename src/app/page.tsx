@@ -29,11 +29,11 @@ export default function Home() {
             <Logo />
             Stitcher
           </Link>
-          <Link href="/customer/login" className="menu">
-            Customer
+          <Link href="/terms" className="menu">
+            Terms & Conditions
           </Link>
-          <Link href="/tailor/login" className="menu">
-            Tailor
+          <Link href="/privacy" className="menu">
+            Privacy Policy
           </Link>
           <div className="material-icons">
             <DropdownMenu>
