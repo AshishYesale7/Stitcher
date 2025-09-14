@@ -1,4 +1,7 @@
 
+'use client';
+
+import { useState } from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
@@ -17,8 +20,8 @@ function MeasurementSlider({ label, value, unit, onValueChange }: { label: strin
       </div>
       <Slider
         defaultValue={[value]}
-        max={unit === 'cm' ? 220 : 150}
-        min={unit === 'cm' ? 120 : 40}
+        max={label === 'Height' ? 220 : (label === 'Weight' ? 150 : 150)}
+        min={label === 'Height' ? 120 : (label === 'Weight' ? 40 : 50)}
         step={1}
         onValueChange={onValueChange}
       />
@@ -27,14 +30,31 @@ function MeasurementSlider({ label, value, unit, onValueChange }: { label: strin
 }
 
 export default function CustomerProfilePage() {
-  const user = {
+  const [isEditing, setIsEditing] = useState(false);
+  const [user, setUser] = useState({
     name: "Alex Doe",
     email: "alex.doe@example.com",
     phone: "+1 234 567 890",
     address: "123 Main St, Anytown, USA",
     avatarUrl: "https://picsum.photos/seed/user/100/100",
     role: "Fashion Enthusiast",
+  });
+
+  const [measurements, setMeasurements] = useState({
+      height: 175,
+      weight: 70,
+      chest: 98,
+      waist: 82,
+  });
+
+  const handleMeasurementChange = (field: keyof typeof measurements) => (value: number[]) => {
+      setMeasurements(prev => ({ ...prev, [field]: value[0] }));
   };
+
+  const handleUserChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { id, value } = e.target;
+    setUser(prev => ({...prev, [id]: value}));
+  }
 
   const friends = [
     { name: "Jacob Lennon", time: "2 min ago", avatar: "https://picsum.photos/seed/friend1/40/40" },
@@ -42,15 +62,6 @@ export default function CustomerProfilePage() {
     { name: "Miguel Cunha Ferreira", time: "7 min ago", avatar: "https://picsum.photos/seed/friend3/40/40" },
     { name: "Eric Yuriev", time: "12 min ago", avatar: "https://picsum.photos/seed/friend4/40/40" },
   ];
-
-  // In a real app, you'd use useState for this
-  let isEditing = false;
-  let measurements = {
-      height: 175,
-      weight: 70,
-      chest: 98,
-      waist: 82,
-  };
 
   return (
     <div className="min-h-screen bg-background">
@@ -84,7 +95,7 @@ export default function CustomerProfilePage() {
                 <CardHeader>
                     <div className="flex justify-between items-center">
                         <CardTitle>About Alex</CardTitle>
-                        <Button variant="ghost" size="icon">
+                        <Button variant="ghost" size="icon" onClick={() => setIsEditing(!isEditing)}>
                             {isEditing ? <Save className="h-4 w-4" /> : <Edit className="h-4 w-4" />}
                             <span className="sr-only">{isEditing ? "Save" : "Edit"}</span>
                         </Button>
@@ -96,21 +107,21 @@ export default function CustomerProfilePage() {
                         <Mail className="h-5 w-5 text-muted-foreground" />
                         <div className="flex-1">
                             <Label htmlFor="email" className="text-xs text-muted-foreground">Email</Label>
-                            <Input id="email" defaultValue={user.email} readOnly={!isEditing} className="border-0 px-0 h-auto focus-visible:ring-0" />
+                            <Input id="email" value={user.email} readOnly={!isEditing} onChange={handleUserChange} className="border-0 px-0 h-auto focus-visible:ring-0 read-only:bg-transparent" />
                         </div>
                     </div>
                      <div className="flex items-center gap-4">
                         <Phone className="h-5 w-5 text-muted-foreground" />
                         <div className="flex-1">
                             <Label htmlFor="phone" className="text-xs text-muted-foreground">Phone</Label>
-                            <Input id="phone" defaultValue={user.phone} readOnly={!isEditing} className="border-0 px-0 h-auto focus-visible:ring-0" />
+                            <Input id="phone" value={user.phone} readOnly={!isEditing} onChange={handleUserChange} className="border-0 px-0 h-auto focus-visible:ring-0 read-only:bg-transparent" />
                         </div>
                     </div>
                      <div className="flex items-center gap-4">
                         <MapPin className="h-5 w-5 text-muted-foreground" />
                         <div className="flex-1">
                             <Label htmlFor="address" className="text-xs text-muted-foreground">Address</Label>
-                            <Input id="address" defaultValue={user.address} readOnly={!isEditing} className="border-0 px-0 h-auto focus-visible:ring-0" />
+                            <Input id="address" value={user.address} readOnly={!isEditing} onChange={handleUserChange} className="border-0 px-0 h-auto focus-visible:ring-0 read-only:bg-transparent" />
                         </div>
                     </div>
                 </CardContent>
@@ -123,10 +134,10 @@ export default function CustomerProfilePage() {
                     <CardDescription>Keep your measurements up to date for a perfect fit.</CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-6">
-                   <MeasurementSlider label="Height" value={measurements.height} unit="cm" onValueChange={(val) => measurements.height = val[0]} />
-                   <MeasurementSlider label="Weight" value={measurements.weight} unit="kg" onValueChange={(val) => measurements.weight = val[0]} />
-                   <MeasurementSlider label="Chest" value={measurements.chest} unit="cm" onValueChange={(val) => measurements.chest = val[0]} />
-                   <MeasurementSlider label="Waist" value={measurements.waist} unit="cm" onValueChange={(val) => measurements.waist = val[0]} />
+                   <MeasurementSlider label="Height" value={measurements.height} unit="cm" onValueChange={handleMeasurementChange('height')} />
+                   <MeasurementSlider label="Weight" value={measurements.weight} unit="kg" onValueChange={handleMeasurementChange('weight')} />
+                   <MeasurementSlider label="Chest" value={measurements.chest} unit="cm" onValueChange={handleMeasurementChange('chest')} />
+                   <MeasurementSlider label="Waist" value={measurements.waist} unit="cm" onValueChange={handleMeasurementChange('waist')} />
                    <div className="pt-4 flex justify-end">
                        <Button><Save className="mr-2 h-4 w-4"/> Save Measurements</Button>
                    </div>
