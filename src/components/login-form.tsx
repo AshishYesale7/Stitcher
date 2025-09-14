@@ -17,7 +17,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
-import { Loader2, Phone, ShieldCheck, Mail, User as UserIcon, ChevronsUpDown } from 'lucide-react';
+import { Loader2, ShieldCheck, User as UserIcon, ChevronsUpDown } from 'lucide-react';
 import { createUserProfile } from '@/app/actions/user';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from '@/components/ui/command';
@@ -96,14 +96,16 @@ export default function LoginForm({ userType }: { userType: 'customer' | 'tailor
           });
         }
       }).catch(err => {
-        console.error("WebOTP API error:", err);
+        if (err.name !== 'AbortError') {
+          console.error("WebOTP API error:", err);
+        }
       });
 
       return () => {
         ac.abort();
       };
     }
-  }, [step, toast]);
+  }, [step]);
 
 
   const handleSuccessfulLogin = async (user: User) => {
@@ -351,6 +353,3 @@ export default function LoginForm({ userType }: { userType: 'customer' | 'tailor
     </div>
   );
 }
-
-    
-    
