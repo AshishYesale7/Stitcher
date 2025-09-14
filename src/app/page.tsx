@@ -6,7 +6,7 @@ import Logo from '@/components/logo';
 
 export default function Home() {
   return (
-    <div className="flex flex-col min-h-dvh bg-background">
+    <div className="flex flex-col min-h-dvh">
       <header className="px-4 lg:px-6 h-16 flex items-center shadow-sm">
         <Link href="/" className="flex items-center justify-center gap-2" prefetch={false}>
           <Logo />
