@@ -2,6 +2,8 @@
    Stitcher— Copyright (c) 2025 Ashish Vasant Yesale (ashishyesale007@gmail.com)
    SPDX-License-Identifier: BSD-3-Clause OR Proprietary
    Stitcher is dual-licensed under the BSD 3-Clause License and a Commercial License.
+   - 📜 [License (BSD 3-Clause)](https://github.com/AshishYesale7/Stitcher/LICENSE)
+- ⚖️ [Commercial Use Terms](https://github.com/AshishYesale7/Stitcher/COMMERCIAL_TERMS.md)
   
    This file is part of the "Stitcher" Project.
   
@@ -139,3 +141,5 @@ Alternatively, commercial use with extended rights is available — contact the 
 
 See the [LICENSE](./LICENSE) file for details.
 
+- 📜 [License (BSD 3-Clause)](./LICENSE)
+- ⚖️ [Commercial Use Terms](./COMMERCIAL_TERMS.md)
