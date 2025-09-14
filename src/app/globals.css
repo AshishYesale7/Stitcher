@@ -518,4 +518,44 @@
     .card.red .btn-countdown:hover {
       background: #a63d2a;
     }
+
+    .card.purple {
+      background: radial-gradient(ellipse at right top, #80008082 0%, #151419 47%, #151419 100%);
+    }
+
+    .card.purple::before {
+      background: linear-gradient(45deg, #232228, #232228, #232228, #232228, #800080) border-box;
+    }
+
+    .card.purple .btn-add {
+      background: #800080;
+    }
+
+    .card.purple .progress-bar::after {
+      background: #800080;
+    }
+
+    .card.purple .btn-countdown:hover {
+      background: #800080;
+    }
+
+    .card.pink {
+      background: radial-gradient(ellipse at right top, #ffc0cb82 0%, #151419 47%, #151419 100%);
+    }
+
+    .card.pink::before {
+      background: linear-gradient(45deg, #232228, #232228, #232228, #232228, #ffc0cb) border-box;
+    }
+
+    .card.pink .btn-add {
+      background: #ffc0cb;
+    }
+
+    .card.pink .progress-bar::after {
+      background: #ffc0cb;
+    }
+    
+    .card.pink .btn-countdown:hover {
+      background: #ffc0cb;
+    }
 }

@@ -1,4 +1,4 @@
-import { Search, Package, Notebook, User } from 'lucide-react';
+import { Search, Package, Notebook, User, Ruler, Palette } from 'lucide-react';
 import Link from 'next/link';
 
 export default function CustomerDashboardPage() {
@@ -67,6 +67,32 @@ export default function CustomerDashboardPage() {
           </div>
           <div className="card-footer">
             <Link href="/customer/profile" className="btn-countdown">View Profile</Link>
+          </div>
+        </div>
+
+        <div className="card purple">
+          <div className="card-body">
+            <h3>Measurement</h3>
+            <Ruler className="w-12 h-12 mx-auto my-2 text-white" />
+            <p>Save your measurements</p>
+            <div className="progress">
+            </div>
+          </div>
+          <div className="card-footer">
+            <Link href="/customer/measurement" className="btn-countdown">Manage</Link>
+          </div>
+        </div>
+
+        <div className="card pink">
+          <div className="card-body">
+            <h3>Design Your Garment</h3>
+            <Palette className="w-12 h-12 mx-auto my-2 text-white" />
+            <p>Create a unique design</p>
+            <div className="progress">
+            </div>
+          </div>
+          <div className="card-footer">
+            <Link href="/customer/design-garment" className="btn-countdown">Design Now</Link>
           </div>
         </div>
       </section>
