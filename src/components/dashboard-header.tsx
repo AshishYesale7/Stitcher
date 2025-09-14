@@ -13,9 +13,14 @@ import {
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Sun, Moon } from 'lucide-react';
 import { useState, useEffect } from 'react';
+import Link from 'next/link';
+import { auth } from '@/lib/firebase';
+import { signOut } from 'firebase/auth';
+import { useRouter } from 'next/navigation';
 
 export default function DashboardHeader() {
   const [theme, setTheme] = useState('light');
+  const router = useRouter();
 
   useEffect(() => {
     const storedTheme = typeof window !== 'undefined' ? localStorage.getItem('theme') || 'light' : 'light';
@@ -30,6 +35,15 @@ export default function DashboardHeader() {
     setTheme(newTheme);
     localStorage.setItem('theme', newTheme);
     document.documentElement.classList.toggle('dark', newTheme === 'dark');
+  };
+
+  const handleLogout = async () => {
+    try {
+      await signOut(auth);
+      router.push('/');
+    } catch (error) {
+      console.error('Logout Error:', error);
+    }
   };
 
   return (
@@ -56,10 +70,12 @@ export default function DashboardHeader() {
             <DropdownMenuContent align="end">
                 <DropdownMenuLabel>My Account</DropdownMenuLabel>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem>Profile</DropdownMenuItem>
+                <DropdownMenuItem asChild>
+                    <Link href="/customer/profile">Profile</Link>
+                </DropdownMenuItem>
                 <DropdownMenuItem>Settings</DropdownMenuItem>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem>Log out</DropdownMenuItem>
+                <DropdownMenuItem onClick={handleLogout}>Log out</DropdownMenuItem>
             </DropdownMenuContent>
             </DropdownMenu>
         </div>
