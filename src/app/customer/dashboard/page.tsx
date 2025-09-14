@@ -16,7 +16,7 @@ export default function CustomerDashboardPage() {
             <h3>Your Tailors</h3>
             <p>Find new tailors</p>
             <div className="progress">
-              <div className="progress-bar" style={{ '--progress-width': '90%' } as React.CSSProperties}></div>
+              
               <span>90%</span>
             </div>
           </div>
@@ -43,7 +43,7 @@ export default function CustomerDashboardPage() {
             <h3>Order Tracking</h3>
             <p>Active orders</p>
             <div className="progress">
-              <div className="progress-bar" style={{ '--progress-width': '30%' } as React.CSSProperties}></div>
+              
               <span>30%</span>
             </div>
           </div>
@@ -70,7 +70,7 @@ export default function CustomerDashboardPage() {
             <h3>Book Order</h3>
             <p>Create a new order</p>
             <div className="progress">
-              <div className="progress-bar" style={{ '--progress-width': '50%' } as React.CSSProperties}></div>
+              
               <span>50%</span>
             </div>
           </div>
@@ -97,7 +97,7 @@ export default function CustomerDashboardPage() {
             <h3>Profile</h3>
             <p>Manage your account</p>
             <div className="progress">
-              <div className="progress-bar" style={{ '--progress-width': '20%' } as React.CSSProperties}></div>
+              
               <span>20%</span>
             </div>
           </div>
