@@ -49,7 +49,7 @@ export default function LoginForm({ userType }: { userType: 'customer' | 'tailor
 
   useEffect(() => {
     // Only run on the client
-    if (typeof window !== 'undefined') {
+    if (typeof window !== 'undefined' && !window.recaptchaVerifier) {
         window.recaptchaVerifier = new RecaptchaVerifier(auth, 'recaptcha-container', {
             'size': 'invisible',
             'callback': (response: any) => {
@@ -123,11 +123,11 @@ export default function LoginForm({ userType }: { userType: 'customer' | 'tailor
         description: "Could not send OTP. Please check the number and try again.",
       });
       // Reset reCAPTCHA on error
-      window.recaptchaVerifier.render().then(function(widgetId) {
-        if (typeof grecaptcha !== 'undefined' && widgetId !== undefined) {
-           grecaptcha.reset(widgetId);
-        }
-      });
+      if (typeof grecaptcha !== 'undefined' && window.recaptchaVerifier) {
+        window.recaptchaVerifier.render().then(function(widgetId) {
+            grecaptcha.reset(widgetId);
+        });
+      }
     } finally {
         setIsLoading(false);
     }
