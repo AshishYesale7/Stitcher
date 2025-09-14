@@ -57,6 +57,23 @@
     --chart-4: 280 65% 60%;
     --chart-5: 340 75% 55%;
   }
+
+  :root {
+    --text: hsl(0, 0%, 99%);
+    --textDim: hsl(0, 0%, 60%);
+    --background-new: hsl(0, 0%, 7%);
+    --primary-new: hsl(155, 100%, 65%);
+    --primaryBg: hsla(155, 100%, 65%, 1%);
+    --primaryHi: hsla(155, 100%, 75%, 25%);
+    --primaryFg: hsl(155, 100%, 85%);
+    --secondary-new: hsl(156, 51%, 14%);
+    --secondaryFg-new: hsl(156, 51%, 75%);
+    --secondaryBg: hsla(156, 51%, 14%, 5%);
+    --secondaryHi: hsla(156, 51%, 30%, 50%);
+    --accent-new: hsl(155, 100%, 94%);
+    --accentBg: hsla(155, 100%, 94%, 1%);
+    --accentHi: hsla(155, 100%, 100%, 25%);
+  }
 }
  
 @layer base {
@@ -65,9 +82,179 @@
   }
   body {
     @apply bg-background text-foreground font-body;
-    background-image: url('https://md-aqil.github.io/md-aqil/img/Banner-bg.png');
-    background-size: cover;
-    background-position: center;
-    background-attachment: fixed;
+    background-color: var(--background-new);
+    color: var(--text);
   }
+  
+  nav {
+    @apply flex flex-row items-center gap-8 text-[color:var(--textDim)] w-full py-4;
+    z-index: 9999;
+  }
+
+  .menu:hover {
+    color: var(--text);
+    cursor: pointer;
+  }
+
+  .sitename {
+    font-weight: bold;
+    margin-right: auto;
+  }
+
+  .grid {
+    @apply absolute h-full w-full flex items-center justify-center self-center;
+    z-index: -1;
+  }
+
+  .grid-svg {
+    height: 80%;
+    width: 80%;
+    position: relative;
+    z-index: 1;
+  }
+
+  .blur {
+    height: 12rem;
+    width: 12rem;
+    background-color: var(--primary-new);
+    filter: blur(100px);
+    border-radius: 100px;
+    z-index: 0;
+    position: absolute;
+  }
+
+  .title {
+    @apply text-8xl font-bold -tracking-[0.8rem] flex flex-col absolute justify-center self-center h-full;
+    z-index: 1000;
+  }
+  
+  .title > p {
+    @apply m-0;
+    line-height: 8rem;
+    width: auto;
+  }
+
+  .title > p:nth-child(1){
+    align-self: flex-start;
+  }
+
+  .title > p:nth-child(2){
+    color: var(--primary-new);
+    align-self: flex-end;
+  }
+
+  .button {
+    @apply flex flex-col justify-center items-center absolute no-underline h-[50px] w-[160px];
+    color: inherit;
+    cursor: pointer;
+    z-index: 9999;
+  }
+
+  .button > button {
+    height: 50px;
+    width: 160px;
+    clip-path: path("M 0 25 C 0 -5, -5 0, 80 0 S 160 -5, 160 25, 165 50 80 50, 0 55, 0 25");
+    border: none;
+    border-radius: 13px;
+    background-color: var(--primaryBg);
+    box-shadow: 0px -3px 15px 0px var(--primaryHi) inset;
+    color: var(--primaryFg);
+    font-family: "Manrope", sans-serif;
+    font-size: 1rem;
+    @apply flex flex-col justify-center items-center absolute transition-all duration-200 ease-in-out;
+    transform: translateY(0px);
+  }
+
+  .button > span {
+    width: 100px;
+    height: 60px;
+    background-color: var(--primaryHi);
+    border-radius: 100%;
+    filter: blur(20px);
+    @apply absolute -bottom-1/2 transition-all duration-200 ease-in-out;
+  }
+  
+  .button:hover > span {
+    opacity: 60%;
+  }
+
+  .button:hover > button {
+    transform: translateY(5px);
+  }
+
+  .button.first {
+    top: 25%;
+    right: 20%;
+  }
+
+  .button.sec {
+    bottom: 20%;
+    left: 20%;
+  }
+
+  .button.sec > button {
+    background-color: var(--accentBg);
+    box-shadow: 0px -3px 15px 0px var(--accentHi) inset;
+    color: var(--accent-new);
+  }
+
+  .button.sec > span {
+    background-color: var(--accentHi);
+  }
+
+  .top-right {
+    position: absolute;
+    top: 0;
+    right: 0;
+    z-index: -1;
+    opacity: 50%;
+  }
+
+  .bottom-left {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    z-index: -1;
+    opacity: 50%;
+  }
+
+  .material-icons {
+    display: none;
+    fill: var(--text);
+  }
+  
+  @media screen and (max-width: 1000px) {
+    .title {
+      @apply text-5xl;
+    }
+    
+    .title > p {
+      line-height: 5rem;
+      letter-spacing: -0.3rem;
+    }
+    
+    nav > :not(.sitename, .material-icons) {
+      display: none;
+    }
+    
+    nav {
+      justify-content: space-between;
+    }
+    
+    .material-icons {
+      display: flex;
+      align-items: center;
+    }
+
+    .button.first {
+      top: 20%;
+      right: 10%;
+    }
+
+    .button.sec {
+      bottom: 15%;
+      left: 10%;
+    }
+  }
+
 }

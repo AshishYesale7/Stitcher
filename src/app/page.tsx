@@ -1,79 +1,62 @@
 import Link from 'next/link';
-import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Scissors, Users, ArrowRight } from 'lucide-react';
-import Logo from '@/components/logo';
 
 export default function Home() {
   return (
-    <div className="flex flex-col min-h-dvh">
-      <header className="px-4 lg:px-6 h-16 flex items-center shadow-sm">
-        <Link href="/" className="flex items-center justify-center gap-2" prefetch={false}>
-          <Logo />
-          <span className="text-2xl font-bold font-headline text-milk-white">Stitcher</span>
-        </Link>
-      </header>
-      <main className="flex-1">
-        <section className="w-full py-12 md:py-24 lg:py-32 xl:py-48">
-          <div className="container px-4 md:px-6">
-            <div className="flex flex-col items-center space-y-6 text-center">
-              <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold tracking-tighter font-headline bg-clip-text text-transparent bg-gradient-to-r from-primary to-accent">
-                Your Perfect Fit, Found.
-              </h1>
-              <p className="max-w-[700px] text-milk-white md:text-xl">
-                Stitcher connects you with skilled tailors to bring your custom clothing ideas to life. For tailors, it's the ultimate tool to manage and grow your business.
-              </p>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-8 w-full max-w-4xl mt-8">
-                <Card className="flex flex-col text-left hover:shadow-xl hover:-translate-y-1 transition-all duration-300 bg-card/30 backdrop-blur-lg">
-                  <CardHeader>
-                    <div className="flex items-center gap-4">
-                      <div className="bg-primary/10 text-primary p-3 rounded-full">
-                        <Users className="h-8 w-8" />
-                      </div>
-                      <CardTitle className="text-2xl font-headline">For Customers</CardTitle>
-                    </div>
-                  </CardHeader>
-                  <CardContent className="flex-1 flex flex-col">
-                    <CardDescription className="flex-1 mb-6">
-                      Discover talented local tailors, design your dream garment, and track your order from start to finish.
-                    </CardDescription>
-                    <Button asChild className="w-full mt-auto">
-                      <Link href="/customer/dashboard">
-                        Find a Tailor
-                        <ArrowRight className="ml-2 h-4 w-4" />
-                      </Link>
-                    </Button>
-                  </CardContent>
-                </Card>
-                <Card className="flex flex-col text-left hover:shadow-xl hover:-translate-y-1 transition-all duration-300 bg-card/30 backdrop-blur-lg">
-                  <CardHeader>
-                    <div className="flex items-center gap-4">
-                      <div className="bg-primary/10 text-primary p-3 rounded-full">
-                        <Scissors className="h-8 w-8" />
-                      </div>
-                      <CardTitle className="text-2xl font-headline">For Tailors</CardTitle>
-                    </div>
-                  </CardHeader>
-                  <CardContent className="flex-1 flex flex-col">
-                    <CardDescription className="flex-1 mb-6">
-                      Showcase your portfolio, manage customer orders seamlessly, and grow your tailoring business with our powerful tools.
-                    </CardDescription>
-                    <Button asChild variant="secondary" className="w-full mt-auto">
-                      <Link href="/tailor/dashboard">
-                        Join as a Tailor
-                        <ArrowRight className="ml-2 h-4 w-4" />
-                      </Link>
-                    </Button>
-                  </CardContent>
-                </Card>
-              </div>
-            </div>
+    <>
+      <div className="grid">
+        <svg className="grid-svg" xmlns="http://www.w3.org/2000/svg" width="982" height="786" viewBox="0 0 982 786" fill="none">
+          <path fillRule="evenodd" clipRule="evenodd" d="M490 401V537H348.5V401H490ZM490 785.5V676H348.5V785.5H347.5V676H206V785.5H205V676H63.5V785.5H62.5V676H0V675H62.5V538H0V537H62.5V401H0V400H62.5V258H0V257H62.5V116H0V115H62.5V0H63.5V115L205 115V0H206V115L347.5 115V0H348.5V115H490V0H491V115L627.5 115V0H628.5V115H765V0H766V115L902.5 115V0H903.5V115H982V116H903.5V257H982V258H903.5V400H982V401H903.5V537H982V538H903.5V675H982V676H903.5V785.5H902.5V676H766V785.5H765V676H628.5V785.5H627.5V676H491V785.5H490ZM902.5 675V538H766V675H902.5ZM902.5 537V401H766V537H902.5ZM902.5 400V258H766V400H902.5ZM902.5 257V116L766 116V257H902.5ZM627.5 675H491V538H627.5V675ZM765 675H628.5V538H765V675ZM348.5 675H490V538H348.5V675ZM347.5 538V675H206V538H347.5ZM205 538V675H63.5V538H205ZM765 537V401H628.5V537H765ZM765 400V258H628.5V400H765ZM765 257V116H628.5V257H765ZM347.5 401V537H206V401H347.5ZM205 401V537H63.5V401H205ZM627.5 401V537H491V401H627.5ZM627.5 116L491 116V257H627.5V116ZM627.5 258H491V400H627.5V258ZM63.5 257V116L205 116V257H63.5ZM63.5 400V258H205V400H63.5ZM206 116V257H347.5V116L206 116ZM348.5 116V257H490V116H348.5ZM206 400V258H347.5V400H206ZM348.5 258V400H490V258H348.5Z" fill="url(#paint0_radial_1_8)" />
+          <defs>
+            <radialGradient id="paint0_radial_1_8" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(491 392.75) rotate(90) scale(513.25 679.989)">
+              <stop stopColor="white" stopOpacity="0.2" />
+              <stop offset="1" stopColor="#000" stopOpacity="0" />
+            </radialGradient>
+          </defs>
+        </svg>
+        <div className="blur"></div>
+      </div>
+      <div className="flex flex-col h-dvh px-[10%] overflow-hidden">
+        <nav>
+          <p className="sitename">Stitcher</p>
+          <Link href="/customer/dashboard" className="menu">
+            Customer
+          </Link>
+          <Link href="/tailor/dashboard" className="menu">
+            Tailor
+          </Link>
+          <svg className="material-icons" xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 0 24 24" width="24px"><path d="M0 0h24v24H0z" fill="none" /><path d="M19 9H5c-.55 0-1 .45-1 1s.45 1 1 1h14c.55 0 1-.45 1-1s-.45-1-1-1zM5 15h14c.55 0 1-.45 1-1s-.45-1-1-1H5c-.55 0-1 .45-1 1s.45 1 1 1z" /></svg>
+        </nav>
+        <main className="flex-1 flex flex-col items-center justify-center">
+          <div className="title">
+            <p>Your Perfect</p>
+            <p>Fit, Found.</p>
           </div>
-        </section>
-      </main>
-      <footer className="flex flex-col gap-2 sm:flex-row py-6 w-full shrink-0 items-center px-4 md:px-6 border-t">
-        <p className="text-xs text-muted-foreground">&copy; 2024 Stitcher. All rights reserved.</p>
-      </footer>
-    </div>
+
+          <Link href="/customer/dashboard" className="button first">
+            <button>For Customers</button><span></span>
+          </Link>
+          
+          <Link href="/tailor/dashboard" className="button sec">
+            <button>For Tailors</button><span></span>
+          </Link>
+
+          <svg className="top-right" width="219" height="147" viewBox="0 0 219 147" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <rect opacity="0.18" x="10.4252" y="75.8326" width="7.50168" height="7.50168" transform="rotate(110.283 10.4252 75.8326)" fill="#686868" stroke="white" strokeWidth="1.22683" />
+            <rect opacity="0.18" x="180.869" y="138.825" width="7.50168" height="7.50168" transform="rotate(110.283 180.869 138.825)" fill="#686868" stroke="white" strokeWidth="1.22683" />
+            <rect x="69.4713" y="-91.84" width="180.485" height="180.485" transform="rotate(20.2832 69.4713 -91.84)" stroke="white" strokeOpacity="0.1" strokeWidth="1.22683" />
+          </svg>
+
+          <svg className="bottom-left" width="232" height="191" viewBox="0 0 232 191" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="50.5685" cy="172.432" r="112.068" stroke="white" strokeOpacity="0.09" />
+            <g opacity="0.1">
+              <path d="M26.4932 5.20547L228.856 172.432" stroke="#D9D9D9" />
+              <rect x="22.4384" y="0.5" width="6.15753" height="6.15753" fill="#686868" stroke="white" />
+              <rect x="224.801" y="169.027" width="6.15753" height="6.15753" fill="#686868" stroke="white" />
+              <circle cx="121.819" cy="83.613" r="1.7774" fill="#323232" stroke="white" />
+            </g>
+          </svg>
+        </main>
+      </div>
+    </>
   );
 }
