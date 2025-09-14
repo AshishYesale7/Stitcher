@@ -1,3 +1,4 @@
+
 'use client';
 
 import { SidebarTrigger } from '@/components/ui/sidebar';
@@ -15,12 +16,25 @@ import { Sun, Moon } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { auth } from '@/lib/firebase';
-import { signOut } from 'firebase/auth';
+import { signOut, onAuthStateChanged } from 'firebase/auth';
 import { useRouter } from 'next/navigation';
 
 export default function DashboardHeader() {
   const [theme, setTheme] = useState('light');
+  const [user, setUser] = useState(auth.currentUser);
   const router = useRouter();
+
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+      setUser(currentUser);
+      if (!currentUser) {
+        // User has logged out, redirect to home page.
+        router.push('/');
+      }
+    });
+    return () => unsubscribe();
+  }, [router]);
+
 
   useEffect(() => {
     const storedTheme = typeof window !== 'undefined' ? localStorage.getItem('theme') || 'light' : 'light';
@@ -40,7 +54,7 @@ export default function DashboardHeader() {
   const handleLogout = async () => {
     try {
       await signOut(auth);
-      router.push('/');
+      // The onAuthStateChanged listener will handle the redirect.
     } catch (error) {
       console.error('Logout Error:', error);
     }
@@ -61,8 +75,8 @@ export default function DashboardHeader() {
             <DropdownMenuTrigger asChild>
                 <Button variant="secondary" size="icon" className="rounded-full">
                 <Avatar>
-                    <AvatarImage src="https://picsum.photos/seed/user/100/100" alt="User" />
-                    <AvatarFallback>U</AvatarFallback>
+                    <AvatarImage src={user?.photoURL ?? "https://picsum.photos/seed/user/100/100"} alt={user?.displayName ?? "User"} />
+                    <AvatarFallback>{user?.displayName?.charAt(0) ?? 'U'}</AvatarFallback>
                 </Avatar>
                 <span className="sr-only">Toggle user menu</span>
                 </Button>
