@@ -1,14 +1,13 @@
 import Link from 'next/link';
 import { Card, CardContent } from '@/components/ui/card';
-import { Search, Package, Notebook, Archive, User, Power } from 'lucide-react';
 
 const menuItems = [
-  { href: '/customer/tailors', label: 'Tailors', icon: Search },
-  { href: '/customer/orders', label: 'Order Tracker', icon: Package },
-  { href: '/customer/book-order', label: 'Book Order', icon: Notebook },
-  { href: '/customer/archive', label: 'Archive Order', icon: Archive },
-  { href: '/customer/profile', label: 'Profile', icon: User },
-  { href: '/', label: 'Exit', icon: Power },
+  { href: '/customer/tailors', label: 'Tailors' },
+  { href: '/customer/orders', label: 'Order Tracker' },
+  { href: '/customer/book-order', label: 'Book Order' },
+  { href: '/customer/archive', label: 'Archive Order' },
+  { href: '/customer/profile', label: 'Profile' },
+  { href: '/', label: 'Exit' },
 ];
 
 const iconComponents: { [key: string]: React.ElementType } = {
@@ -31,7 +30,7 @@ export default function CustomerDashboardPage() {
             <Link href={item.href} key={item.label}>
               <Card className="bg-card/60 backdrop-blur-sm text-card-foreground hover:bg-primary/90 transition-colors">
                 <CardContent className="flex flex-col items-center justify-center p-6 space-y-2 aspect-square">
-                  {Icon ? <Icon /> : <item.icon className="w-12 h-12" />}
+                  {Icon && <Icon />}
                   <span className="text-sm font-semibold text-center">{item.label}</span>
                 </CardContent>
               </Card>
