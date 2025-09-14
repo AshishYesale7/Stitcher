@@ -1,7 +1,7 @@
 
 'use client';
 
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import {
   getAuth,
@@ -10,15 +10,15 @@ import {
   RecaptchaVerifier,
   signInWithPhoneNumber,
   ConfirmationResult,
-  type User,
+  type User as FirebaseUser,
 } from 'firebase/auth';
 import { app } from '@/lib/firebase';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
-import { Loader2, Phone, ShieldCheck, Mail, User as UserIcon, Search, ChevronsUpDown } from 'lucide-react';
-import { createUserProfile } from '@/app/actions/user';
+import { Loader2, Phone, ShieldCheck, Mail, User as UserIcon, ChevronsUpDown } from 'lucide-react';
+import { createUserProfile, type UserProfilePayload } from '@/app/actions/user';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from '@/components/ui/command';
 import { countries, type Country } from '@/lib/countries';
@@ -80,15 +80,9 @@ export default function LoginForm({ userType }: { userType: 'customer' | 'tailor
     return () => clearTimeout(timer);
   }, [resendCooldown]);
 
-  const handleSuccessfulLogin = async (user: Pick<User, 'uid' | 'email' | 'displayName' | 'photoURL' | 'phoneNumber'>) => {
+  const handleSuccessfulLogin = async (user: UserProfilePayload) => {
     try {
-      await createUserProfile({
-        uid: user.uid,
-        email: user.email,
-        displayName: user.displayName,
-        photoURL: user.photoURL,
-        phoneNumber: user.phoneNumber,
-      }, userType);
+      await createUserProfile(user, userType);
       router.push(`/${userType}/dashboard`);
     } catch (error) {
        console.error("Profile Creation Error:", error);
@@ -106,7 +100,13 @@ export default function LoginForm({ userType }: { userType: 'customer' | 'tailor
     const provider = new GoogleAuthProvider();
     try {
       const result = await signInWithPopup(auth, provider);
-      await handleSuccessfulLogin(result.user);
+      await handleSuccessfulLogin({
+        uid: result.user.uid,
+        email: result.user.email,
+        displayName: result.user.displayName,
+        photoURL: result.user.photoURL,
+        phoneNumber: result.user.phoneNumber,
+      });
     } catch (error: any) {
       if (error.code === 'auth/popup-closed-by-user') {
         setIsLoading(false);
@@ -125,13 +125,13 @@ export default function LoginForm({ userType }: { userType: 'customer' | 'tailor
   const handlePhoneSignIn = async () => {
     setIsLoading(true);
     try {
-        const recaptchaVerifier = new RecaptchaVerifier(auth, 'recaptcha-container', {
+        window.recaptchaVerifier = new RecaptchaVerifier(auth, 'recaptcha-container', {
             'size': 'invisible',
             'callback': () => {},
         });
         
         const fullPhoneNumber = `${selectedCountry.dial_code}${phone}`;
-        const confirmationResult = await signInWithPhoneNumber(auth, fullPhoneNumber, recaptchaVerifier);
+        const confirmationResult = await signInWithPhoneNumber(auth, fullPhoneNumber, window.recaptchaVerifier);
         window.confirmationResult = confirmationResult;
         setStep('otp');
         setResendCooldown(30);
@@ -173,7 +173,13 @@ export default function LoginForm({ userType }: { userType: 'customer' | 'tailor
     try {
       const result = await window.confirmationResult.confirm(otp);
       if (result?.user) {
-        await handleSuccessfulLogin(result.user);
+        await handleSuccessfulLogin({
+            uid: result.user.uid,
+            email: result.user.email,
+            displayName: result.user.displayName,
+            photoURL: result.user.photoURL,
+            phoneNumber: result.user.phoneNumber,
+        });
       } else {
         throw new Error("User not found after OTP confirmation.");
       }
@@ -207,7 +213,7 @@ export default function LoginForm({ userType }: { userType: 'customer' | 'tailor
                                 <Button
                                     variant="outline"
                                     role="combobox"
-                                    className="w-[130px] justify-between rounded-r-none border-r-0"
+                                    className="w-[130px] justify-between rounded-r-none border-r-0 text-foreground"
                                 >
                                     <span className="truncate">{selectedCountry.flag} {selectedCountry.dial_code}</span>
                                     <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
@@ -348,3 +354,5 @@ export default function LoginForm({ userType }: { userType: 'customer' | 'tailor
     </div>
   );
 }
+
+    
