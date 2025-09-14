@@ -1,3 +1,28 @@
 {
-  "placeholderImages": []
+  "placeholderImages": [
+    {
+      "id": "tailor-1",
+      "description": "A friendly tailor smiling in their workshop.",
+      "imageUrl": "https://picsum.photos/seed/tailor1/400/400",
+      "imageHint": "tailor portrait"
+    },
+    {
+      "id": "tailor-2",
+      "description": "A tailor meticulously working on a piece of fabric.",
+      "imageUrl": "https://picsum.photos/seed/tailor2/400/400",
+      "imageHint": "sewing hands"
+    },
+    {
+      "id": "tailor-3",
+      "description": "The interior of a modern and clean tailoring shop.",
+      "imageUrl": "https://picsum.photos/seed/tailor3/400/400",
+      "imageHint": "tailor shop"
+    },
+    {
+      "id": "tailor-4",
+      "description": "A close-up of a vintage sewing machine.",
+      "imageUrl": "https://picsum.photos/seed/tailor4/400/400",
+      "imageHint": "sewing machine"
+    }
+  ]
 }
