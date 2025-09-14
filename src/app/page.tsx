@@ -24,7 +24,7 @@ export default function Home() {
                 Stitcher connects you with skilled tailors to bring your custom clothing ideas to life. For tailors, it's the ultimate tool to manage and grow your business.
               </p>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-8 w-full max-w-4xl mt-8">
-                <Card className="flex flex-col text-left hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
+                <Card className="flex flex-col text-left hover:shadow-xl hover:-translate-y-1 transition-all duration-300 bg-card/60 backdrop-blur-sm">
                   <CardHeader>
                     <div className="flex items-center gap-4">
                       <div className="bg-primary/10 text-primary p-3 rounded-full">
@@ -45,7 +45,7 @@ export default function Home() {
                     </Button>
                   </CardContent>
                 </Card>
-                <Card className="flex flex-col text-left hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
+                <Card className="flex flex-col text-left hover:shadow-xl hover:-translate-y-1 transition-all duration-300 bg-card/60 backdrop-blur-sm">
                   <CardHeader>
                     <div className="flex items-center gap-4">
                       <div className="bg-primary/10 text-primary p-3 rounded-full">

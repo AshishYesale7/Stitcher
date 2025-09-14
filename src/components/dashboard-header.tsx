@@ -33,7 +33,7 @@ export default function DashboardHeader() {
   };
 
   return (
-    <header className="sticky top-0 z-10 flex h-16 items-center gap-4 border-b bg-primary/10 px-4 md:px-6 text-primary">
+    <header className="sticky top-0 z-10 flex h-16 items-center gap-4 border-b bg-background/60 backdrop-blur-sm px-4 md:px-6 text-primary">
       <SidebarTrigger className="md:hidden" />
        <div className="flex w-full items-center justify-between">
         <h1 className="text-xl font-bold font-headline">Stitcher</h1>

@@ -29,7 +29,7 @@ export default function CustomerDashboardPage() {
           const Icon = iconComponents[item.label];
           return (
             <Link href={item.href} key={item.label}>
-              <Card className="bg-primary text-primary-foreground hover:bg-primary/90 transition-colors">
+              <Card className="bg-card/60 backdrop-blur-sm text-card-foreground hover:bg-primary/90 transition-colors">
                 <CardContent className="flex flex-col items-center justify-center p-6 space-y-2 aspect-square">
                   {Icon ? <Icon /> : <item.icon className="w-12 h-12" />}
                   <span className="text-sm font-semibold text-center">{item.label}</span>
