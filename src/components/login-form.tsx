@@ -227,13 +227,6 @@ export default function LoginForm({ userType }: { userType: 'customer' | 'tailor
             Forgot Password?
         </Link>
       </div>
-
-       <div className="text-center text-sm text-muted-foreground">
-            Don't have an account?{' '}
-            <Link href="#" className="underline font-semibold hover:text-primary">
-                Sign up
-            </Link>
-       </div>
     </div>
   );
 }
