@@ -1,11 +1,9 @@
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Separator } from "@/components/ui/separator";
-import { User, Mail, Phone, MapPin, Edit } from "lucide-react";
+import { Card, CardContent } from "@/components/ui/card";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Plus, Star, MessageSquare, MoreVertical, User, Mail, Phone, MapPin } from "lucide-react";
 
 export default function CustomerProfilePage() {
   const user = {
@@ -14,74 +12,94 @@ export default function CustomerProfilePage() {
     phone: "+1 234 567 890",
     address: "123 Main St, Anytown, USA",
     avatarUrl: "https://picsum.photos/seed/user/100/100",
+    role: "Fashion Enthusiast",
   };
 
+  const friends = [
+    { name: "Jacob Lennon", time: "2 min ago", avatar: "https://picsum.photos/seed/friend1/40/40" },
+    { name: "Didier Mailly", time: "5 min ago", avatar: "https://picsum.photos/seed/friend2/40/40" },
+    { name: "Miguel Cunha Ferreira", time: "7 min ago", avatar: "https://picsum.photos/seed/friend3/40/40" },
+    { name: "Eric Yuriev", time: "12 min ago", avatar: "https://picsum.photos/seed/friend4/40/40" },
+  ];
+
   return (
-    <div className="space-y-8 p-4 sm:p-6 lg:p-8">
-      <div>
-        <h1 className="text-3xl font-bold font-headline tracking-tight">Your Profile</h1>
-        <p className="text-muted-foreground mt-1">
-          Manage your personal information and preferences.
-        </p>
-      </div>
-      <Card>
-        <CardHeader>
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-4">
-              <Avatar className="w-20 h-20 border-2 border-primary/20">
-                <AvatarImage src={user.avatarUrl} alt={user.name} data-ai-hint="person" />
-                <AvatarFallback>{user.name.charAt(0)}</AvatarFallback>
-              </Avatar>
-              <div>
-                <CardTitle className="text-2xl">{user.name}</CardTitle>
-                <CardDescription>{user.email}</CardDescription>
-              </div>
-            </div>
-            <Button variant="outline" size="icon">
-              <Edit className="h-4 w-4" />
-              <span className="sr-only">Edit Profile</span>
-            </Button>
+    <div className="min-h-screen bg-background">
+      <div className="relative h-48 md:h-56 bg-gradient-to-r from-red-500 to-purple-600 p-4 flex items-end rounded-b-2xl shadow-lg">
+        <div className="flex items-center gap-4">
+          <Avatar className="w-24 h-24 border-4 border-background">
+            <AvatarImage src={user.avatarUrl} alt={user.name} data-ai-hint="person" />
+            <AvatarFallback>{user.name.charAt(0)}</AvatarFallback>
+          </Avatar>
+          <div>
+            <h1 className="text-2xl font-bold text-white">{user.name}</h1>
+            <p className="text-sm text-white/80">{user.role}</p>
           </div>
-        </CardHeader>
-        <Separator />
-        <CardContent className="pt-6">
-          <form className="space-y-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div className="space-y-2">
-                <Label htmlFor="name" className="flex items-center gap-2">
-                  <User className="w-4 h-4 text-muted-foreground" />
-                  Full Name
-                </Label>
-                <Input id="name" defaultValue={user.name} />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="email" className="flex items-center gap-2">
-                  <Mail className="w-4 h-4 text-muted-foreground" />
-                  Email Address
-                </Label>
-                <Input id="email" type="email" defaultValue={user.email} />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="phone" className="flex items-center gap-2">
-                  <Phone className="w-4 h-4 text-muted-foreground" />
-                  Phone Number
-                </Label>
-                <Input id="phone" type="tel" defaultValue={user.phone} />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="address" className="flex items-center gap-2">
-                  <MapPin className="w-4 h-4 text-muted-foreground" />
-                  Address
-                </Label>
-                <Input id="address" defaultValue={user.address} />
-              </div>
-            </div>
-            <div className="flex justify-end pt-4">
-              <Button type="submit">Save Changes</Button>
-            </div>
-          </form>
-        </CardContent>
-      </Card>
+        </div>
+        <Button size="icon" className="absolute -bottom-6 right-6 rounded-full h-12 w-12 bg-red-500 hover:bg-red-600 shadow-md">
+          <Plus className="h-6 w-6" />
+          <span className="sr-only">Add</span>
+        </Button>
+      </div>
+
+      <div className="p-4 sm:p-6 lg:p-8">
+        <Tabs defaultValue="friends" className="w-full mt-8">
+          <TabsList className="grid w-full grid-cols-3">
+            <TabsTrigger value="timeline">Timeline</TabsTrigger>
+            <TabsTrigger value="friends">Friend List</TabsTrigger>
+            <TabsTrigger value="top-rated">Top Rated</TabsTrigger>
+          </TabsList>
+          <TabsContent value="friends" className="mt-6">
+            <Card>
+              <CardContent className="p-0">
+                <div className="space-y-2">
+                  <h3 className="text-lg font-semibold p-4">Recently added friends</h3>
+                  <ul className="divide-y divide-border">
+                    {friends.map((friend, index) => (
+                      <li key={index} className="flex items-center justify-between p-4 hover:bg-muted/50">
+                        <div className="flex items-center gap-4">
+                          <Avatar className="w-10 h-10">
+                            <AvatarImage src={friend.avatar} alt={friend.name} data-ai-hint="person portrait" />
+                            <AvatarFallback>{friend.name.charAt(0)}</AvatarFallback>
+                          </Avatar>
+                          <div>
+                            <p className="font-medium">{friend.name}</p>
+                            <p className="text-xs text-muted-foreground">{friend.time}</p>
+                          </div>
+                        </div>
+                        <div className="flex items-center gap-2 text-muted-foreground">
+                          <Button variant="ghost" size="icon" className="h-8 w-8">
+                            <Star className="h-4 w-4" />
+                          </Button>
+                          <Button variant="ghost" size="icon" className="h-8 w-8">
+                            <MessageSquare className="h-4 w-4" />
+                          </Button>
+                          <Button variant="ghost" size="icon" className="h-8 w-8">
+                            <MoreVertical className="h-4 w-4" />
+                          </Button>
+                        </div>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              </CardContent>
+            </Card>
+          </TabsContent>
+          <TabsContent value="timeline">
+             <Card>
+                <CardContent className="p-6">
+                    <p>Timeline content coming soon.</p>
+                </CardContent>
+             </Card>
+          </TabsContent>
+          <TabsContent value="top-rated">
+             <Card>
+                <CardContent className="p-6">
+                    <p>Top Rated content coming soon.</p>
+                </CardContent>
+             </Card>
+          </TabsContent>
+        </Tabs>
+      </div>
     </div>
   );
 }
