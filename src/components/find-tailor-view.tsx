@@ -1,7 +1,7 @@
 'use client';
 
-import { useFormState, useFormStatus } from 'react-dom';
-import { useEffect } from 'react';
+import { useFormStatus } from 'react-dom';
+import { useEffect, useActionState } from 'react';
 import { getTailorRecommendations, type FormState } from '@/app/actions/recommendations';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
@@ -29,7 +29,7 @@ function SubmitButton() {
 }
 
 export default function FindTailorView() {
-  const [state, formAction] = useFormState(getTailorRecommendations, initialState);
+  const [state, formAction] = useActionState(getTailorRecommendations, initialState);
   const { toast } = useToast();
 
   useEffect(() => {
