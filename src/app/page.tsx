@@ -20,7 +20,7 @@ export default function Home() {
               <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold tracking-tighter font-headline bg-clip-text text-transparent bg-gradient-to-r from-primary to-accent">
                 Your Perfect Fit, Found.
               </h1>
-              <p className="max-w-[700px] text-muted-foreground md:text-xl">
+              <p className="max-w-[700px] text-milk-white md:text-xl">
                 Stitcher connects you with skilled tailors to bring your custom clothing ideas to life. For tailors, it's the ultimate tool to manage and grow your business.
               </p>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-8 w-full max-w-4xl mt-8">
