@@ -13,7 +13,7 @@ export default function CustomerLoginPage() {
               Stitcher
             </span>
           </Link>
-          <h1 className="text-2xl font-semibold tracking-tight">
+          <h1 className="text-2xl font-semibold tracking-tight text-foreground">
             Welcome, Customer
           </h1>
           <p className="text-sm text-muted-foreground">
