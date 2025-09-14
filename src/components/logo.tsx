@@ -8,7 +8,7 @@ export default function Logo() {
       strokeWidth="2"
       strokeLinecap="round"
       strokeLinejoin="round"
-      className="h-6 w-6 text-milk-white"
+      className="h-6 w-6"
     >
       <path d="M12 22v-5" />
       <path d="M15.24 12.24a5 5 0 0 0-7.48 0" />

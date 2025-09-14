@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import Logo from '@/components/logo';
 
 export default function Home() {
   return (
@@ -17,7 +18,10 @@ export default function Home() {
       </div>
       <div className="flex flex-col h-dvh px-[10%] overflow-hidden">
         <nav>
-          <p className="sitename">Stitcher</p>
+          <Link href="/" className="sitename flex items-center gap-2">
+            <Logo />
+            Stitcher
+          </Link>
           <Link href="/customer/dashboard" className="menu">
             Customer
           </Link>
