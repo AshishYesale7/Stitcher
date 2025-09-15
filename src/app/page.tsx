@@ -30,31 +30,33 @@ export default function Home() {
         <div className="blur"></div>
       </div>
       <div className="flex flex-col h-dvh overflow-hidden">
-        <nav className="px-4 sm:px-6 md:px-8 lg:px-[10%]">
-          <Link href="/" className="sitename flex items-center gap-2">
-            <Logo />
-            Stitcher
-          </Link>
-          <Link href="/terms" className="menu">
-            Terms & Conditions
-          </Link>
-          <Link href="/privacy" className="menu">
-            Privacy Policy
-          </Link>
-          <div className="material-icons">
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="ghost" size="icon">
-                  <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 0 24 24" width="24px" fill="currentColor"><path d="M0 0h24v24H0z" fill="none" /><path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z" /></svg>
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent>
-                <DropdownMenuItem asChild><Link href="/terms">Terms & Conditions</Link></DropdownMenuItem>
-                <DropdownMenuItem asChild><Link href="/privacy">Privacy Policy</Link></DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
-          </div>
-        </nav>
+        <div className="w-full px-4 sm:px-6 md:px-8 lg:px-[5%]">
+          <nav>
+            <Link href="/" className="sitename flex items-center gap-2">
+              <Logo />
+              Stitcher
+            </Link>
+            <Link href="/terms" className="menu">
+              Terms & Conditions
+            </Link>
+            <Link href="/privacy" className="menu">
+              Privacy Policy
+            </Link>
+            <div className="material-icons">
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="ghost" size="icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 0 24 24" width="24px" fill="currentColor"><path d="M0 0h24v24H0z" fill="none" /><path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z" /></svg>
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent>
+                  <DropdownMenuItem asChild><Link href="/terms">Terms & Conditions</Link></DropdownMenuItem>
+                  <DropdownMenuItem asChild><Link href="/privacy">Privacy Policy</Link></DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            </div>
+          </nav>
+        </div>
         <main className="flex-1 flex flex-col items-center justify-center px-[10%]">
           <div className="title">
             <p>Your Perfect</p>
@@ -92,5 +94,4 @@ export default function Home() {
     </>
   );
 }
-
     
