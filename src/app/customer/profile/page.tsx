@@ -14,13 +14,21 @@ import { auth, db } from "@/lib/firebase";
 import type { User as FirebaseUser } from "firebase/auth";
 import { doc, getDoc, setDoc } from "firebase/firestore";
 import { useToast } from "@/hooks/use-toast";
-import type { OnboardingData } from "@/lib/schemas/onboarding";
 
-type UserProfile = OnboardingData & {
+type UserProfile = {
     uid: string;
+    fullName: string;
+    address: string;
     email: string;
     avatarUrl: string;
     role: string;
+    height: number;
+    weight: number;
+    measurementUnit: string;
+    chest: number;
+    waist: number;
+    hips: number;
+    inseam: number;
 };
 
 
@@ -62,8 +70,6 @@ export default function CustomerProfilePage() {
             uid: firebaseUser.uid,
             fullName: data.fullName || data.displayName || 'New User',
             address: data.address || '',
-            gender: data.gender || 'Other',
-            age: data.age || 0,
             height: data.height || 175,
             weight: data.weight || 70,
             measurementUnit: data.measurementUnit || 'cm',
@@ -86,7 +92,7 @@ export default function CustomerProfilePage() {
   }, []);
 
   const handleMeasurementChange = (field: keyof UserProfile) => (value: number[]) => {
-      if (user) {
+      if (user && typeof value[0] === 'number') {
         setUser(prev => ({ ...prev!, [field]: value[0] }));
       }
   };
