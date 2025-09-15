@@ -79,7 +79,7 @@ function OnboardingSlide2() {
         <CardDescription>This helps us find the perfect fit for you.</CardDescription>
       </CardHeader>
       <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div>
+        <div className="space-y-2">
           <Label htmlFor="gender">Gender</Label>
           <Controller
             name="gender"
@@ -99,19 +99,31 @@ function OnboardingSlide2() {
           />
           {errors.gender && <p className="text-sm text-destructive">{errors.gender.message}</p>}
         </div>
-        <div>
+        <div className="space-y-2">
           <Label htmlFor="age">Age</Label>
-          <Controller name="age" control={control} render={({ field }) => <Input id="age" type="number" placeholder="25" {...field} />} />
+          <Controller
+            name="age"
+            control={control}
+            render={({ field }) => <Input id="age" type="number" placeholder="25" {...field} />}
+          />
           {errors.age && <p className="text-sm text-destructive">{errors.age.message}</p>}
         </div>
-        <div>
+        <div className="space-y-2">
           <Label htmlFor="height">Height (cm)</Label>
-          <Controller name="height" control={control} render={({ field }) => <Input id="height" type="number" placeholder="175" {...field} />} />
+          <Controller
+            name="height"
+            control={control}
+            render={({ field }) => <Input id="height" type="number" placeholder="175" {...field} />}
+          />
           {errors.height && <p className="text-sm text-destructive">{errors.height.message}</p>}
         </div>
-        <div>
+        <div className="space-y-2">
           <Label htmlFor="weight">Weight (kg)</Label>
-          <Controller name="weight" control={control} render={({ field }) => <Input id="weight" type="number" placeholder="70" {...field} />} />
+          <Controller
+            name="weight"
+            control={control}
+            render={({ field }) => <Input id="weight" type="number" placeholder="70" {...field} />}
+          />
           {errors.weight && <p className="text-sm text-destructive">{errors.weight.message}</p>}
         </div>
       </CardContent>
@@ -363,5 +375,3 @@ export default function OnboardingPage() {
     </FormProvider>
   );
 }
-
-    
