@@ -188,23 +188,25 @@ export default function OnboardingPage() {
   const router = useRouter();
   const { toast } = useToast();
 
+  const defaultFormValues: OnboardingFormData = {
+    name: '',
+    address: '',
+    phone: '',
+    email: '',
+    gender: 'male',
+    age: 0,
+    height: 0,
+    weight: 0,
+    chest: 0,
+    waist: 0,
+    hips: 0,
+    inseam: 0,
+    measurementUnit: 'cm',
+  };
+
   const methods = useForm<OnboardingFormData>({
     resolver: zodResolver(formSchema),
-    defaultValues: {
-        name: '',
-        address: '',
-        phone: '',
-        email: '',
-        gender: 'male',
-        age: 0,
-        height: 0,
-        weight: 0,
-        chest: 0,
-        waist: 0,
-        hips: 0,
-        inseam: 0,
-        measurementUnit: 'cm',
-    }
+    defaultValues: defaultFormValues
   });
   
   const { handleSubmit, trigger } = methods;
@@ -228,6 +230,7 @@ export default function OnboardingPage() {
           }
         }
         methods.reset({
+            ...defaultFormValues, // Ensure all fields have a default value
             name: firebaseUser.displayName || '',
             email: firebaseUser.email || '',
             phone: firebaseUser.phoneNumber || ''
@@ -345,3 +348,5 @@ export default function OnboardingPage() {
     </FormProvider>
   );
 }
+
+    
