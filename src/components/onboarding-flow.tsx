@@ -2,24 +2,22 @@
 'use client';
 
 import { useState } from 'react';
-import { useForm, FormProvider, Controller } from 'react-hook-form';
+import { useForm, FormProvider } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import {
   Carousel,
   CarouselContent,
   CarouselItem,
-  CarouselNext,
-  CarouselPrevious,
   type CarouselApi,
 } from '@/components/ui/carousel';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Progress } from '@/components/ui/progress';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
-import { saveOnboardingData, onboardingSchema, type OnboardingData } from '@/app/actions/onboarding';
+import { saveOnboardingData } from '@/app/actions/onboarding';
+import { onboardingSchema, type OnboardingData } from '@/lib/schemas/onboarding';
 import { useToast } from '@/hooks/use-toast';
 import { Loader2 } from 'lucide-react';
 
@@ -112,7 +110,7 @@ export default function OnboardingFlow({ onOnboardingComplete }: OnboardingFlowP
   const progressValue = ((current + 1) / slides.length) * 100;
 
   return (
-    <div className="w-full max-w-2xl mx-auto p-4 sm:p-6 lg:p-8">
+    <div className="w-full max-w-4xl mx-auto p-4 sm:p-6 lg:p-8">
       <div className="text-center mb-8">
         <h1 className="text-3xl font-bold font-headline">Welcome to Stitcher</h1>
         <p className="text-muted-foreground">Let's get your profile set up in a few quick steps.</p>
@@ -157,7 +155,7 @@ export default function OnboardingFlow({ onOnboardingComplete }: OnboardingFlowP
 
 
 function OnboardingSlide1() {
-  const { control } = useFormContext();
+  const { control } = useForm<OnboardingData>();
   return (
     <Card>
       <CardHeader>
@@ -197,7 +195,7 @@ function OnboardingSlide1() {
 }
 
 function OnboardingSlide2() {
-  const { control } = useFormContext();
+  const { control } = useForm<OnboardingData>();
   return (
     <Card>
       <CardHeader>
@@ -258,7 +256,7 @@ function OnboardingSlide2() {
 }
 
 function OnboardingSlide3() {
-    const { control } = useFormContext();
+    const { control } = useForm<OnboardingData>();
     return (
         <Card>
             <CardHeader>

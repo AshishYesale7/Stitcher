@@ -14,7 +14,7 @@ import { auth, db } from "@/lib/firebase";
 import type { User as FirebaseUser } from "firebase/auth";
 import { doc, getDoc, setDoc } from "firebase/firestore";
 import { useToast } from "@/hooks/use-toast";
-import type { OnboardingData } from "@/app/actions/onboarding";
+import type { OnboardingData } from "@/lib/schemas/onboarding";
 
 type UserProfile = OnboardingData & {
     uid: string;
@@ -227,7 +227,7 @@ export default function CustomerProfilePage() {
                    <MeasurementSlider label="Chest" value={user.chest} unit={user.measurementUnit} onValueChange={handleMeasurementChange('chest')} disabled={!isEditing}/>
                    <MeasurementSlider label="Waist" value={user.waist} unit={user.measurementUnit} onValueChange={handleMeasurementChange('waist')} disabled={!isEditing}/>
                    <MeasurementSlider label="Hips" value={user.hips} unit={user.measurementUnit} onValueChange={handleMeasurementChange('hips')} disabled={!isEditing}/>
-                   <MeasurementSlider label="Inseam" value={user.inseam} unit={user.measurementUnit} onValuechange={handleMeasurementChange('inseam')} disabled={!isEditing}/>
+                   <MeasurementSlider label="Inseam" value={user.inseam} unit={user.measurementUnit} onValueChange={handleMeasurementChange('inseam')} disabled={!isEditing}/>
                    <div className="pt-4 flex justify-end">
                        <Button onClick={handleSave} disabled={isSaving || !isEditing}>
                            {isSaving ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Save className="mr-2 h-4 w-4"/>} 
