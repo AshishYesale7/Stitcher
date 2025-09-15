@@ -86,7 +86,7 @@ function OnboardingSlide2() {
             control={control}
             render={({ field }) => (
               <Select onValueChange={field.onChange} defaultValue={field.value}>
-                <SelectTrigger>
+                <SelectTrigger id="gender">
                   <SelectValue placeholder="Select gender" />
                 </SelectTrigger>
                 <SelectContent>
@@ -184,6 +184,7 @@ export default function OnboardingPage() {
   const [count, setCount] = useState(0);
   const [user, setUser] = useState<User | null>(null);
   const [userRole, setUserRole] = useState<UserRole | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const router = useRouter();
   const { toast } = useToast();
@@ -209,7 +210,7 @@ export default function OnboardingPage() {
     defaultValues: defaultFormValues
   });
   
-  const { handleSubmit, trigger } = methods;
+  const { handleSubmit, trigger, reset } = methods;
 
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged(async (firebaseUser) => {
@@ -218,54 +219,68 @@ export default function OnboardingPage() {
         const customerDoc = await getDoc(doc(db, 'customers', firebaseUser.uid));
         if (customerDoc.exists()) {
           setUserRole('customer');
+          const data = customerDoc.data();
+          if (data.onboardingCompleted) {
+            router.push('/customer/dashboard');
+          } else {
+             reset({ ...defaultFormValues, ...data, name: firebaseUser.displayName || '', email: firebaseUser.email || '', phone: firebaseUser.phoneNumber || '' });
+          }
           setCount(3);
         } else {
           const tailorDoc = await getDoc(doc(db, 'tailors', firebaseUser.uid));
           if (tailorDoc.exists()) {
             setUserRole('tailor');
+             const data = tailorDoc.data();
+             if (data.onboardingCompleted) {
+                router.push('/tailor/dashboard');
+             } else {
+                reset({ ...defaultFormValues, ...data, name: firebaseUser.displayName || '', email: firebaseUser.email || '', phone: firebaseUser.phoneNumber || '' });
+             }
             setCount(1);
           } else {
-             // Handle case where user exists in auth but not in db collections
              router.push('/');
           }
         }
-        methods.reset({
-            ...defaultFormValues, // Ensure all fields have a default value
-            name: firebaseUser.displayName || '',
-            email: firebaseUser.email || '',
-            phone: firebaseUser.phoneNumber || ''
-        });
       } else {
         router.push('/');
       }
       setIsLoading(false);
     });
     return () => unsubscribe();
-  }, [router, methods]);
+  }, [router, reset]);
 
   useEffect(() => {
     if (!api) return;
+    setCount(api.scrollSnapList().length);
     setCurrent(api.selectedScrollSnap() + 1);
     api.on('select', () => setCurrent(api.selectedScrollSnap() + 1));
   }, [api]);
 
   const slides = [<OnboardingSlide1 />, <OnboardingSlide2 />, <OnboardingSlide3 />];
+  const customerSlides = slides;
+  const tailorSlides = [slides[0]];
 
   const handleNext = useCallback(async () => {
-    let fieldsToValidate: (keyof OnboardingFormData)[] = [];
-    if (current === 1) fieldsToValidate = ['name', 'address'];
-    if (current === 2) fieldsToValidate = ['gender', 'age', 'height', 'weight'];
-    
-    const isValid = fieldsToValidate.length > 0 ? await trigger(fieldsToValidate) : true;
-    
-    if (isValid && api) {
-      if (current < count) {
-        api.scrollNext();
-      } else {
-         handleSubmit(onSubmit)();
-      }
+    let fieldsToValidate: (keyof OnboardingFormData)[] | undefined;
+    if (userRole === 'customer') {
+        if (current === 1) fieldsToValidate = ['name', 'address'];
+        if (current === 2) fieldsToValidate = ['gender', 'age', 'height', 'weight'];
+        if (current === 3) fieldsToValidate = ['chest', 'waist', 'hips', 'inseam', 'measurementUnit'];
     }
-  }, [api, current, count, trigger, handleSubmit]);
+    if (userRole === 'tailor') {
+        if (current === 1) fieldsToValidate = ['name', 'address'];
+    }
+    
+    const isValid = fieldsToValidate ? await trigger(fieldsToValidate) : true;
+    
+    if (isValid) {
+        if (current < (userRole === 'customer' ? customerSlides.length : tailorSlides.length)) {
+            api?.scrollNext();
+        } else {
+            handleSubmit(onSubmit)();
+        }
+    }
+  }, [api, current, trigger, handleSubmit, userRole, customerSlides.length, tailorSlides.length]);
   
   const onSubmit = async (data: OnboardingFormData) => {
     if (!user || !userRole) {
@@ -273,7 +288,7 @@ export default function OnboardingPage() {
       return;
     }
     
-    setIsLoading(true);
+    setIsSubmitting(true);
     try {
       const collectionName = userRole === 'customer' ? 'customers' : 'tailors';
       const userDocRef = doc(db, collectionName, user.uid);
@@ -283,10 +298,8 @@ export default function OnboardingPage() {
           updatedAt: serverTimestamp()
       };
 
-      // Add all form data to profile
       Object.assign(profileData, data);
 
-      // Overwrite display name from form
       if(data.name) {
         profileData.displayName = data.name;
       }
@@ -300,7 +313,7 @@ export default function OnboardingPage() {
       console.error("Failed to save onboarding data:", error);
       toast({ variant: 'destructive', title: 'Error', description: 'Failed to save your profile. Please try again.' });
     } finally {
-      setIsLoading(false);
+      setIsSubmitting(false);
     }
   };
 
@@ -312,15 +325,17 @@ export default function OnboardingPage() {
       </div>
     );
   }
+  
+  const currentSlides = userRole === 'customer' ? customerSlides : tailorSlides;
 
   return (
     <FormProvider {...methods}>
       <div className="flex min-h-screen flex-col items-center justify-center bg-background p-4">
         <div className="w-full max-w-2xl">
           <Card>
-            <Carousel setApi={setApi} className="w-full">
+            <Carousel setApi={setApi} className="w-full" opts={{ watchDrag: false, loop: false, align: "start" }} >
               <CarouselContent>
-                {slides.slice(0, count).map((slide, index) => (
+                {currentSlides.map((slide, index) => (
                   <CarouselItem key={index}>{slide}</CarouselItem>
                 ))}
               </CarouselContent>
@@ -328,17 +343,17 @@ export default function OnboardingPage() {
 
             <div className="flex items-center justify-between p-6">
                 <p className="text-sm text-muted-foreground">
-                    Step {current} of {count}
+                    Step {current} of {currentSlides.length}
                 </p>
                 <div className="flex gap-2">
                     {current > 1 && (
-                        <Button variant="outline" onClick={() => api?.scrollPrev()} disabled={isLoading}>
+                        <Button variant="outline" onClick={() => api?.scrollPrev()} disabled={isSubmitting}>
                             Back
                         </Button>
                     )}
-                    <Button onClick={handleNext} disabled={isLoading}>
-                        {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                        {current === count ? 'Finish' : 'Next'}
+                    <Button onClick={handleNext} disabled={isSubmitting}>
+                        {isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                        {current === currentSlides.length ? 'Finish' : 'Next'}
                     </Button>
                 </div>
             </div>
