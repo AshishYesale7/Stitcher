@@ -1,7 +1,7 @@
 
 'use client';
 
-import DashboardCards from '@/components/dashboard-cards';
+import OnboardingFlow from '@/components/onboarding-flow';
 import { Loader2 } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import { auth } from '@/lib/firebase';
@@ -37,7 +37,7 @@ export default function CustomerDashboardPage() {
 
     return (
         <div className="p-4 sm:p-6 lg:p-8">
-            <DashboardCards />
+            <OnboardingFlow />
         </div>
     );
 }
