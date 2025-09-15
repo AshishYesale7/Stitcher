@@ -363,5 +363,3 @@ export default function OnboardingPage() {
     </FormProvider>
   );
 }
-
-    
