@@ -8,23 +8,20 @@ import { z } from 'zod';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 
+// --- Slide 1: Basic Information ---
 const slide1Schema = z.object({
   fullName: z.string().min(3, { message: 'Full name must be at least 3 characters.' }),
   address: z.string().min(5, { message: 'Address must be at least 5 characters.' }),
 });
-
 type Slide1Data = z.infer<typeof slide1Schema>;
 
-function OnboardingSlide1({ onNext }: { onNext: (data: Slide1Data) => void }) {
+function OnboardingSlide1({ onNext, defaultValues }: { onNext: (data: Slide1Data) => void; defaultValues: Partial<Slide1Data> }) {
   const form = useForm<Slide1Data>({
     resolver: zodResolver(slide1Schema),
-    defaultValues: {
-      fullName: '',
-      address: '',
-    },
+    defaultValues,
   });
 
   const onSubmit: SubmitHandler<Slide1Data> = (data) => {
@@ -72,9 +69,7 @@ function OnboardingSlide1({ onNext }: { onNext: (data: Slide1Data) => void }) {
             />
           </CardContent>
           <CardFooter className="flex justify-between">
-            <div>
-                <p className="text-sm text-muted-foreground">Step 1 of 3</p>
-            </div>
+            <p className="text-sm text-muted-foreground">Step 1 of 3</p>
             <Button type="submit">
               Next
             </Button>
@@ -85,6 +80,122 @@ function OnboardingSlide1({ onNext }: { onNext: (data: Slide1Data) => void }) {
   );
 }
 
+// --- Slide 2: Physical Attributes ---
+const slide2Schema = z.object({
+    gender: z.enum(['male', 'female', 'other'], { required_error: 'Please select a gender.' }),
+    age: z.coerce.number().min(10, { message: 'You must be at least 10 years old.' }).max(120),
+    height: z.coerce.number().min(100, { message: 'Height must be at least 100cm.' }),
+    weight: z.coerce.number().min(30, { message: 'Weight must be at least 30kg.' }),
+});
+type Slide2Data = z.infer<typeof slide2Schema>;
+
+function OnboardingSlide2({ onNext, onBack, defaultValues }: { onNext: (data: Slide2Data) => void; onBack: () => void; defaultValues: Partial<Slide2Data>}) {
+    const form = useForm<Slide2Data>({
+        resolver: zodResolver(slide2Schema),
+        defaultValues,
+    });
+
+    const onSubmit: SubmitHandler<Slide2Data> = (data) => {
+        onNext(data);
+    };
+
+    return (
+        <Form {...form}>
+            <form onSubmit={form.handleSubmit(onSubmit)}>
+                <Card className="w-full max-w-sm mx-auto">
+                    <CardHeader>
+                        <CardTitle>Physical Attributes</CardTitle>
+                        <CardDescription>This helps us recommend the perfect fit for you.</CardDescription>
+                    </CardHeader>
+                    <CardContent className="space-y-4">
+                         <FormField
+                            control={form.control}
+                            name="gender"
+                            render={({ field }) => (
+                                <FormItem className="space-y-3">
+                                <FormLabel>Gender</FormLabel>
+                                <FormControl>
+                                    <RadioGroup
+                                    onValueChange={field.onChange}
+                                    defaultValue={field.value}
+                                    className="flex space-x-4"
+                                    >
+                                    <FormItem className="flex items-center space-x-2 space-y-0">
+                                        <FormControl>
+                                        <RadioGroupItem value="male" />
+                                        </FormControl>
+                                        <FormLabel className="font-normal">Male</FormLabel>
+                                    </FormItem>
+                                    <FormItem className="flex items-center space-x-2 space-y-0">
+                                        <FormControl>
+                                        <RadioGroupItem value="female" />
+                                        </FormControl>
+                                        <FormLabel className="font-normal">Female</FormLabel>
+                                    </FormItem>
+                                    <FormItem className="flex items-center space-x-2 space-y-0">
+                                        <FormControl>
+                                        <RadioGroupItem value="other" />
+                                        </FormControl>
+                                        <FormLabel className="font-normal">Other</FormLabel>
+                                    </FormItem>
+                                    </RadioGroup>
+                                </FormControl>
+                                <FormMessage />
+                                </FormItem>
+                            )}
+                        />
+                        <FormField
+                            control={form.control}
+                            name="age"
+                            render={({ field }) => (
+                                <FormItem>
+                                <FormLabel>Age</FormLabel>
+                                <FormControl>
+                                    <Input type="number" placeholder="25" {...field} value={field.value ?? ''} />
+                                </FormControl>
+                                <FormMessage />
+                                </FormItem>
+                            )}
+                        />
+                        <FormField
+                            control={form.control}
+                            name="height"
+                            render={({ field }) => (
+                                <FormItem>
+                                <FormLabel>Height (cm)</FormLabel>
+                                <FormControl>
+                                    <Input type="number" placeholder="175" {...field} value={field.value ?? ''} />
+                                </FormControl>
+                                <FormMessage />
+                                </FormItem>
+                            )}
+                        />
+                        <FormField
+                            control={form.control}
+                            name="weight"
+                            render={({ field }) => (
+                                <FormItem>
+                                <FormLabel>Weight (kg)</FormLabel>
+                                <FormControl>
+                                    <Input type="number" placeholder="70" {...field} value={field.value ?? ''} />
+                                </FormControl>
+                                <FormMessage />
+                                </FormItem>
+                            )}
+                        />
+                    </CardContent>
+                    <CardFooter className="flex justify-between">
+                        <Button type="button" variant="ghost" onClick={onBack}>Back</Button>
+                        <p className="text-sm text-muted-foreground">Step 2 of 3</p>
+                        <Button type="submit">Next</Button>
+                    </CardFooter>
+                </Card>
+            </form>
+        </Form>
+    );
+}
+
+
 export default function OnboardingFlow() {
   const [step, setStep] = useState(1);
   const [onboardingData, setOnboardingData] = useState({});
@@ -92,20 +203,33 @@ export default function OnboardingFlow() {
   const handleSlide1Next = (data: Slide1Data) => {
     setOnboardingData(prev => ({ ...prev, ...data }));
     setStep(2);
-    // For now, we just log the data. We'll build the next steps soon.
-    console.log('Slide 1 Data:', data);
-    console.log("Moving to step 2");
   };
 
-  return (
-    <div>
-      {step === 1 && <OnboardingSlide1 onNext={handleSlide1Next} />}
-      {step === 2 && (
-        <div className="text-center">
-            <p>Step 2: Coming soon!</p>
-            <Button onClick={() => setStep(1)}>Go Back</Button>
-        </div>
-      )}
-    </div>
-  );
+  const handleSlide2Next = (data: Slide2Data) => {
+    setOnboardingData(prev => ({ ...prev, ...data }));
+    setStep(3);
+    // For now, we just log the data. We'll build the next steps soon.
+    console.log('Onboarding Data so far:', { ...onboardingData, ...data });
+    console.log("Moving to step 3");
+  };
+
+  const handleBack = () => {
+    setStep(prev => prev - 1);
+  }
+
+  switch (step) {
+    case 1:
+        return <OnboardingSlide1 onNext={handleSlide1Next} defaultValues={onboardingData} />;
+    case 2:
+        return <OnboardingSlide2 onNext={handleSlide2Next} onBack={handleBack} defaultValues={onboardingData} />;
+    case 3:
+        return (
+            <div className="text-center p-8">
+                <h2 className="text-xl font-semibold mb-4">Step 3: Coming soon!</h2>
+                <Button onClick={handleBack}>Go Back</Button>
+            </div>
+        );
+    default:
+        return <OnboardingSlide1 onNext={handleSlide1Next} defaultValues={onboardingData} />;
+  }
 }
