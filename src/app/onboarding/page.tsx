@@ -191,6 +191,18 @@ export default function OnboardingPage() {
   const methods = useForm<OnboardingFormData>({
     resolver: zodResolver(formSchema),
     defaultValues: {
+        name: '',
+        address: '',
+        phone: '',
+        email: '',
+        gender: 'male',
+        age: 0,
+        height: 0,
+        weight: 0,
+        chest: 0,
+        waist: 0,
+        hips: 0,
+        inseam: 0,
         measurementUnit: 'cm',
     }
   });
