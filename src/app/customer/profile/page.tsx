@@ -1,15 +1,28 @@
 
 'use client';
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Plus, Star, MessageSquare, MoreVertical, User, Mail, Phone, MapPin, Edit, Save } from "lucide-react";
+import { Plus, Star, MessageSquare, MoreVertical, User, Mail, Phone, MapPin, Edit, Save, Loader2 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Slider } from "@/components/ui/slider";
+import { auth, db } from "@/lib/firebase";
+import type { User as FirebaseUser } from "firebase/auth";
+import { doc, getDoc, setDoc } from "firebase/firestore";
+
+interface UserProfile {
+    uid: string;
+    name: string;
+    email: string;
+    phone: string;
+    address: string;
+    avatarUrl: string;
+    role: string;
+}
 
 function MeasurementSlider({ label, value, unit, onValueChange }: { label: string, value: number, unit: string, onValueChange: (value: number[]) => void }) {
   return (
@@ -31,14 +44,8 @@ function MeasurementSlider({ label, value, unit, onValueChange }: { label: strin
 
 export default function CustomerProfilePage() {
   const [isEditing, setIsEditing] = useState(false);
-  const [user, setUser] = useState({
-    name: "Alex Doe",
-    email: "alex.doe@example.com",
-    phone: "+1 234 567 890",
-    address: "123 Main St, Anytown, USA",
-    avatarUrl: "https://picsum.photos/seed/user/100/100",
-    role: "Fashion Enthusiast",
-  });
+  const [user, setUser] = useState<UserProfile | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
 
   const [measurements, setMeasurements] = useState({
       height: 175,
@@ -47,13 +54,56 @@ export default function CustomerProfilePage() {
       waist: 82,
   });
 
+  useEffect(() => {
+    const unsubscribe = auth.onAuthStateChanged(async (firebaseUser: FirebaseUser | null) => {
+      if (firebaseUser) {
+        const userDocRef = doc(db, 'customers', firebaseUser.uid);
+        const userDocSnap = await getDoc(userDocRef);
+
+        if (userDocSnap.exists()) {
+          const data = userDocSnap.data();
+          setUser({
+            uid: firebaseUser.uid,
+            name: data.displayName || 'No Name',
+            email: data.email || 'No Email',
+            phone: data.phoneNumber || 'No Phone',
+            address: data.address || '123 Main St, Anytown, USA',
+            avatarUrl: data.photoURL || `https://picsum.photos/seed/${firebaseUser.uid}/100/100`,
+            role: data.role || 'Fashion Enthusiast'
+          });
+        } else {
+            // If profile doesn't exist, create a default one
+            const newUserProfile: UserProfile = {
+                uid: firebaseUser.uid,
+                name: firebaseUser.displayName || 'New User',
+                email: firebaseUser.email || '',
+                phone: firebaseUser.phoneNumber || '',
+                address: '',
+                avatarUrl: firebaseUser.photoURL || `https://picsum.photos/seed/${firebaseUser.uid}/100/100`,
+                role: 'Fashion Enthusiast',
+            };
+            await setDoc(userDocRef, newUserProfile);
+            setUser(newUserProfile);
+        }
+      } else {
+        setUser(null);
+      }
+      setIsLoading(false);
+    });
+
+    return () => unsubscribe();
+  }, []);
+
+
   const handleMeasurementChange = (field: keyof typeof measurements) => (value: number[]) => {
       setMeasurements(prev => ({ ...prev, [field]: value[0] }));
   };
 
   const handleUserChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { id, value } = e.target;
-    setUser(prev => ({...prev, [id]: value}));
+    if (user) {
+        setUser(prev => ({...prev!, [id]: value}));
+    }
   }
 
   const friends = [
@@ -62,6 +112,22 @@ export default function CustomerProfilePage() {
     { name: "Miguel Cunha Ferreira", time: "7 min ago", avatar: "https://picsum.photos/seed/friend3/40/40" },
     { name: "Eric Yuriev", time: "12 min ago", avatar: "https://picsum.photos/seed/friend4/40/40" },
   ];
+
+  if (isLoading) {
+    return (
+        <div className="flex justify-center items-center min-h-screen">
+            <Loader2 className="h-16 w-16 animate-spin text-primary" />
+        </div>
+    )
+  }
+
+  if (!user) {
+     return (
+        <div className="flex justify-center items-center min-h-screen">
+            <p>Please log in to view your profile.</p>
+        </div>
+    )
+  }
 
   return (
     <div className="min-h-screen bg-background">
@@ -94,7 +160,7 @@ export default function CustomerProfilePage() {
             <Card>
                 <CardHeader>
                     <div className="flex justify-between items-center">
-                        <CardTitle>About Alex</CardTitle>
+                        <CardTitle>About {user.name.split(' ')[0]}</CardTitle>
                         <Button variant="ghost" size="icon" onClick={() => setIsEditing(!isEditing)}>
                             {isEditing ? <Save className="h-4 w-4" /> : <Edit className="h-4 w-4" />}
                             <span className="sr-only">{isEditing ? "Save" : "Edit"}</span>
@@ -192,3 +258,5 @@ export default function CustomerProfilePage() {
     </div>
   );
 }
+
+    
