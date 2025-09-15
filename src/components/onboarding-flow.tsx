@@ -10,6 +10,13 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Input } from '@/components/ui/input';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
+import { Loader2 } from 'lucide-react';
+import { useRouter } from 'next/navigation';
+import { auth } from '@/lib/firebase';
+import { updateUserProfile } from '@/app/actions/user';
+import { useToast } from '@/hooks/use-toast';
+import MeasurementCard from './measurement-card';
+
 
 // --- Slide 1: Basic Information ---
 const slide1Schema = z.object({
@@ -195,10 +202,68 @@ function OnboardingSlide2({ onNext, onBack, defaultValues }: { onNext: (data: Sl
     );
 }
 
+// --- Slide 3: Measurements ---
+type Measurement = 'Shoulder' | 'Chest' | 'Waist' | 'Hips' | 'Inseam' | 'Sleeve';
+type MeasurementData = { [key in Measurement]: number };
+
+const slide3Schema = z.object({
+    measurements: z.object({
+        Shoulder: z.number(),
+        Chest: z.number(),
+        Waist: z.number(),
+        Hips: z.number(),
+        Inseam: z.number(),
+        Sleeve: z.number(),
+    })
+});
+
+type Slide3Data = z.infer<typeof slide3Schema>;
+
+
+function OnboardingSlide3({ onFinish, onBack, defaultValues }: { onFinish: (data: Slide3Data) => void; onBack: () => void; defaultValues: Partial<Slide3Data>}) {
+    const [measurements, setMeasurements] = useState<MeasurementData>(
+        defaultValues.measurements || {
+            Shoulder: 45, Chest: 98, Waist: 82, Hips: 104, Inseam: 78, Sleeve: 62
+        }
+    );
+    const [isSaving, setIsSaving] = useState(false);
+
+    const handleMeasurementChange = (field: Measurement, value: number) => {
+        setMeasurements(prev => ({ ...prev, [field]: value }));
+    };
+
+    const handleFinishClick = () => {
+        setIsSaving(true);
+        onFinish({ measurements });
+    };
+
+    return (
+        <Card className="w-full max-w-sm mx-auto">
+            <CardHeader>
+                <CardTitle>Body Measurements</CardTitle>
+                <CardDescription>Tap on a label to adjust your measurements.</CardDescription>
+            </CardHeader>
+            <CardContent>
+                <MeasurementCard measurements={measurements} onMeasurementChange={handleMeasurementChange} />
+            </CardContent>
+            <CardFooter className="flex justify-between">
+                <Button type="button" variant="ghost" onClick={onBack} disabled={isSaving}>Back</Button>
+                <p className="text-sm text-muted-foreground">Step 3 of 3</p>
+                <Button type="button" onClick={handleFinishClick} disabled={isSaving}>
+                    {isSaving ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
+                    Finish
+                </Button>
+            </CardFooter>
+        </Card>
+    );
+}
+
 
 export default function OnboardingFlow() {
   const [step, setStep] = useState(1);
-  const [onboardingData, setOnboardingData] = useState({});
+  const [onboardingData, setOnboardingData] = useState<Partial<Slide1Data & Slide2Data & Slide3Data>>({});
+  const router = useRouter();
+  const { toast } = useToast();
 
   const handleSlide1Next = (data: Slide1Data) => {
     setOnboardingData(prev => ({ ...prev, ...data }));
@@ -208,10 +273,39 @@ export default function OnboardingFlow() {
   const handleSlide2Next = (data: Slide2Data) => {
     setOnboardingData(prev => ({ ...prev, ...data }));
     setStep(3);
-    // For now, we just log the data. We'll build the next steps soon.
-    console.log('Onboarding Data so far:', { ...onboardingData, ...data });
-    console.log("Moving to step 3");
   };
+
+  const handleSlide3Finish = async (data: Slide3Data) => {
+      const finalData = { ...onboardingData, ...data };
+      const user = auth.currentUser;
+
+      if (!user) {
+          toast({
+              variant: 'destructive',
+              title: 'Error',
+              description: 'You must be logged in to save your profile.',
+          });
+          return;
+      }
+      
+      try {
+        await updateUserProfile(user.uid, finalData);
+        toast({
+            title: 'Profile Saved!',
+            description: "Your onboarding is complete. Welcome to Stitcher!",
+        });
+        router.push('/customer/dashboard');
+        router.refresh(); // Forces a refresh to re-evaluate the dashboard page
+      } catch (error) {
+        console.error("Failed to save onboarding data:", error);
+        toast({
+            variant: 'destructive',
+            title: 'Save Failed',
+            description: 'There was a problem saving your profile. Please try again.',
+        });
+      }
+  };
+
 
   const handleBack = () => {
     setStep(prev => prev - 1);
@@ -223,12 +317,7 @@ export default function OnboardingFlow() {
     case 2:
         return <OnboardingSlide2 onNext={handleSlide2Next} onBack={handleBack} defaultValues={onboardingData} />;
     case 3:
-        return (
-            <div className="text-center p-8">
-                <h2 className="text-xl font-semibold mb-4">Step 3: Coming soon!</h2>
-                <Button onClick={handleBack}>Go Back</Button>
-            </div>
-        );
+        return <OnboardingSlide3 onFinish={handleSlide3Finish} onBack={handleBack} defaultValues={onboardingData} />;
     default:
         return <OnboardingSlide1 onNext={handleSlide1Next} defaultValues={onboardingData} />;
   }

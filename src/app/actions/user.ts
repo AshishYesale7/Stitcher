@@ -52,3 +52,28 @@ export async function createUserProfile(userData: UserProfilePayload, role: User
     throw new Error('Failed to create user profile.');
   }
 }
+
+/**
+ * Updates a customer's profile with their onboarding data.
+ * @param uid The user's UID.
+ * @param data The onboarding data to save.
+ */
+export async function updateUserProfile(uid: string, data: any) {
+    if (!uid) {
+        throw new Error('User UID is required to update profile.');
+    }
+
+    const userRef = doc(db, 'customers', uid);
+
+    try {
+        await setDoc(userRef, {
+            ...data,
+            onboardingCompleted: true,
+            updatedAt: serverTimestamp(),
+        }, { merge: true });
+        console.log(`Successfully updated profile for user ${uid}`);
+    } catch(error) {
+        console.error('Error updating user profile:', error);
+        throw new Error('Failed to update user profile.');
+    }
+}
