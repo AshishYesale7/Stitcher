@@ -9,8 +9,9 @@ import DashboardHeader from '@/components/dashboard-header';
 export default function CustomerLayout({ children }: { children: ReactNode }) {
   const pathname = usePathname();
   const isLoginPage = pathname === '/customer/login';
+  const isOnboardingPage = pathname === '/onboarding';
 
-  if (isLoginPage) {
+  if (isLoginPage || isOnboardingPage) {
     return <>{children}</>;
   }
 
