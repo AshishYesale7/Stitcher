@@ -10,7 +10,7 @@ import {
   SidebarMenuButton,
   SidebarFooter,
 } from '@/components/ui/sidebar';
-import { LayoutGrid, Package, MessageCircle, Heart, User, LogOut, Search, Notebook, Archive } from 'lucide-react';
+import { LayoutGrid, Package, MessageCircle, Heart, User, LogOut, Search, Notebook, Archive, Ruler } from 'lucide-react';
 import Logo from '@/components/logo';
 
 const menuItems = [
@@ -19,6 +19,7 @@ const menuItems = [
   { href: '/customer/orders', label: 'Order Tracker', icon: Package },
   { href: '/customer/book-order', label: 'Book Order', icon: Notebook },
   { href: '/customer/archive', label: 'Archive Order', icon: Archive },
+  { href: '/customer/measurement', label: 'Measurement', icon: Ruler },
   { href: '/customer/profile', label: 'Profile', icon: User },
 ];
 
