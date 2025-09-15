@@ -39,18 +39,14 @@ export function useAuthRedirect() {
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
       if (user) {
-        const userProfile = await getUserProfile(user);
-        if (userProfile) {
-          if (!userProfile.onboardingCompleted) {
-             if (pathname !== '/onboarding') {
-              router.push('/onboarding');
+        // If user is logged in, but not on a dashboard, redirect them.
+        // This handles cases where a logged-in user visits the homepage.
+        if (!pathname.includes('/dashboard')) {
+            const userProfile = await getUserProfile(user);
+            if (userProfile) {
+                const targetDashboard = `/${userProfile.role}/dashboard`;
+                router.push(targetDashboard);
             }
-          } else {
-            const targetDashboard = `/${userProfile.role}/dashboard`;
-            if (pathname !== targetDashboard) {
-               router.push(targetDashboard);
-            }
-          }
         }
       }
     });
