@@ -48,7 +48,7 @@ function OnboardingSlide1({ onNext, defaultValues }: { onNext: (data: Slide1Data
                 <FormItem>
                   <FormLabel>Full Name</FormLabel>
                   <FormControl>
-                    <Input placeholder="e.g. John Doe" {...field} />
+                    <Input placeholder="e.g. John Doe" {...field} value={field.value ?? ''} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -61,7 +61,7 @@ function OnboardingSlide1({ onNext, defaultValues }: { onNext: (data: Slide1Data
                 <FormItem>
                   <FormLabel>Address</FormLabel>
                   <FormControl>
-                    <Input placeholder="e.g. 123 Main St, Anytown" {...field} />
+                    <Input placeholder="e.g. 123 Main St, Anytown" {...field} value={field.value ?? ''} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
