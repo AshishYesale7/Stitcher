@@ -13,6 +13,7 @@ import { Slider } from "@/components/ui/slider";
 import { auth, db } from "@/lib/firebase";
 import type { User as FirebaseUser } from "firebase/auth";
 import { doc, getDoc, setDoc } from "firebase/firestore";
+import { useToast } from "@/hooks/use-toast";
 
 interface UserProfile {
     uid: string;
@@ -22,6 +23,10 @@ interface UserProfile {
     address: string;
     avatarUrl: string;
     role: string;
+    height: number;
+    weight: number;
+    chest: number;
+    waist: number;
 }
 
 function MeasurementSlider({ label, value, unit, onValueChange }: { label: string, value: number, unit: string, onValueChange: (value: number[]) => void }) {
@@ -44,15 +49,10 @@ function MeasurementSlider({ label, value, unit, onValueChange }: { label: strin
 
 export default function CustomerProfilePage() {
   const [isEditing, setIsEditing] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
   const [user, setUser] = useState<UserProfile | null>(null);
   const [isLoading, setIsLoading] = useState(true);
-
-  const [measurements, setMeasurements] = useState({
-      height: 175,
-      weight: 70,
-      chest: 98,
-      waist: 82,
-  });
+  const { toast } = useToast();
 
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged(async (firebaseUser: FirebaseUser | null) => {
@@ -64,15 +64,18 @@ export default function CustomerProfilePage() {
           const data = userDocSnap.data();
           setUser({
             uid: firebaseUser.uid,
-            name: data.displayName || 'No Name',
+            name: data.name || data.displayName || 'No Name',
             email: data.email || 'No Email',
-            phone: data.phoneNumber || 'No Phone',
+            phone: data.phone || data.phoneNumber || 'No Phone',
             address: data.address || '123 Main St, Anytown, USA',
             avatarUrl: data.photoURL || `https://picsum.photos/seed/${firebaseUser.uid}/100/100`,
-            role: data.role || 'Fashion Enthusiast'
+            role: data.role || 'Fashion Enthusiast',
+            height: data.height || 175,
+            weight: data.weight || 70,
+            chest: data.chest || 98,
+            waist: data.waist || 82,
           });
         } else {
-            // If profile doesn't exist, create a default one
             const newUserProfile: UserProfile = {
                 uid: firebaseUser.uid,
                 name: firebaseUser.displayName || 'New User',
@@ -81,8 +84,12 @@ export default function CustomerProfilePage() {
                 address: '',
                 avatarUrl: firebaseUser.photoURL || `https://picsum.photos/seed/${firebaseUser.uid}/100/100`,
                 role: 'Fashion Enthusiast',
+                height: 175,
+                weight: 70,
+                chest: 98,
+                waist: 82,
             };
-            await setDoc(userDocRef, newUserProfile);
+            await setDoc(userDocRef, newUserProfile, { merge: true });
             setUser(newUserProfile);
         }
       } else {
@@ -94,15 +101,32 @@ export default function CustomerProfilePage() {
     return () => unsubscribe();
   }, []);
 
-
-  const handleMeasurementChange = (field: keyof typeof measurements) => (value: number[]) => {
-      setMeasurements(prev => ({ ...prev, [field]: value[0] }));
+  const handleMeasurementChange = (field: keyof UserProfile) => (value: number[]) => {
+      if (user) {
+        setUser(prev => ({ ...prev!, [field]: value[0] }));
+      }
   };
-
+  
   const handleUserChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { id, value } = e.target;
     if (user) {
         setUser(prev => ({...prev!, [id]: value}));
+    }
+  }
+
+  const handleSave = async () => {
+    if (!user) return;
+    setIsSaving(true);
+    try {
+        const userDocRef = doc(db, 'customers', user.uid);
+        await setDoc(userDocRef, user, { merge: true });
+        setIsEditing(false);
+        toast({ title: "Success", description: "Your profile has been updated." });
+    } catch(error) {
+        console.error("Error saving profile:", error);
+        toast({ variant: 'destructive', title: "Error", description: "Failed to save profile." });
+    } finally {
+        setIsSaving(false);
     }
   }
 
@@ -161,8 +185,8 @@ export default function CustomerProfilePage() {
                 <CardHeader>
                     <div className="flex justify-between items-center">
                         <CardTitle>About {user.name.split(' ')[0]}</CardTitle>
-                        <Button variant="ghost" size="icon" onClick={() => setIsEditing(!isEditing)}>
-                            {isEditing ? <Save className="h-4 w-4" /> : <Edit className="h-4 w-4" />}
+                        <Button variant="ghost" size="icon" onClick={() => isEditing ? handleSave() : setIsEditing(true)} disabled={isSaving}>
+                            {isSaving ? <Loader2 className="h-4 w-4 animate-spin" /> : (isEditing ? <Save className="h-4 w-4" /> : <Edit className="h-4 w-4" />)}
                             <span className="sr-only">{isEditing ? "Save" : "Edit"}</span>
                         </Button>
                     </div>
@@ -170,10 +194,17 @@ export default function CustomerProfilePage() {
                 </CardHeader>
                 <CardContent className="space-y-6">
                     <div className="flex items-center gap-4">
+                        <User className="h-5 w-5 text-muted-foreground" />
+                        <div className="flex-1">
+                            <Label htmlFor="name" className="text-xs text-muted-foreground">Name</Label>
+                            <Input id="name" value={user.name} readOnly={!isEditing} onChange={handleUserChange} className="border-0 px-0 h-auto focus-visible:ring-0 read-only:bg-transparent" />
+                        </div>
+                    </div>
+                    <div className="flex items-center gap-4">
                         <Mail className="h-5 w-5 text-muted-foreground" />
                         <div className="flex-1">
                             <Label htmlFor="email" className="text-xs text-muted-foreground">Email</Label>
-                            <Input id="email" value={user.email} readOnly={!isEditing} onChange={handleUserChange} className="border-0 px-0 h-auto focus-visible:ring-0 read-only:bg-transparent" />
+                            <Input id="email" value={user.email} readOnly className="border-0 px-0 h-auto focus-visible:ring-0 read-only:bg-transparent" />
                         </div>
                     </div>
                      <div className="flex items-center gap-4">
@@ -200,12 +231,15 @@ export default function CustomerProfilePage() {
                     <CardDescription>Keep your measurements up to date for a perfect fit.</CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-6">
-                   <MeasurementSlider label="Height" value={measurements.height} unit="cm" onValueChange={handleMeasurementChange('height')} />
-                   <MeasurementSlider label="Weight" value={measurements.weight} unit="kg" onValueChange={handleMeasurementChange('weight')} />
-                   <MeasurementSlider label="Chest" value={measurements.chest} unit="cm" onValueChange={handleMeasurementChange('chest')} />
-                   <MeasurementSlider label="Waist" value={measurements.waist} unit="cm" onValueChange={handleMeasurementChange('waist')} />
+                   <MeasurementSlider label="Height" value={user.height} unit="cm" onValueChange={handleMeasurementChange('height')} />
+                   <MeasurementSlider label="Weight" value={user.weight} unit="kg" onValueChange={handleMeasurementChange('weight')} />
+                   <MeasurementSlider label="Chest" value={user.chest} unit="cm" onValueChange={handleMeasurementChange('chest')} />
+                   <MeasurementSlider label="Waist" value={user.waist} unit="cm" onValueChange={handleMeasurementChange('waist')} />
                    <div className="pt-4 flex justify-end">
-                       <Button><Save className="mr-2 h-4 w-4"/> Save Measurements</Button>
+                       <Button onClick={handleSave} disabled={isSaving}>
+                           {isSaving ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Save className="mr-2 h-4 w-4"/>} 
+                           Save Measurements
+                       </Button>
                    </div>
                 </CardContent>
             </Card>
