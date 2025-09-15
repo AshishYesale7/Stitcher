@@ -14,22 +14,17 @@ import { auth, db } from "@/lib/firebase";
 import type { User as FirebaseUser } from "firebase/auth";
 import { doc, getDoc, setDoc } from "firebase/firestore";
 import { useToast } from "@/hooks/use-toast";
+import type { OnboardingData } from "@/app/actions/onboarding";
 
-interface UserProfile {
+type UserProfile = OnboardingData & {
     uid: string;
-    name: string;
     email: string;
-    phone: string;
-    address: string;
     avatarUrl: string;
     role: string;
-    height: number;
-    weight: number;
-    chest: number;
-    waist: number;
-}
+};
 
-function MeasurementSlider({ label, value, unit, onValueChange }: { label: string, value: number, unit: string, onValueChange: (value: number[]) => void }) {
+
+function MeasurementSlider({ label, value, unit, onValueChange, disabled }: { label: string, value: number, unit: string, onValueChange: (value: number[]) => void, disabled: boolean }) {
   return (
     <div className="space-y-3">
       <div className="flex justify-between items-center">
@@ -37,11 +32,12 @@ function MeasurementSlider({ label, value, unit, onValueChange }: { label: strin
         <span className="text-sm font-semibold text-primary">{value} {unit}</span>
       </div>
       <Slider
-        defaultValue={[value]}
+        value={[value]}
         max={label === 'Height' ? 220 : (label === 'Weight' ? 150 : 150)}
         min={label === 'Height' ? 120 : (label === 'Weight' ? 40 : 50)}
         step={1}
         onValueChange={onValueChange}
+        disabled={disabled}
       />
     </div>
   );
@@ -64,33 +60,21 @@ export default function CustomerProfilePage() {
           const data = userDocSnap.data();
           setUser({
             uid: firebaseUser.uid,
-            name: data.name || data.displayName || 'No Name',
-            email: data.email || 'No Email',
-            phone: data.phone || data.phoneNumber || 'No Phone',
-            address: data.address || '123 Main St, Anytown, USA',
-            avatarUrl: data.photoURL || `https://picsum.photos/seed/${firebaseUser.uid}/100/100`,
-            role: data.role || 'Fashion Enthusiast',
+            fullName: data.fullName || data.displayName || 'New User',
+            address: data.address || '',
+            gender: data.gender || 'Other',
+            age: data.age || 0,
             height: data.height || 175,
             weight: data.weight || 70,
+            measurementUnit: data.measurementUnit || 'cm',
             chest: data.chest || 98,
             waist: data.waist || 82,
+            hips: data.hips || 104,
+            inseam: data.inseam || 78,
+            email: data.email || firebaseUser.email || '',
+            avatarUrl: data.photoURL || firebaseUser.photoURL || `https://picsum.photos/seed/${firebaseUser.uid}/100/100`,
+            role: 'Fashion Enthusiast',
           });
-        } else {
-            const newUserProfile: UserProfile = {
-                uid: firebaseUser.uid,
-                name: firebaseUser.displayName || 'New User',
-                email: firebaseUser.email || '',
-                phone: firebaseUser.phoneNumber || '',
-                address: '',
-                avatarUrl: firebaseUser.photoURL || `https://picsum.photos/seed/${firebaseUser.uid}/100/100`,
-                role: 'Fashion Enthusiast',
-                height: 175,
-                weight: 70,
-                chest: 98,
-                waist: 82,
-            };
-            await setDoc(userDocRef, newUserProfile, { merge: true });
-            setUser(newUserProfile);
         }
       } else {
         setUser(null);
@@ -118,8 +102,9 @@ export default function CustomerProfilePage() {
     if (!user) return;
     setIsSaving(true);
     try {
-        const userDocRef = doc(db, 'customers', user.uid);
-        await setDoc(userDocRef, user, { merge: true });
+        const { uid, email, avatarUrl, role, ...profileData } = user;
+        const userDocRef = doc(db, 'customers', uid);
+        await setDoc(userDocRef, profileData, { merge: true });
         setIsEditing(false);
         toast({ title: "Success", description: "Your profile has been updated." });
     } catch(error) {
@@ -158,11 +143,11 @@ export default function CustomerProfilePage() {
       <div className="relative h-48 md:h-56 bg-gradient-to-r from-red-500 to-purple-600 p-4 flex items-end rounded-b-2xl shadow-lg">
         <div className="flex items-center gap-4">
           <Avatar className="w-24 h-24 border-4 border-background">
-            <AvatarImage src={user.avatarUrl} alt={user.name} data-ai-hint="person" />
-            <AvatarFallback>{user.name.charAt(0)}</AvatarFallback>
+            <AvatarImage src={user.avatarUrl} alt={user.fullName} data-ai-hint="person" />
+            <AvatarFallback>{user.fullName.charAt(0)}</AvatarFallback>
           </Avatar>
           <div>
-            <h1 className="text-2xl font-bold text-white">{user.name}</h1>
+            <h1 className="text-2xl font-bold text-white">{user.fullName}</h1>
             <p className="text-sm text-white/80">{user.role}</p>
           </div>
         </div>
@@ -184,7 +169,7 @@ export default function CustomerProfilePage() {
             <Card>
                 <CardHeader>
                     <div className="flex justify-between items-center">
-                        <CardTitle>About {user.name.split(' ')[0]}</CardTitle>
+                        <CardTitle>About {user.fullName.split(' ')[0]}</CardTitle>
                         <Button variant="ghost" size="icon" onClick={() => isEditing ? handleSave() : setIsEditing(true)} disabled={isSaving}>
                             {isSaving ? <Loader2 className="h-4 w-4 animate-spin" /> : (isEditing ? <Save className="h-4 w-4" /> : <Edit className="h-4 w-4" />)}
                             <span className="sr-only">{isEditing ? "Save" : "Edit"}</span>
@@ -196,8 +181,8 @@ export default function CustomerProfilePage() {
                     <div className="flex items-center gap-4">
                         <User className="h-5 w-5 text-muted-foreground" />
                         <div className="flex-1">
-                            <Label htmlFor="name" className="text-xs text-muted-foreground">Name</Label>
-                            <Input id="name" value={user.name} readOnly={!isEditing} onChange={handleUserChange} className="border-0 px-0 h-auto focus-visible:ring-0 read-only:bg-transparent" />
+                            <Label htmlFor="fullName" className="text-xs text-muted-foreground">Name</Label>
+                            <Input id="fullName" value={user.fullName} readOnly={!isEditing} onChange={handleUserChange} className="border-0 px-0 h-auto focus-visible:ring-0 read-only:bg-transparent" />
                         </div>
                     </div>
                     <div className="flex items-center gap-4">
@@ -211,7 +196,7 @@ export default function CustomerProfilePage() {
                         <Phone className="h-5 w-5 text-muted-foreground" />
                         <div className="flex-1">
                             <Label htmlFor="phone" className="text-xs text-muted-foreground">Phone</Label>
-                            <Input id="phone" value={user.phone} readOnly={!isEditing} onChange={handleUserChange} className="border-0 px-0 h-auto focus-visible:ring-0 read-only:bg-transparent" />
+                            <Input id="phone" value={auth.currentUser?.phoneNumber || "Not available"} readOnly className="border-0 px-0 h-auto focus-visible:ring-0 read-only:bg-transparent" />
                         </div>
                     </div>
                      <div className="flex items-center gap-4">
@@ -227,16 +212,24 @@ export default function CustomerProfilePage() {
           <TabsContent value="measurements" className="mt-6">
             <Card>
                 <CardHeader>
-                    <CardTitle>Body Measurements</CardTitle>
+                    <div className="flex justify-between items-center">
+                        <CardTitle>Body Measurements</CardTitle>
+                         <Button variant="ghost" size="icon" onClick={() => isEditing ? handleSave() : setIsEditing(true)} disabled={isSaving}>
+                            {isSaving ? <Loader2 className="h-4 w-4 animate-spin" /> : (isEditing ? <Save className="h-4 w-4" /> : <Edit className="h-4 w-4" />)}
+                            <span className="sr-only">{isEditing ? "Save" : "Edit"}</span>
+                        </Button>
+                    </div>
                     <CardDescription>Keep your measurements up to date for a perfect fit.</CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-6">
-                   <MeasurementSlider label="Height" value={user.height} unit="cm" onValueChange={handleMeasurementChange('height')} />
-                   <MeasurementSlider label="Weight" value={user.weight} unit="kg" onValueChange={handleMeasurementChange('weight')} />
-                   <MeasurementSlider label="Chest" value={user.chest} unit="cm" onValueChange={handleMeasurementChange('chest')} />
-                   <MeasurementSlider label="Waist" value={user.waist} unit="cm" onValueChange={handleMeasurementChange('waist')} />
+                   <MeasurementSlider label="Height" value={user.height} unit="cm" onValueChange={handleMeasurementChange('height')} disabled={!isEditing} />
+                   <MeasurementSlider label="Weight" value={user.weight} unit="kg" onValueChange={handleMeasurementChange('weight')} disabled={!isEditing}/>
+                   <MeasurementSlider label="Chest" value={user.chest} unit={user.measurementUnit} onValueChange={handleMeasurementChange('chest')} disabled={!isEditing}/>
+                   <MeasurementSlider label="Waist" value={user.waist} unit={user.measurementUnit} onValueChange={handleMeasurementChange('waist')} disabled={!isEditing}/>
+                   <MeasurementSlider label="Hips" value={user.hips} unit={user.measurementUnit} onValueChange={handleMeasurementChange('hips')} disabled={!isEditing}/>
+                   <MeasurementSlider label="Inseam" value={user.inseam} unit={user.measurementUnit} onValuechange={handleMeasurementChange('inseam')} disabled={!isEditing}/>
                    <div className="pt-4 flex justify-end">
-                       <Button onClick={handleSave} disabled={isSaving}>
+                       <Button onClick={handleSave} disabled={isSaving || !isEditing}>
                            {isSaving ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Save className="mr-2 h-4 w-4"/>} 
                            Save Measurements
                        </Button>
@@ -292,5 +285,3 @@ export default function CustomerProfilePage() {
     </div>
   );
 }
-
-    
