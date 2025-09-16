@@ -1,4 +1,5 @@
 
+
 'use client';
 
 import { useState, useEffect } from 'react';
@@ -83,12 +84,12 @@ function OnboardingSlide1({ onNext, defaultValues }: { onNext: (data: Slide1Data
                 </FormItem>
               )}
             />
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div className="flex flex-col sm:flex-row gap-4">
                  <FormField
                   control={form.control}
                   name="house"
                   render={({ field }) => (
-                    <FormItem>
+                    <FormItem className="flex-1">
                       <FormLabel>House No.</FormLabel>
                       <FormControl>
                         <Input placeholder="e.g. #123" {...field} value={field.value ?? ''} />
@@ -101,7 +102,7 @@ function OnboardingSlide1({ onNext, defaultValues }: { onNext: (data: Slide1Data
                   control={form.control}
                   name="street"
                   render={({ field }) => (
-                    <FormItem>
+                    <FormItem className="flex-1">
                       <FormLabel>Street</FormLabel>
                       <FormControl>
                         <Input placeholder="e.g. Main St" {...field} value={field.value ?? ''} />
@@ -111,12 +112,12 @@ function OnboardingSlide1({ onNext, defaultValues }: { onNext: (data: Slide1Data
                   )}
                 />
             </div>
-             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+             <div className="flex flex-col sm:flex-row gap-4">
                 <FormField
                   control={form.control}
                   name="city"
                   render={({ field }) => (
-                    <FormItem>
+                    <FormItem className="flex-1">
                       <FormLabel>City</FormLabel>
                       <FormControl>
                         <Input placeholder="e.g. Anytown" {...field} value={field.value ?? ''} />
@@ -129,7 +130,7 @@ function OnboardingSlide1({ onNext, defaultValues }: { onNext: (data: Slide1Data
                   control={form.control}
                   name="state"
                   render={({ field }) => (
-                    <FormItem>
+                    <FormItem className="flex-1">
                       <FormLabel>State/Province</FormLabel>
                       <FormControl>
                         <Input placeholder="e.g. California" {...field} value={field.value ?? ''} />
@@ -142,7 +143,7 @@ function OnboardingSlide1({ onNext, defaultValues }: { onNext: (data: Slide1Data
                   control={form.control}
                   name="zip"
                   render={({ field }) => (
-                    <FormItem>
+                    <FormItem className="flex-1">
                       <FormLabel>ZIP / PIN Code</FormLabel>
                       <FormControl>
                         <Input placeholder="e.g. 90210" {...field} value={field.value ?? ''} />
@@ -464,3 +465,5 @@ export default function OnboardingFlow() {
     
 
       
+
+    
