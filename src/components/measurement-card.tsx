@@ -4,9 +4,8 @@
 import { useState } from 'react';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
 import { Slider } from '@/components/ui/slider';
-import { Button } from '@/components/ui/button';
-import { Label } from '@/components/ui/label';
 import Image from 'next/image';
+import { Label } from '@/components/ui/label';
 
 type Measurement = 'Shoulder' | 'Chest' | 'Waist' | 'Hips' | 'Inseam' | 'Sleeve';
 type MeasurementUnit = 'cm' | 'inch';
@@ -17,18 +16,21 @@ type MeasurementData = {
 
 type MeasurementPoint = {
   name: Measurement;
-  top: string;
-  left: string;
+  imageUrl: string; 
 };
 
+// We can update these URLs later as you provide them
 const points: MeasurementPoint[] = [
-  { name: 'Shoulder', top: '19%', left: '25%' },
-  { name: 'Chest', top: '28%', left: '70%' },
-  { name: 'Waist', top: '42%', left: '25%' },
-  { name: 'Hips', top: '55%', left: '70%' },
-  { name: 'Inseam', top: '75%', left: '28%' },
-  { name: 'Sleeve', top: '35%', left: '5%' },
+  { name: 'Shoulder', imageUrl: "https://media.istockphoto.com/id/176992048/photo/a-dressmakers-mannequin-with-a-yellow-tape-measure.jpg?s=612x612&w=0&k=20&c=vksMIhJQdtz2XrVwiqQNyL_Nmz1xBwvF9pMV90xWc60=" },
+  { name: 'Chest', imageUrl: "https://media.istockphoto.com/id/176992048/photo/a-dressmakers-mannequin-with-a-yellow-tape-measure.jpg?s=612x612&w=0&k=20&c=vksMIhJQdtz2XrVwiqQNyL_Nmz1xBwvF9pMV90xWc60=" },
+  { name: 'Waist', imageUrl: "https://media.istockphoto.com/id/176992048/photo/a-dressmakers-mannequin-with-a-yellow-tape-measure.jpg?s=612x612&w=0&k=20&c=vksMIhJQdtz2XrVwiqQNyL_Nmz1xBwvF9pMV90xWc60=" },
+  { name: 'Hips', imageUrl: "https://media.istockphoto.com/id/176992048/photo/a-dressmakers-mannequin-with-a-yellow-tape-measure.jpg?s=612x612&w=0&k=20&c=vksMIhJQdtz2XrVwiqQNyL_Nmz1xBwvF9pMV90xWc60=" },
+  { name: 'Inseam', imageUrl: "https://media.istockphoto.com/id/176992048/photo/a-dressmakers-mannequin-with-a-yellow-tape-measure.jpg?s=612x612&w=0&k=20&c=vksMIhJQdtz2XrVwiqQNyL_Nmz1xBwvF9pMV90xWc60=" },
+  { name: 'Sleeve', imageUrl: "https://media.istockphoto.com/id/176992048/photo/a-dressmakers-mannequin-with-a-yellow-tape-measure.jpg?s=612x612&w=0&k=20&c=vksMIhJQdtz2XrVwiqQNyL_Nmz1xBwvF9pMV90xWc60=" },
 ];
+
+const leftPoints: Measurement[] = ['Shoulder', 'Waist', 'Inseam'];
+const rightPoints: Measurement[] = ['Chest', 'Hips', 'Sleeve'];
 
 export default function MeasurementCard({ 
     measurements, 
@@ -55,34 +57,23 @@ export default function MeasurementCard({
       }
   }
 
-  return (
-    <div className="relative w-full max-w-sm mx-auto aspect-[3/4]">
-      <Image
-        src="https://i.imgur.com/k4dM9iV.png"
-        alt="Tailor's dummy"
-        width={300}
-        height={400}
-        className="w-full h-auto"
-        priority
-      />
-
-      {points.map((point) => (
-        <Sheet key={point.name} onOpenChange={(isOpen) => !isOpen && setSelectedMeasurement(null)}>
+  const selectedImageUrl = points.find(p => p.name === selectedMeasurement)?.imageUrl || "https://media.istockphoto.com/id/176992048/photo/a-dressmakers-mannequin-with-a-yellow-tape-measure.jpg?s=612x612&w=0&k=20&c=vksMIhJQdtz2XrVwiqQNyL_Nmz1xBwvF9pMV90xWc60=";
+  
+  const renderMeasurementButton = (pointName: Measurement) => (
+      <Sheet key={pointName} onOpenChange={(isOpen) => !isOpen && setSelectedMeasurement(null)}>
           <SheetTrigger
             asChild
-            onClick={() => setSelectedMeasurement(point.name)}
-            style={{ top: point.top, left: point.left }}
-            className="absolute transform -translate-x-1/2 -translate-y-1/2"
+            onClick={() => setSelectedMeasurement(pointName)}
           >
             <div
-              className={`flex items-center justify-center p-2 rounded-lg cursor-pointer transition-all ${
-                selectedMeasurement === point.name
-                  ? 'bg-primary text-primary-foreground shadow-lg scale-110'
+              className={`flex items-center justify-between p-2 rounded-lg cursor-pointer transition-all ${
+                selectedMeasurement === pointName
+                  ? 'bg-primary text-primary-foreground shadow-lg scale-105'
                   : 'bg-background/80 backdrop-blur-sm border shadow-md'
               }`}
             >
-              <div className="text-xs font-semibold">{point.name}</div>
-              <div className="text-xs ml-2 font-bold">{measurements[point.name]} {unit}</div>
+              <div className="text-xs font-semibold">{pointName}</div>
+              <div className="text-xs ml-2 font-bold">{measurements[pointName]} {unit}</div>
             </div>
           </SheetTrigger>
           <SheetContent side="bottom">
@@ -105,9 +96,31 @@ export default function MeasurementCard({
             </div>
           </SheetContent>
         </Sheet>
-      ))}
+  );
+
+  return (
+    <div className="grid grid-cols-3 gap-2 items-center">
+      {/* Left Column */}
+      <div className="flex flex-col space-y-4">
+        {leftPoints.map(renderMeasurementButton)}
+      </div>
+
+      {/* Center Image */}
+      <div className="relative aspect-[3/4]">
+        <Image
+          src={selectedImageUrl}
+          alt="Tailor's dummy"
+          fill
+          className="object-cover rounded-lg"
+          priority
+        />
+      </div>
+
+      {/* Right Column */}
+      <div className="flex flex-col space-y-4">
+        {rightPoints.map(renderMeasurementButton)}
+      </div>
     </div>
   );
 }
-
     
