@@ -5,7 +5,7 @@ import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { FormLabel, FormControl, FormItem } from "@/components/ui/form";
+import { Label } from "@/components/ui/label";
 import { Loader2, Save } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { auth, db } from '@/lib/firebase';
@@ -121,14 +121,14 @@ export default function MeasurementPage() {
                             onValueChange={(val) => handleUnitChange(val as MeasurementUnit)}
                             className="flex items-center space-x-2"
                             >
-                            <FormItem className="flex items-center space-x-1 space-y-0">
-                                <FormControl><RadioGroupItem value="cm" id="cm" /></FormControl>
-                                <FormLabel htmlFor="cm" className="font-normal text-xs">cm</FormLabel>
-                            </FormItem>
-                            <FormItem className="flex items-center space-x-1 space-y-0">
-                                <FormControl><RadioGroupItem value="inch" id="inch" /></FormControl>
-                                <FormLabel htmlFor="inch" className="font-normal text-xs">inch</FormLabel>
-                            </FormItem>
+                            <div className="flex items-center space-x-1 space-y-0">
+                                <RadioGroupItem value="cm" id="cm" />
+                                <Label htmlFor="cm" className="font-normal text-xs">cm</Label>
+                            </div>
+                            <div className="flex items-center space-x-1 space-y-0">
+                                <RadioGroupItem value="inch" id="inch" />
+                                <Label htmlFor="inch" className="font-normal text-xs">inch</Label>
+                            </div>
                         </RadioGroup>
                     </div>
                 </CardHeader>
@@ -145,5 +145,3 @@ export default function MeasurementPage() {
         </div>
     );
 }
-
-    
