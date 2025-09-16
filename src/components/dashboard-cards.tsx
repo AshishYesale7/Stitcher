@@ -11,7 +11,7 @@ export default function DashboardCards() {
           
           <div className="card-body">
             <h3>Your Tailors</h3>
-            <Search className="w-8 h-8 mx-auto my-2 text-black" />
+            <Search className="w-8 h-8 mx-auto my-2 text-black dark:text-white" />
             <p>Find new tailors</p>
             <div className="progress">
             </div>
@@ -25,7 +25,7 @@ export default function DashboardCards() {
           
           <div className="card-body">
             <h3>Order Tracking</h3>
-            <Package className="w-8 h-8 mx-auto my-2 text-black" />
+            <Package className="w-8 h-8 mx-auto my-2 text-black dark:text-white" />
             <p>Active orders</p>
             <div className="progress">
             </div>
@@ -38,7 +38,7 @@ export default function DashboardCards() {
         <div className="card purple">
           <div className="card-body">
             <h3>Measurement</h3>
-            <Ruler className="w-8 h-8 mx-auto my-2 text-black" />
+            <Ruler className="w-8 h-8 mx-auto my-2 text-black dark:text-white" />
             <p>Save your measurements</p>
             <div className="progress">
             </div>
@@ -52,7 +52,7 @@ export default function DashboardCards() {
           
           <div className="card-body">
             <h3>Profile</h3>
-            <User className="w-8 h-8 mx-auto my-2 text-black" />
+            <User className="w-8 h-8 mx-auto my-2 text-black dark:text-white" />
             <p>Manage your account</p>
             <div className="progress">
             </div>
@@ -66,7 +66,7 @@ export default function DashboardCards() {
           
           <div className="card-body">
             <h3>Book Order</h3>
-            <Notebook className="w-8 h-8 mx-auto my-2 text-black" />
+            <Notebook className="w-8 h-8 mx-auto my-2 text-black dark:text-white" />
             <p>Create a new order</p>
             <div className="progress">
             </div>
@@ -79,7 +79,7 @@ export default function DashboardCards() {
         <div className="card pink">
           <div className="card-body">
             <h3>Design Your Garment</h3>
-            <Palette className="w-8 h-8 mx-auto my-2 text-black" />
+            <Palette className="w-8 h-8 mx-auto my-2 text-black dark:text-white" />
             <p>Create a unique design</p>
             <div className="progress">
             </div>
