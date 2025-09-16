@@ -109,7 +109,7 @@ export default function MeasurementPage() {
     
     return (
         <div className="p-4 sm:p-6 lg:p-8 flex justify-center">
-            <Card className="w-full max-w-sm mx-auto min-h-[600px] relative top-8">
+            <Card className="w-full max-w-sm mx-auto flex flex-col">
                 <CardHeader>
                      <div className="flex justify-between items-center">
                         <div>
@@ -132,7 +132,7 @@ export default function MeasurementPage() {
                         </RadioGroup>
                     </div>
                 </CardHeader>
-                <CardContent>
+                <CardContent className="flex-1 flex items-center">
                     <MeasurementCard measurements={measurements} onMeasurementChange={handleMeasurementChange} unit={unit} />
                 </CardContent>
                 <CardFooter className="flex justify-end">
