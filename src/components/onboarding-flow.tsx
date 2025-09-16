@@ -478,14 +478,14 @@ function OnboardingSlide3({ onFinish, onBack, defaultValues }: { onFinish: (data
                         onValueChange={(val) => handleUnitChange(val as MeasurementUnit)}
                         className="flex items-center space-x-2"
                     >
-                        <FormItem className="flex items-center space-x-1 space-y-0">
-                            <FormControl><RadioGroupItem value="cm" id="cm" /></FormControl>
-                            <FormLabel htmlFor="cm" className="font-normal text-xs">cm</FormLabel>
-                        </FormItem>
-                        <FormItem className="flex items-center space-x-1 space-y-0">
-                            <FormControl><RadioGroupItem value="inch" id="inch" /></FormControl>
-                            <FormLabel htmlFor="inch" className="font-normal text-xs">inch</FormLabel>
-                        </FormItem>
+                        <div className="flex items-center space-x-1 space-y-0">
+                            <RadioGroupItem value="cm" id="cm" />
+                            <label htmlFor="cm" className="font-normal text-xs">cm</label>
+                        </div>
+                        <div className="flex items-center space-x-1 space-y-0">
+                            <RadioGroupItem value="inch" id="inch" />
+                            <label htmlFor="inch" className="font-normal text-xs">inch</label>
+                        </div>
                     </RadioGroup>
                 </div>
             </CardHeader>
@@ -599,5 +599,7 @@ export default function OnboardingFlow() {
     
 
       
+
+    
 
     
