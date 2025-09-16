@@ -466,7 +466,7 @@ function OnboardingSlide3({ onFinish, onBack, defaultValues }: { onFinish: (data
     };
 
     return (
-        <Card className="w-full max-w-sm mx-auto">
+        <Card className="w-full max-w-md mx-auto">
             <CardHeader>
                 <div className="flex justify-between items-center">
                     <div>
@@ -496,7 +496,7 @@ function OnboardingSlide3({ onFinish, onBack, defaultValues }: { onFinish: (data
                     unit={unit}
                 />
             </CardContent>
-            <CardFooter className="flex justify-between">
+            <CardFooter className="flex justify-between items-center">
                 <Button type="button" variant="ghost" onClick={onBack} disabled={isSaving}>Back</Button>
                 <p className="text-sm text-muted-foreground">Step 3 of 3</p>
                 <Button type="button" onClick={handleFinishClick} disabled={isSaving}>
@@ -597,7 +597,3 @@ export default function OnboardingFlow() {
 }
 
     
-
-    
-
-
