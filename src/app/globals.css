@@ -263,12 +263,12 @@
       max-width: 42rem;
       margin-inline: auto;
       position: relative;
-      z-index: 10;
+      z-index: 1;
     }
 
     .card {
       position: relative;
-      z-index: 555;
+      z-index: 5;
       width: 100%;
       min-height: 16rem;
       display: grid;
