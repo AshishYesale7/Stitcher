@@ -57,7 +57,7 @@ export default function Home() {
         </nav>
         <main className="flex-1 flex flex-col items-center justify-center">
           <div className="title">
-            <p>Your Perfect</p>
+            <p className="text-white">Your Perfect</p>
             <p>Fit, Found.</p>
           </div>
 
