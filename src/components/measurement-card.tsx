@@ -99,14 +99,14 @@ export default function MeasurementCard({
   );
 
   return (
-    <div className="grid grid-cols-3 gap-2 items-center">
+    <div className="grid grid-cols-5 gap-4 items-center">
       {/* Left Column */}
-      <div className="flex flex-col space-y-8">
+      <div className="col-span-1 flex flex-col space-y-8">
         {leftPoints.map(renderMeasurementButton)}
       </div>
 
       {/* Center Image */}
-      <div className="relative aspect-[3/4]">
+      <div className="col-span-3 relative aspect-[3/4]">
         <Image
           src={selectedImageUrl}
           alt="Tailor's dummy"
@@ -117,7 +117,7 @@ export default function MeasurementCard({
       </div>
 
       {/* Right Column */}
-      <div className="flex flex-col space-y-8">
+      <div className="col-span-1 flex flex-col space-y-8">
         {rightPoints.map(renderMeasurementButton)}
       </div>
     </div>
