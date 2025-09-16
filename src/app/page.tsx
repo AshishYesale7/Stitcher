@@ -29,8 +29,8 @@ export default function Home() {
         </svg>
         <div className="blur"></div>
       </div>
-      <div className="flex flex-col h-dvh px-[10%] overflow-hidden">
-        <nav>
+      <div className="flex flex-col h-dvh overflow-hidden">
+        <nav className="px-[10%]">
           <Link href="/" className="sitename flex items-center gap-2 text-black -ml-4">
             <Logo />
             Stitcher
@@ -55,7 +55,7 @@ export default function Home() {
             </DropdownMenu>
           </div>
         </nav>
-        <main className="flex-1 flex flex-col items-center justify-center">
+        <main className="flex-1 flex flex-col items-center justify-center px-[10%]">
           <div className="title">
             <p className="text-white">Your Perfect</p>
             <p>Fit, Found.</p>
