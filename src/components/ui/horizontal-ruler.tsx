@@ -1,7 +1,7 @@
 
 'use client';
 
-import { useRef, useEffect, useMemo, useState } from 'react';
+import { useRef, useEffect, useMemo } from 'react';
 import { cn } from '@/lib/utils';
 import { Input } from './input';
 
@@ -27,7 +27,6 @@ export function HorizontalRuler({
 }: HorizontalRulerProps) {
   const rulerRef = useRef<HTMLDivElement>(null);
   const isDragging = useRef(false);
-  const [internalValue, setInternalValue] = useState(value);
   const scrollTimeout = useRef<NodeJS.Timeout | null>(null);
 
   const effectiveStep = 0.1;
@@ -35,35 +34,31 @@ export function HorizontalRuler({
   const rulerWidth = useMemo(() => totalTicks * TICK_WIDTH, [totalTicks]);
 
   useEffect(() => {
-    // Only update if the parent's value is significantly different
-    if (Math.abs(value - internalValue) > 0.01) {
-        setInternalValue(value);
-    }
-  }, [value, internalValue]);
-  
-  useEffect(() => {
     const ruler = rulerRef.current;
-    if (!ruler || typeof internalValue !== 'number') return;
+    if (!ruler || typeof value !== 'number') return;
   
     const center = ruler.clientWidth / 2;
-    const scrollPosition = ((internalValue - min) / effectiveStep) * TICK_WIDTH - center;
+    const scrollPosition = ((value - min) / effectiveStep) * TICK_WIDTH - center;
     
-    ruler.scrollTo({
-      left: scrollPosition,
-      behavior: 'smooth'
-    });
+    // Only scroll if the new position is noticeably different from the current one
+    if (Math.abs(ruler.scrollLeft - scrollPosition) > TICK_WIDTH) {
+        ruler.scrollTo({
+          left: scrollPosition,
+          behavior: 'smooth'
+        });
+    }
   
-  }, [internalValue, min, effectiveStep]);
+  }, [value, min, effectiveStep]);
 
   const handleScroll = () => {
-    if (isDragging.current) return;
+    if (isDragging.current || !rulerRef.current) return;
 
     if (scrollTimeout.current) {
       clearTimeout(scrollTimeout.current);
     }
     
     scrollTimeout.current = setTimeout(() => {
-      if (!rulerRef.current) return; // Add check here
+      if (!rulerRef.current) return;
       const center = rulerRef.current.clientWidth / 2;
       const scrollLeft = rulerRef.current.scrollLeft;
       
@@ -75,7 +70,6 @@ export function HorizontalRuler({
   
       if (finalValue !== value) {
          onChange(finalValue);
-         setInternalValue(finalValue);
       }
     }, 150); 
   };
@@ -83,12 +77,11 @@ export function HorizontalRuler({
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
       const newValue = parseFloat(e.target.value);
       if (!isNaN(newValue)) {
-        setInternalValue(newValue); // Update internal state for typing
         if (newValue >= min && newValue <= max) {
-            onChange(newValue); // Propagate change if valid
+            onChange(newValue);
         }
       } else {
-        setInternalValue(0); // Handle empty input
+        onChange(min);
       }
   }
 
@@ -120,14 +113,14 @@ export function HorizontalRuler({
     return ticks;
   };
   
-  const displayValue = typeof internalValue === 'number' ? internalValue.toFixed(1) : (0).toFixed(1);
+  const displayValue = typeof value === 'number' ? value.toFixed(1) : (0).toFixed(1);
 
   return (
     <div className={cn('relative w-full flex flex-col items-center justify-center gap-4', className)}>
       <div className="flex items-center gap-2">
         <Input 
           type="number"
-          value={typeof internalValue === 'number' ? internalValue : ''}
+          value={typeof value === 'number' ? value : ''}
           onChange={handleInputChange}
           className="w-24 text-center text-lg font-bold text-primary"
           step={effectiveStep}
@@ -139,7 +132,10 @@ export function HorizontalRuler({
       <div className="relative w-full h-24 flex items-center justify-center">
          <div className="absolute top-1/2 -translate-y-[calc(50%+12px)] left-1/2 -translate-x-1/2 flex flex-col items-center gap-1 z-10 pointer-events-none">
             <div className="w-px h-6 bg-primary" />
-            <div className="w-2 h-2 rounded-full bg-primary" />
+            <div className="relative flex items-center justify-center">
+              <div className="w-1.5 h-1.5 rounded-full bg-primary z-10" />
+              <div className="absolute w-4 h-4 rounded-full bg-primary/20" />
+            </div>
         </div>
         <div
           ref={rulerRef}
@@ -148,6 +144,12 @@ export function HorizontalRuler({
           onMouseUp={() => { 
             isDragging.current = false;
             handleScroll();
+          }}
+          onMouseLeave={() => {
+            if (isDragging.current) {
+              isDragging.current = false;
+              handleScroll();
+            }
           }}
           onTouchStart={() => { isDragging.current = true; }}
           onTouchEnd={() => {
