@@ -35,24 +35,23 @@ export function HorizontalRuler({
 
   useEffect(() => {
     const ruler = rulerRef.current;
-    if (!ruler || typeof value !== 'number') return;
+    if (!ruler || typeof value !== 'number' || isDragging.current) return;
   
     const center = ruler.clientWidth / 2;
     const scrollPosition = ((value - min) / effectiveStep) * TICK_WIDTH - center;
     
     // Only scroll if the new position is noticeably different from the current one
-    if (Math.abs(ruler.scrollLeft - scrollPosition) > TICK_WIDTH) {
+    if (Math.abs(ruler.scrollLeft - scrollPosition) > 1) { // smaller threshold for precision
         ruler.scrollTo({
           left: scrollPosition,
-          behavior: 'smooth'
+          behavior: 'auto' // use 'auto' for instant jump to avoid smooth scroll conflicts
         });
     }
   
   }, [value, min, effectiveStep]);
 
   const handleScroll = () => {
-    if (isDragging.current || !rulerRef.current) return;
-
+    if (!rulerRef.current) return;
     if (scrollTimeout.current) {
       clearTimeout(scrollTimeout.current);
     }
@@ -71,7 +70,7 @@ export function HorizontalRuler({
       if (finalValue !== value) {
          onChange(finalValue);
       }
-    }, 150); 
+    }, 50); // a small delay to batch scroll events
   };
   
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -80,7 +79,8 @@ export function HorizontalRuler({
         if (newValue >= min && newValue <= max) {
             onChange(newValue);
         }
-      } else {
+      } else if (e.target.value === '') {
+        // Allow clearing the input, maybe set to min
         onChange(min);
       }
   }
@@ -113,7 +113,7 @@ export function HorizontalRuler({
     return ticks;
   };
   
-  const displayValue = typeof value === 'number' ? value.toFixed(1) : (0).toFixed(1);
+  const displayValue = typeof value === 'number' ? value.toFixed(1) : (min).toFixed(1);
 
   return (
     <div className={cn('relative w-full flex flex-col items-center justify-center gap-4', className)}>
@@ -134,28 +134,17 @@ export function HorizontalRuler({
             <div className="w-px h-6 bg-primary" />
             <div className="relative flex items-center justify-center">
               <div className="w-1.5 h-1.5 rounded-full bg-primary z-10" />
-              <div className="absolute w-4 h-4 rounded-full bg-primary/20" />
+              <div className="absolute w-4 h-4 rounded-full bg-primary/20 animate-pulse" />
             </div>
         </div>
         <div
           ref={rulerRef}
           onScroll={handleScroll}
           onMouseDown={() => { isDragging.current = true; }}
-          onMouseUp={() => { 
-            isDragging.current = false;
-            handleScroll();
-          }}
-          onMouseLeave={() => {
-            if (isDragging.current) {
-              isDragging.current = false;
-              handleScroll();
-            }
-          }}
+          onMouseUp={() => { isDragging.current = false; }}
+          onMouseLeave={() => { isDragging.current = false; }}
           onTouchStart={() => { isDragging.current = true; }}
-          onTouchEnd={() => {
-            isDragging.current = false;
-            handleScroll();
-          }}
+          onTouchEnd={() => { isDragging.current = false; }}
           className="w-full overflow-x-scroll cursor-grab active:cursor-grabbing hide-scrollbar"
         >
           <div className="flex items-start" style={{ width: `${rulerWidth}px`, padding: `0 calc(50% - ${TICK_WIDTH/2}px)` }}>
@@ -170,6 +159,15 @@ export function HorizontalRuler({
         }
         .hide-scrollbar::-webkit-scrollbar {
           display: none; /* Chrome, Safari and Opera */
+        }
+        /* For browsers that support number input spinners */
+        input[type=number]::-webkit-inner-spin-button, 
+        input[type=number]::-webkit-outer-spin-button { 
+          -webkit-appearance: none; 
+          margin: 0; 
+        }
+        input[type=number] {
+          -moz-appearance: textfield; /* Firefox */
         }
       `}</style>
     </div>
