@@ -17,6 +17,11 @@ type MeasurementData = {
     [key in Measurement]: number;
 };
 
+type Slide3Data = {
+    measurements: MeasurementData,
+    measurementUnit: MeasurementUnit
+}
+
 type MeasurementPoint = {
   name: Measurement;
   imageUrl: string; 
@@ -36,24 +41,22 @@ const leftPoints: Measurement[] = ['Shoulder', 'Chest', 'Inseam'];
 const rightPoints: Measurement[] = ['Waist', 'Hips', 'Sleeve'];
 
 export default function MeasurementCard({ 
-    measurements, 
-    onMeasurementChange,
-    unit = 'cm',
-    onUnitChange,
+    defaultMeasurements,
+    defaultUnit,
     onBack,
     onFinish,
-    isSaving,
 }: { 
-    measurements: MeasurementData,
-    onMeasurementChange: (field: Measurement, value: number) => void;
-    unit: MeasurementUnit;
-    onUnitChange: (unit: MeasurementUnit) => void;
+    defaultMeasurements: MeasurementData,
+    defaultUnit: MeasurementUnit,
     onBack: () => void;
-    onFinish: () => void;
-    isSaving: boolean;
+    onFinish: (data: Slide3Data) => void;
 }) {
+  const [measurements, setMeasurements] = useState<MeasurementData>(defaultMeasurements);
+  const [unit, setUnit] = useState<MeasurementUnit>(defaultUnit);
   const [selectedMeasurement, setSelectedMeasurement] = useState<Measurement | null>(null);
   const [isOpen, setIsOpen] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
+
 
   useEffect(() => {
     if (!isOpen) {
@@ -63,9 +66,30 @@ export default function MeasurementCard({
 
   const handleValueChange = (value: number) => {
     if (selectedMeasurement) {
-      onMeasurementChange(selectedMeasurement, value);
+      setMeasurements(prev => ({ ...prev, [selectedMeasurement]: value }));
     }
   };
+
+  const handleUnitChange = (newUnit: MeasurementUnit) => {
+    if (newUnit === unit) return;
+
+    const conversionFactor = newUnit === 'inch' ? (1 / 2.54) : 2.54;
+    
+    const convertedMeasurements = Object.fromEntries(
+        Object.entries(measurements).map(([key, value]) => [
+            key,
+            Math.round((value * conversionFactor) * 10) / 10
+        ])
+    ) as MeasurementData;
+    
+    setMeasurements(convertedMeasurements);
+    setUnit(newUnit);
+  };
+  
+  const handleFinishClick = () => {
+    setIsSaving(true);
+    onFinish({ measurements, measurementUnit: unit });
+  }
 
   const getSliderMinMax = () => {
       const isCm = unit === 'cm';
@@ -119,7 +143,7 @@ export default function MeasurementCard({
           </div>
           <RadioGroup
             value={unit}
-            onValueChange={(val) => onUnitChange(val as MeasurementUnit)}
+            onValueChange={(val) => handleUnitChange(val as MeasurementUnit)}
             className="flex items-center space-x-2"
           >
             <div className="flex items-center space-x-1 space-y-0">
@@ -162,7 +186,7 @@ export default function MeasurementCard({
         <div className="w-full flex justify-between items-center border-t pt-4">
             <Button type="button" variant="ghost" onClick={onBack} disabled={isSaving}>Back</Button>
             <p className="text-sm text-muted-foreground">Step 3 of 3</p>
-            <Button type="button" onClick={onFinish} disabled={isSaving}>
+            <Button type="button" onClick={handleFinishClick} disabled={isSaving}>
                 {isSaving ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
                 Finish
             </Button>

@@ -428,51 +428,20 @@ type Slide3Data = z.infer<typeof slide3Schema>;
 
 
 function OnboardingSlide3({ onFinish, onBack, defaultValues }: { onFinish: (data: Slide3Data) => void; onBack: () => void; defaultValues: Partial<Slide3Data>}) {
-    const [measurements, setMeasurements] = useState<MeasurementData>(
-        defaultValues.measurements || {
-            Shoulder: 45, Chest: 98, Waist: 82, Hips: 104, Inseam: 78, Sleeve: 62
-        }
-    );
-    const [unit, setUnit] = useState<MeasurementUnit>(defaultValues.measurementUnit || 'cm');
-    const [isSaving, setIsSaving] = useState(false);
 
-    const handleMeasurementChange = (field: Measurement, value: number) => {
-        setMeasurements(prev => ({ ...prev, [field]: value }));
-    };
-
-    const handleUnitChange = (newUnit: MeasurementUnit) => {
-        if (newUnit === unit) return;
-
-        const conversionFactor = newUnit === 'inch' ? (1 / 2.54) : 2.54;
-        
-        const convertedMeasurements = Object.fromEntries(
-            Object.entries(measurements).map(([key, value]) => [
-                key,
-                Math.round((value * conversionFactor) * 10) / 10 // round to 1 decimal place
-            ])
-        ) as MeasurementData;
-        
-        setMeasurements(convertedMeasurements);
-        setUnit(newUnit);
-    };
-
-    const handleFinishClick = () => {
-        setIsSaving(true);
-        onFinish({ measurements, measurementUnit: unit });
+    const handleFinishClick = (data: Slide3Data) => {
+        onFinish(data);
     };
 
     return (
-        <Card className="w-full max-w-md mx-auto">
-          <MeasurementCard 
-              measurements={measurements} 
-              onMeasurementChange={handleMeasurementChange}
-              unit={unit}
-              onUnitChange={handleUnitChange}
-              onBack={onBack}
-              onFinish={handleFinishClick}
-              isSaving={isSaving}
-          />
-        </Card>
+        <MeasurementCard 
+            defaultMeasurements={defaultValues.measurements || {
+                Shoulder: 45, Chest: 98, Waist: 82, Hips: 104, Inseam: 78, Sleeve: 62
+            }}
+            defaultUnit={defaultValues.measurementUnit || 'cm'}
+            onBack={onBack}
+            onFinish={handleFinishClick}
+        />
     );
 }
 
@@ -482,6 +451,7 @@ export default function OnboardingFlow() {
   const [onboardingData, setOnboardingData] = useState<Partial<Slide1Data & Slide2Data & Slide3Data & { phoneNumber: string }>>({});
   const router = useRouter();
   const { toast } = useToast();
+  const [isSaving, setIsSaving] = useState(false);
 
   const handleSlide1Next = (data: Slide1Data, fullPhoneNumber: string) => {
     setOnboardingData(prev => ({ ...prev, ...data, phoneNumber: fullPhoneNumber }));
@@ -494,6 +464,7 @@ export default function OnboardingFlow() {
   };
 
   const handleSlide3Finish = async (data: Slide3Data) => {
+      setIsSaving(true);
       const finalData = { ...onboardingData, ...data, onboardingCompleted: true };
 
       const user = auth.currentUser;
@@ -504,17 +475,17 @@ export default function OnboardingFlow() {
               title: 'Error',
               description: 'You must be logged in to save your profile.',
           });
+          setIsSaving(false);
           return;
       }
       
       try {
         await updateUserProfile(user.uid, finalData);
         toast({
-            title: 'Profile Saved!',
-            description: "Your onboarding is complete. Welcome to Stitcher!",
+            title: 'Data saved',
         });
         router.push('/customer/dashboard');
-        router.refresh(); // Forces a refresh to re-evaluate the dashboard page
+        router.refresh();
       } catch (error) {
         console.error("Failed to save onboarding data:", error);
         toast({
@@ -522,6 +493,8 @@ export default function OnboardingFlow() {
             title: 'Save Failed',
             description: 'There was a problem saving your profile. Please try again.',
         });
+      } finally {
+        setIsSaving(false);
       }
   };
 
