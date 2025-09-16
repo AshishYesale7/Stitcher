@@ -462,44 +462,16 @@ function OnboardingSlide3({ onFinish, onBack, defaultValues }: { onFinish: (data
     };
 
     return (
-        <Card className="w-full max-w-md mx-auto flex flex-col h-[600px]">
-            <CardHeader>
-                <div className="flex justify-between items-center">
-                    <div>
-                        <CardTitle>Body Measurements</CardTitle>
-                        <CardDescription>Tap on a label to adjust.</CardDescription>
-                    </div>
-                    <RadioGroup
-                        value={unit}
-                        onValueChange={(val) => handleUnitChange(val as MeasurementUnit)}
-                        className="flex items-center space-x-2"
-                    >
-                        <div className="flex items-center space-x-1 space-y-0">
-                            <RadioGroupItem value="cm" id="cm" />
-                            <label htmlFor="cm" className="font-normal text-xs">cm</label>
-                        </div>
-                        <div className="flex items-center space-x-1 space-y-0">
-                            <RadioGroupItem value="inch" id="inch" />
-                            <label htmlFor="inch" className="font-normal text-xs">inch</label>
-                        </div>
-                    </RadioGroup>
-                </div>
-            </CardHeader>
-            <CardContent className="flex-1 flex flex-col justify-center">
-                <MeasurementCard 
-                    measurements={measurements} 
-                    onMeasurementChange={handleMeasurementChange}
-                    unit={unit}
-                />
-            </CardContent>
-            <CardFooter className="flex justify-between items-center">
-                <Button type="button" variant="ghost" onClick={onBack} disabled={isSaving}>Back</Button>
-                <p className="text-sm text-muted-foreground">Step 3 of 3</p>
-                <Button type="button" onClick={handleFinishClick} disabled={isSaving}>
-                    {isSaving ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
-                    Finish
-                </Button>
-            </CardFooter>
+        <Card className="w-full max-w-md mx-auto">
+          <MeasurementCard 
+              measurements={measurements} 
+              onMeasurementChange={handleMeasurementChange}
+              unit={unit}
+              onUnitChange={handleUnitChange}
+              onBack={onBack}
+              onFinish={handleFinishClick}
+              isSaving={isSaving}
+          />
         </Card>
     );
 }
@@ -569,5 +541,3 @@ export default function OnboardingFlow() {
         return <OnboardingSlide1 onNext={handleSlide1Next} defaultValues={onboardingData} />;
   }
 }
-
-    

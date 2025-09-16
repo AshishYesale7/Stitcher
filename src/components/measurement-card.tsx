@@ -5,6 +5,10 @@ import { useState, useEffect } from 'react';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
 import Image from 'next/image';
 import { HorizontalRuler } from '@/components/ui/horizontal-ruler';
+import { CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
+import { Button } from './ui/button';
+import { Loader2 } from 'lucide-react';
 
 type Measurement = 'Shoulder' | 'Chest' | 'Waist' | 'Hips' | 'Inseam' | 'Sleeve';
 type MeasurementUnit = 'cm' | 'inch';
@@ -34,11 +38,19 @@ const rightPoints: Measurement[] = ['Waist', 'Hips', 'Sleeve'];
 export default function MeasurementCard({ 
     measurements, 
     onMeasurementChange,
-    unit = 'cm'
+    unit = 'cm',
+    onUnitChange,
+    onBack,
+    onFinish,
+    isSaving,
 }: { 
     measurements: MeasurementData,
     onMeasurementChange: (field: Measurement, value: number) => void;
     unit: MeasurementUnit;
+    onUnitChange: (unit: MeasurementUnit) => void;
+    onBack: () => void;
+    onFinish: () => void;
+    isSaving: boolean;
 }) {
   const [selectedMeasurement, setSelectedMeasurement] = useState<Measurement | null>(null);
   const [isOpen, setIsOpen] = useState(false);
@@ -99,29 +111,61 @@ export default function MeasurementCard({
   );
 
   return (
-    <div className="grid grid-cols-5 gap-4 items-center">
-      {/* Left Column */}
-      <div className="col-span-1 flex flex-col space-y-8 relative z-10">
-        {leftPoints.map(renderMeasurementButton)}
-      </div>
+    <>
+      <CardHeader>
+        <div className="flex justify-between items-center">
+          <div>
+            <CardTitle>Body Measurements</CardTitle>
+            <CardDescription>Tap on a label to adjust.</CardDescription>
+          </div>
+          <RadioGroup
+            value={unit}
+            onValueChange={(val) => onUnitChange(val as MeasurementUnit)}
+            className="flex items-center space-x-2"
+          >
+            <div className="flex items-center space-x-1 space-y-0">
+              <RadioGroupItem value="cm" id="cm" />
+              <label htmlFor="cm" className="font-normal text-xs">cm</label>
+            </div>
+            <div className="flex items-center space-x-1 space-y-0">
+              <RadioGroupItem value="inch" id="inch" />
+              <label htmlFor="inch" className="font-normal text-xs">inch</label>
+            </div>
+          </RadioGroup>
+        </div>
+      </CardHeader>
+      <CardContent>
+        <div className="grid grid-cols-5 gap-4 items-center">
+          {/* Left Column */}
+          <div className="col-span-1 flex flex-col space-y-8 relative z-10">
+            {leftPoints.map(renderMeasurementButton)}
+          </div>
 
-      {/* Center Image */}
-      <div className="col-span-3 relative aspect-[3/4]">
-        <Image
-          src={selectedImageUrl}
-          alt="Tailor's dummy"
-          fill
-          className="object-contain rounded-lg"
-          priority
-        />
-      </div>
+          {/* Center Image */}
+          <div className="col-span-3 relative aspect-[3/4]">
+            <Image
+              src={selectedImageUrl}
+              alt="Tailor's dummy"
+              fill
+              className="object-contain rounded-lg"
+              priority
+            />
+          </div>
 
-      {/* Right Column */}
-      <div className="col-span-1 flex flex-col space-y-8 relative z-10">
-        {rightPoints.map(renderMeasurementButton)}
-      </div>
-    </div>
+          {/* Right Column */}
+          <div className="col-span-1 flex flex-col space-y-8 relative z-10">
+            {rightPoints.map(renderMeasurementButton)}
+          </div>
+        </div>
+      </CardContent>
+      <CardFooter className="flex justify-between items-center">
+          <Button type="button" variant="ghost" onClick={onBack} disabled={isSaving}>Back</Button>
+          <p className="text-sm text-muted-foreground">Step 3 of 3</p>
+          <Button type="button" onClick={onFinish} disabled={isSaving}>
+              {isSaving ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
+              Finish
+          </Button>
+      </CardFooter>
+    </>
   );
 }
-    
-
