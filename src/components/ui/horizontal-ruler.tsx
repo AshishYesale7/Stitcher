@@ -8,7 +8,6 @@ import { Input } from './input';
 interface HorizontalRulerProps {
   min?: number;
   max?: number;
-  step?: number;
   value: number;
   onChange: (value: number) => void;
   unit?: string;
@@ -41,7 +40,7 @@ export function HorizontalRuler({
   
   useEffect(() => {
     const ruler = rulerRef.current;
-    if (!ruler) return;
+    if (!ruler || typeof internalValue !== 'number') return;
   
     // Center the value
     const center = ruler.clientWidth / 2;
@@ -114,12 +113,14 @@ export function HorizontalRuler({
     return ticks;
   };
   
+  const displayValue = typeof value === 'number' ? value.toFixed(1) : '0.0';
+
   return (
     <div className={cn('relative w-full flex flex-col items-center justify-center gap-4', className)}>
       <div className="flex items-center gap-2">
         <Input 
           type="number"
-          value={value.toFixed(1)}
+          value={displayValue}
           onChange={handleInputChange}
           className="w-24 text-center text-lg font-bold text-primary"
           step={effectiveStep}
