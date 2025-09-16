@@ -22,6 +22,7 @@ import MeasurementCard from './measurement-card';
 const slide1Schema = z.object({
   fullName: z.string().min(3, { message: 'Full name must be at least 3 characters.' }),
   address: z.string().min(5, { message: 'Address must be at least 5 characters.' }),
+  phoneNumber: z.string().min(10, { message: 'Please enter a valid 10-digit phone number.' }).regex(/^\d{10}$/, { message: 'Phone number must be 10 digits.'}),
 });
 type Slide1Data = z.infer<typeof slide1Schema>;
 
@@ -69,6 +70,19 @@ function OnboardingSlide1({ onNext, defaultValues }: { onNext: (data: Slide1Data
                   <FormLabel>Address</FormLabel>
                   <FormControl>
                     <Input placeholder="e.g. 123 Main St, Anytown" {...field} value={field.value ?? ''} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+             <FormField
+              control={form.control}
+              name="phoneNumber"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Phone Number</FormLabel>
+                  <FormControl>
+                    <Input type="tel" placeholder="e.g. 9876543210" {...field} value={field.value ?? ''} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
