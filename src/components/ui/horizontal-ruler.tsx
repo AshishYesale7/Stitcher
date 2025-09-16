@@ -35,24 +35,25 @@ export function HorizontalRuler({
   const rulerWidth = useMemo(() => totalTicks * TICK_WIDTH, [totalTicks]);
 
   useEffect(() => {
-    setInternalValue(value);
+    // Only update if the parent's value is significantly different
+    if (Math.abs(value - internalValue) > 0.01) {
+        setInternalValue(value);
+    }
   }, [value]);
   
   useEffect(() => {
     const ruler = rulerRef.current;
     if (!ruler || typeof internalValue !== 'number') return;
   
-    // Center the value
     const center = ruler.clientWidth / 2;
     const scrollPosition = ((internalValue - min) / effectiveStep) * TICK_WIDTH - center;
     
-    // Smooth scroll to position
     ruler.scrollTo({
       left: scrollPosition,
       behavior: 'smooth'
     });
   
-  }, [internalValue, min, effectiveStep]);
+  }, [internalValue, min, effectiveStep, max]);
 
   const handleScroll = () => {
     if (!rulerRef.current) return;
@@ -74,14 +75,20 @@ export function HorizontalRuler({
   
       if (finalValue !== value) {
          onChange(finalValue);
+         setInternalValue(finalValue);
       }
-    }, 150); // debounce scroll event
+    }, 150); 
   };
   
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
       const newValue = parseFloat(e.target.value);
-      if (!isNaN(newValue) && newValue >= min && newValue <= max) {
-          onChange(newValue);
+      if (!isNaN(newValue)) {
+        setInternalValue(newValue); // Update internal state for typing
+        if (newValue >= min && newValue <= max) {
+            onChange(newValue); // Propagate change if valid
+        }
+      } else {
+        setInternalValue(0); // Handle empty input
       }
   }
 
@@ -113,14 +120,14 @@ export function HorizontalRuler({
     return ticks;
   };
   
-  const displayValue = typeof value === 'number' ? value.toFixed(1) : '0.0';
+  const displayValue = typeof internalValue === 'number' ? internalValue.toFixed(1) : (0).toFixed(1);
 
   return (
     <div className={cn('relative w-full flex flex-col items-center justify-center gap-4', className)}>
       <div className="flex items-center gap-2">
         <Input 
           type="number"
-          value={displayValue}
+          value={typeof internalValue === 'number' ? internalValue : ''}
           onChange={handleInputChange}
           className="w-24 text-center text-lg font-bold text-primary"
           step={effectiveStep}
