@@ -338,15 +338,15 @@ function OnboardingSlide2({ onNext, onBack, defaultValues }: { onNext: (data: Sl
                                                 >
                                                     <FormItem className="flex items-center space-x-1 space-y-0">
                                                         <FormControl><RadioGroupItem value="cm" /></FormControl>
-                                                        <FormLabel className="font-normal text-xs">cm</FormLabel>
+                                                        <FormLabel htmlFor="cm" className="font-normal text-xs">cm</FormLabel>
                                                     </FormItem>
                                                     <FormItem className="flex items-center space-x-1 space-y-0">
                                                         <FormControl><RadioGroupItem value="m" /></FormControl>
-                                                        <FormLabel className="font-normal text-xs">m</FormLabel>
+                                                        <FormLabel htmlFor="m" className="font-normal text-xs">m</FormLabel>
                                                     </FormItem>
                                                     <FormItem className="flex items-center space-x-1 space-y-0">
                                                         <FormControl><RadioGroupItem value="ft" /></FormControl>
-                                                        <FormLabel className="font-normal text-xs">ft</FormLabel>
+                                                        <FormLabel htmlFor="ft" className="font-normal text-xs">ft</FormLabel>
                                                     </FormItem>
                                                 </RadioGroup>
                                             </FormControl>
@@ -358,7 +358,7 @@ function OnboardingSlide2({ onNext, onBack, defaultValues }: { onNext: (data: Sl
                         </div>
 
                          <div className="space-y-2">
-                             <FormLabel>Weight ({weightUnit})</FormLabel>
+                             <FormLabel>Weight</FormLabel>
                              <div className="flex gap-2">
                                 <FormField
                                     control={form.control}
@@ -385,11 +385,11 @@ function OnboardingSlide2({ onNext, onBack, defaultValues }: { onNext: (data: Sl
                                                 >
                                                     <FormItem className="flex items-center space-x-1 space-y-0">
                                                         <FormControl><RadioGroupItem value="kg" /></FormControl>
-                                                        <FormLabel className="font-normal text-xs">kg</FormLabel>
+                                                        <FormLabel htmlFor="kg" className="font-normal text-xs">kg</FormLabel>
                                                     </FormItem>
                                                     <FormItem className="flex items-center space-x-1 space-y-0">
                                                         <FormControl><RadioGroupItem value="lbs" /></FormControl>
-                                                        <FormLabel className="font-normal text-xs">lbs</FormLabel>
+                                                        <FormLabel htmlFor="lbs" className="font-normal text-xs">lbs</FormLabel>
                                                     </FormItem>
                                                 </RadioGroup>
                                             </FormControl>
@@ -478,14 +478,14 @@ function OnboardingSlide3({ onFinish, onBack, defaultValues }: { onFinish: (data
                         onValueChange={(val) => handleUnitChange(val as MeasurementUnit)}
                         className="flex items-center space-x-2"
                         >
-                        <FormItem className="flex items-center space-x-1 space-y-0">
-                            <FormControl><RadioGroupItem value="cm" id="cm" /></FormControl>
-                            <FormLabel htmlFor="cm" className="font-normal text-xs">cm</FormLabel>
-                        </FormItem>
-                        <FormItem className="flex items-center space-x-1 space-y-0">
-                            <FormControl><RadioGroupItem value="inch" id="inch" /></FormControl>
-                            <FormLabel htmlFor="inch" className="font-normal text-xs">inch</FormLabel>
-                        </FormItem>
+                        <div className="flex items-center space-x-1 space-y-0">
+                            <RadioGroupItem value="cm" id="cm" />
+                            <label htmlFor="cm" className="font-normal text-xs">cm</label>
+                        </div>
+                        <div className="flex items-center space-x-1 space-y-0">
+                            <RadioGroupItem value="inch" id="inch" />
+                             <label htmlFor="inch" className="font-normal text-xs">inch</label>
+                        </div>
                     </RadioGroup>
                 </div>
             </CardHeader>
