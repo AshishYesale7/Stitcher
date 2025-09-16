@@ -22,15 +22,15 @@ type MeasurementPoint = {
 // We can update these URLs later as you provide them
 const points: MeasurementPoint[] = [
   { name: 'Shoulder', imageUrl: "https://cdn.shopify.com/s/files/1/1540/9157/files/size_picture_large.png?v=1534362322" },
-  { name: 'Chest', imageUrl: "https://i.imgur.com/aGv43aP.png" },
   { name: 'Waist', imageUrl: "https://i.imgur.com/JbocJ7d.png" },
+  { name: 'Chest', imageUrl: "https://i.imgur.com/aGv43aP.png" },
   { name: 'Hips', imageUrl: "https://i.imgur.com/Am15c0a.png" },
   { name: 'Inseam', imageUrl: "https://i.imgur.com/kS9o2d1.png" },
   { name: 'Sleeve', imageUrl: "https://i.imgur.com/YwDX6kL.png" },
 ];
 
-const leftPoints: Measurement[] = ['Shoulder', 'Waist', 'Inseam'];
-const rightPoints: Measurement[] = ['Chest', 'Hips', 'Sleeve'];
+const leftPoints: Measurement[] = ['Shoulder', 'Chest', 'Inseam'];
+const rightPoints: Measurement[] = ['Waist', 'Hips', 'Sleeve'];
 
 export default function MeasurementCard({ 
     measurements, 
