@@ -24,7 +24,11 @@ import { countries, type Country } from '@/lib/countries';
 // --- Slide 1: Basic Information ---
 const slide1Schema = z.object({
   fullName: z.string().min(3, { message: 'Full name must be at least 3 characters.' }),
-  address: z.string().min(5, { message: 'Address must be at least 5 characters.' }),
+  house: z.string().min(1, { message: 'Please enter a house number.' }),
+  street: z.string().min(3, { message: 'Street must be at least 3 characters.' }),
+  city: z.string().min(3, { message: 'City must be at least 3 characters.' }),
+  state: z.string().min(2, { message: 'State/Province must be at least 2 characters.' }),
+  zip: z.string().min(4, { message: 'Please enter a valid ZIP/PIN code.' }),
   phoneNumber: z.string().min(10, { message: 'Please enter a valid 10-digit phone number.' }).regex(/^\d{10}$/, { message: 'Phone number must be 10 digits.'}),
 });
 type Slide1Data = z.infer<typeof slide1Schema>;
@@ -56,7 +60,7 @@ function OnboardingSlide1({ onNext, defaultValues }: { onNext: (data: Slide1Data
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)}>
-        <Card className="w-full max-w-sm mx-auto">
+        <Card className="w-full max-w-lg mx-auto">
           <CardHeader>
             <CardTitle>Welcome to Stitcher</CardTitle>
             <CardDescription>Let's get your profile set up in a few quick steps.</CardDescription>
@@ -79,19 +83,75 @@ function OnboardingSlide1({ onNext, defaultValues }: { onNext: (data: Slide1Data
                 </FormItem>
               )}
             />
-            <FormField
-              control={form.control}
-              name="address"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Address</FormLabel>
-                  <FormControl>
-                    <Input placeholder="e.g. 123 Main St, Anytown" {...field} value={field.value ?? ''} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                 <FormField
+                  control={form.control}
+                  name="house"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>House No.</FormLabel>
+                      <FormControl>
+                        <Input placeholder="e.g. #123" {...field} value={field.value ?? ''} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="street"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Street</FormLabel>
+                      <FormControl>
+                        <Input placeholder="e.g. Main St" {...field} value={field.value ?? ''} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+            </div>
+             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                <FormField
+                  control={form.control}
+                  name="city"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>City</FormLabel>
+                      <FormControl>
+                        <Input placeholder="e.g. Anytown" {...field} value={field.value ?? ''} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                 <FormField
+                  control={form.control}
+                  name="state"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>State/Province</FormLabel>
+                      <FormControl>
+                        <Input placeholder="e.g. California" {...field} value={field.value ?? ''} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="zip"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>ZIP / PIN Code</FormLabel>
+                      <FormControl>
+                        <Input placeholder="e.g. 90210" {...field} value={field.value ?? ''} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+             </div>
              <FormField
               control={form.control}
               name="phoneNumber"
@@ -339,7 +399,8 @@ export default function OnboardingFlow() {
   const { toast } = useToast();
 
   const handleSlide1Next = (data: Slide1Data, fullPhoneNumber: string) => {
-    setOnboardingData(prev => ({ ...prev, ...data, phoneNumber: fullPhoneNumber }));
+    const address = `${data.house}, ${data.street}, ${data.city}, ${data.state}, ${data.zip}`;
+    setOnboardingData(prev => ({ ...prev, ...data, address, phoneNumber: fullPhoneNumber }));
     setStep(2);
   };
 
@@ -349,7 +410,7 @@ export default function OnboardingFlow() {
   };
 
   const handleSlide3Finish = async (data: Slide3Data) => {
-      const { phoneNumber, ...restData } = onboardingData;
+      const { phoneNumber, house, street, city, state, zip, ...restData } = onboardingData;
       const finalData = { ...restData, ...data, phoneNumber };
 
       const user = auth.currentUser;
@@ -397,5 +458,7 @@ export default function OnboardingFlow() {
         return <OnboardingSlide1 onNext={handleSlide1Next} defaultValues={onboardingData} />;
   }
 }
+
+    
 
     

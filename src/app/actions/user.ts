@@ -1,3 +1,4 @@
+
 'use server';
 
 import { doc, setDoc, getFirestore, serverTimestamp } from 'firebase/firestore';
@@ -63,11 +64,20 @@ export async function updateUserProfile(uid: string, data: any) {
         throw new Error('User UID is required to update profile.');
     }
 
+    const { house, street, city, state: st, zip, ...rest } = data;
+    const address = `${house}, ${street}, ${city}, ${st} ${zip}`;
+
     const userRef = doc(db, 'customers', uid);
 
     try {
         await setDoc(userRef, {
-            ...data,
+            ...rest,
+            address,
+            house,
+            street,
+            city,
+            state: st,
+            zip,
             onboardingCompleted: true,
             updatedAt: serverTimestamp(),
         }, { merge: true });
@@ -77,3 +87,5 @@ export async function updateUserProfile(uid: string, data: any) {
         throw new Error('Failed to update user profile.');
     }
 }
+
+    
