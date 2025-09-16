@@ -109,7 +109,7 @@ export default function MeasurementPage() {
     
     return (
         <div className="p-4 sm:p-6 lg:p-8 flex justify-center items-center">
-            <Card className="w-full max-w-sm mx-auto min-h-[200px]">
+            <Card className="w-full max-w-sm mx-auto min-h-[600px]">
                 <CardHeader>
                      <div className="flex justify-between items-center">
                         <div>
