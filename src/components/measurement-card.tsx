@@ -1,11 +1,11 @@
 
 'use client';
 
-import { useState } from 'react';
-import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
-import { Slider } from '@/components/ui/slider';
+import { useState, useEffect } from 'react';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import Image from 'next/image';
 import { Label } from '@/components/ui/label';
+import { HorizontalRuler } from '@/components/ui/horizontal-ruler';
 
 type Measurement = 'Shoulder' | 'Chest' | 'Waist' | 'Hips' | 'Inseam' | 'Sleeve';
 type MeasurementUnit = 'cm' | 'inch';
@@ -29,8 +29,8 @@ const points: MeasurementPoint[] = [
   { name: 'Sleeve', imageUrl: "https://i.imgur.com/YwDX6kL.png" },
 ];
 
-const leftPoints: Measurement[] = ['Shoulder', 'Chest', 'Inseam'];
-const rightPoints: Measurement[] = ['Waist', 'Hips', 'Sleeve'];
+const leftPoints: Measurement[] = ['Shoulder', 'Waist', 'Inseam'];
+const rightPoints: Measurement[] = ['Chest', 'Hips', 'Sleeve'];
 
 export default function MeasurementCard({ 
     measurements, 
@@ -42,15 +42,23 @@ export default function MeasurementCard({
     unit: MeasurementUnit;
 }) {
   const [selectedMeasurement, setSelectedMeasurement] = useState<Measurement | null>(null);
+  const [isOpen, setIsOpen] = useState(false);
 
-  const handleSliderChange = (value: number[]) => {
+  useEffect(() => {
+    if (!isOpen) {
+      setSelectedMeasurement(null);
+    }
+  }, [isOpen]);
+
+  const handleValueChange = (value: number) => {
     if (selectedMeasurement) {
-      onMeasurementChange(selectedMeasurement, value[0]);
+      onMeasurementChange(selectedMeasurement, value);
     }
   };
 
   const getSliderMinMax = () => {
       const isCm = unit === 'cm';
+      // Based on common human measurements
       return {
           min: isCm ? 20 : 8,
           max: isCm ? 200 : 80
@@ -60,42 +68,40 @@ export default function MeasurementCard({
   const selectedImageUrl = points.find(p => p.name === selectedMeasurement)?.imageUrl || "https://i.pinimg.com/736x/2d/07/2f/2d072f7858370dbb0ff1703d8e3c75f7.jpg";
   
   const renderMeasurementButton = (pointName: Measurement) => (
-      <Sheet key={pointName} onOpenChange={(isOpen) => !isOpen && setSelectedMeasurement(null)}>
-          <SheetTrigger
-            asChild
-            onClick={() => setSelectedMeasurement(pointName)}
-          >
+      <Dialog key={pointName} open={selectedMeasurement === pointName && isOpen} onOpenChange={(open) => { setIsOpen(open); if (open) setSelectedMeasurement(pointName)}}>
+          <DialogTrigger asChild>
             <div
               className={`flex flex-col items-center justify-center p-2 rounded-lg cursor-pointer transition-all ${
                 selectedMeasurement === pointName
                   ? 'bg-primary text-primary-foreground shadow-lg scale-105'
                   : 'bg-background/80 backdrop-blur-sm border shadow-md'
               }`}
+              onClick={() => setSelectedMeasurement(pointName)}
             >
               <div className="text-xs font-semibold">{pointName}</div>
               <div className="text-xs font-bold">{measurements[pointName]} {unit}</div>
             </div>
-          </SheetTrigger>
-          <SheetContent side="bottom">
-            <SheetHeader>
-              <SheetTitle>Set {selectedMeasurement} Measurement</SheetTitle>
-            </SheetHeader>
+          </DialogTrigger>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Set {selectedMeasurement} Measurement</DialogTitle>
+            </DialogHeader>
             <div className="py-8">
-              <div className="flex justify-between items-center mb-4">
-                <Label htmlFor="measurement-slider" className="text-lg">{selectedMeasurement}</Label>
-                <span className="text-lg font-bold text-primary">{measurements[selectedMeasurement!]} {unit}</span>
+               <div className="flex justify-between items-center mb-4">
+                <Label className="text-lg">{selectedMeasurement}</Label>
+                <span className="text-lg font-bold text-primary">{measurements[selectedMeasurement!]?.toFixed(1)} {unit}</span>
               </div>
-              <Slider
-                id="measurement-slider"
+              <HorizontalRuler
                 min={getSliderMinMax().min}
                 max={getSliderMinMax().max}
                 step={unit === 'cm' ? 1 : 0.1}
-                value={[measurements[selectedMeasurement!]]}
-                onValueChange={handleSliderChange}
+                value={measurements[selectedMeasurement!]}
+                onChange={handleValueChange}
+                unit={unit}
               />
             </div>
-          </SheetContent>
-        </Sheet>
+          </DialogContent>
+        </Dialog>
   );
 
   return (

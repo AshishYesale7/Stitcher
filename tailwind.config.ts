@@ -1,3 +1,4 @@
+
 import type {Config} from 'tailwindcss';
 
 export default {
@@ -63,6 +64,7 @@ export default {
           '4': 'hsl(var(--chart-4))',
           '5': 'hsl(var(--chart-5))',
         },
+        ruler: 'hsl(var(--muted-foreground) / 0.5)',
       },
       borderRadius: {
         lg: "var(--radius)",
