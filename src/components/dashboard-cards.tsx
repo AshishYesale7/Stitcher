@@ -35,17 +35,16 @@ export default function DashboardCards() {
           </div>
         </div>
 
-        <div className="card red">
-          
+        <div className="card purple">
           <div className="card-body">
-            <h3>Book Order</h3>
-            <Notebook className="w-8 h-8 mx-auto my-2 text-white" />
-            <p>Create a new order</p>
+            <h3>Measurement</h3>
+            <Ruler className="w-8 h-8 mx-auto my-2 text-white" />
+            <p>Save your measurements</p>
             <div className="progress">
             </div>
           </div>
           <div className="card-footer">
-            <Link href="/customer/book-order" className="btn-countdown">Book Now</Link>
+            <Link href="/customer/measurement" className="btn-countdown">Manage</Link>
           </div>
         </div>
 
@@ -63,16 +62,17 @@ export default function DashboardCards() {
           </div>
         </div>
 
-        <div className="card purple">
+        <div className="card red">
+          
           <div className="card-body">
-            <h3>Measurement</h3>
-            <Ruler className="w-8 h-8 mx-auto my-2 text-white" />
-            <p>Save your measurements</p>
+            <h3>Book Order</h3>
+            <Notebook className="w-8 h-8 mx-auto my-2 text-white" />
+            <p>Create a new order</p>
             <div className="progress">
             </div>
           </div>
           <div className="card-footer">
-            <Link href="/customer/measurement" className="btn-countdown">Manage</Link>
+            <Link href="/customer/book-order" className="btn-countdown">Book Now</Link>
           </div>
         </div>
 
