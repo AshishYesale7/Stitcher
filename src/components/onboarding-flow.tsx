@@ -466,7 +466,7 @@ function OnboardingSlide3({ onFinish, onBack, defaultValues }: { onFinish: (data
     };
 
     return (
-        <Card className="w-full max-w-md mx-auto">
+        <Card className="w-full max-w-md mx-auto flex flex-col h-[800px]">
             <CardHeader>
                 <div className="flex justify-between items-center">
                     <div>
@@ -478,18 +478,18 @@ function OnboardingSlide3({ onFinish, onBack, defaultValues }: { onFinish: (data
                         onValueChange={(val) => handleUnitChange(val as MeasurementUnit)}
                         className="flex items-center space-x-2"
                     >
-                        <div className="flex items-center space-x-1">
-                            <RadioGroupItem value="cm" id="cm" />
-                            <label htmlFor="cm" className="text-xs font-normal">cm</label>
-                        </div>
-                        <div className="flex items-center space-x-1">
-                            <RadioGroupItem value="inch" id="inch" />
-                            <label htmlFor="inch" className="text-xs font-normal">inch</label>
-                        </div>
+                        <FormItem className="flex items-center space-x-1 space-y-0">
+                            <FormControl><RadioGroupItem value="cm" id="cm" /></FormControl>
+                            <FormLabel htmlFor="cm" className="font-normal text-xs">cm</FormLabel>
+                        </FormItem>
+                        <FormItem className="flex items-center space-x-1 space-y-0">
+                            <FormControl><RadioGroupItem value="inch" id="inch" /></FormControl>
+                            <FormLabel htmlFor="inch" className="font-normal text-xs">inch</FormLabel>
+                        </FormItem>
                     </RadioGroup>
                 </div>
             </CardHeader>
-            <CardContent>
+            <CardContent className="flex-1 flex items-center">
                 <MeasurementCard 
                     measurements={measurements} 
                     onMeasurementChange={handleMeasurementChange}
@@ -599,3 +599,5 @@ export default function OnboardingFlow() {
     
 
       
+
+    
