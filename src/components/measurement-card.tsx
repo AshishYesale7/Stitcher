@@ -101,7 +101,7 @@ export default function MeasurementCard({
   return (
     <div className="grid grid-cols-5 gap-4 items-center">
       {/* Left Column */}
-      <div className="col-span-1 flex flex-col space-y-8">
+      <div className="col-span-1 flex flex-col space-y-8 relative z-10">
         {leftPoints.map(renderMeasurementButton)}
       </div>
 
@@ -117,7 +117,7 @@ export default function MeasurementCard({
       </div>
 
       {/* Right Column */}
-      <div className="col-span-1 flex flex-col space-y-8">
+      <div className="col-span-1 flex flex-col space-y-8 relative z-10">
         {rightPoints.map(renderMeasurementButton)}
       </div>
     </div>
