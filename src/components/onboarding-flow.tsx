@@ -228,7 +228,8 @@ function OnboardingSlide1({ onNext, defaultValues }: { onNext: (data: Slide1Data
 const slide2Schema = z.object({
     gender: z.enum(['male', 'female', 'other'], { required_error: 'Please select a gender.' }),
     age: z.coerce.number().min(10, { message: 'You must be at least 10 years old.' }).max(120),
-    height: z.coerce.number().min(100, { message: 'Height must be at least 100cm.' }),
+    height: z.coerce.number().min(1, { message: 'Height must be a positive number.' }),
+    heightUnit: z.enum(['cm', 'm', 'ft']),
     weight: z.coerce.number().min(30, { message: 'Weight must be at least 30kg.' }),
 });
 type Slide2Data = z.infer<typeof slide2Schema>;
@@ -236,8 +237,13 @@ type Slide2Data = z.infer<typeof slide2Schema>;
 function OnboardingSlide2({ onNext, onBack, defaultValues }: { onNext: (data: Slide2Data) => void; onBack: () => void; defaultValues: Partial<Slide2Data>}) {
     const form = useForm<Slide2Data>({
         resolver: zodResolver(slide2Schema),
-        defaultValues,
+        defaultValues: {
+            ...defaultValues,
+            heightUnit: defaultValues.heightUnit || 'cm',
+        },
     });
+
+    const heightUnit = form.watch('heightUnit');
 
     const onSubmit: SubmitHandler<Slide2Data> = (data) => {
         onNext(data);
@@ -301,19 +307,53 @@ function OnboardingSlide2({ onNext, onBack, defaultValues }: { onNext: (data: Sl
                                 </FormItem>
                             )}
                         />
-                        <FormField
-                            control={form.control}
-                            name="height"
-                            render={({ field }) => (
-                                <FormItem>
-                                <FormLabel>Height (cm)</FormLabel>
-                                <FormControl>
-                                    <Input type="number" placeholder="175" {...field} value={field.value ?? ''} />
-                                </FormControl>
-                                <FormMessage />
-                                </FormItem>
-                            )}
-                        />
+                        <div className="space-y-2">
+                             <FormLabel>Height</FormLabel>
+                             <div className="flex gap-2">
+                                <FormField
+                                    control={form.control}
+                                    name="height"
+                                    render={({ field }) => (
+                                        <FormItem className="flex-1">
+                                        <FormControl>
+                                            <Input type="number" placeholder={heightUnit === 'cm' ? '175' : heightUnit === 'm' ? '1.75' : '5.9'} {...field} value={field.value ?? ''} />
+                                        </FormControl>
+                                        <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
+                                 <FormField
+                                    control={form.control}
+                                    name="heightUnit"
+                                    render={({ field }) => (
+                                        <FormItem className="space-y-3">
+                                            <FormControl>
+                                                <RadioGroup
+                                                onValueChange={field.onChange}
+                                                defaultValue={field.value}
+                                                className="flex h-10 items-center space-x-2 rounded-md border border-input px-3"
+                                                >
+                                                    <FormItem className="flex items-center space-x-1 space-y-0">
+                                                        <FormControl><RadioGroupItem value="cm" /></FormControl>
+                                                        <FormLabel className="font-normal text-xs">cm</FormLabel>
+                                                    </FormItem>
+                                                    <FormItem className="flex items-center space-x-1 space-y-0">
+                                                        <FormControl><RadioGroupItem value="m" /></FormControl>
+                                                        <FormLabel className="font-normal text-xs">m</FormLabel>
+                                                    </FormItem>
+                                                    <FormItem className="flex items-center space-x-1 space-y-0">
+                                                        <FormControl><RadioGroupItem value="ft" /></FormControl>
+                                                        <FormLabel className="font-normal text-xs">ft</FormLabel>
+                                                    </FormItem>
+                                                </RadioGroup>
+                                            </FormControl>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
+                             </div>
+                        </div>
+
                         <FormField
                             control={form.control}
                             name="weight"
