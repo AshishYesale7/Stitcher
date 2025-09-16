@@ -473,18 +473,20 @@ function OnboardingSlide3({ onFinish, onBack, defaultValues }: { onFinish: (data
                         <CardTitle>Body Measurements</CardTitle>
                         <CardDescription>Tap on a label to adjust.</CardDescription>
                     </div>
-                     <div
+                     <RadioGroup
+                        defaultValue={unit}
+                        onValueChange={(val) => handleUnitChange(val as MeasurementUnit)}
                         className="flex items-center space-x-2"
                         >
                         <div className="flex items-center space-x-1 space-y-0">
-                            <RadioGroupItem value="cm" id="cm" checked={unit === 'cm'} onClick={() => handleUnitChange('cm')} />
+                            <RadioGroupItem value="cm" id="cm" />
                             <label htmlFor="cm" className="font-normal text-xs">cm</label>
                         </div>
                         <div className="flex items-center space-x-1 space-y-0">
-                            <RadioGroupItem value="inch" id="inch" checked={unit === 'inch'} onClick={() => handleUnitChange('inch')} />
+                            <RadioGroupItem value="inch" id="inch" />
                              <label htmlFor="inch" className="font-normal text-xs">inch</label>
                         </div>
-                    </div>
+                    </RadioGroup>
                 </div>
             </CardHeader>
             <CardContent>
@@ -597,4 +599,5 @@ export default function OnboardingFlow() {
     
 
     
+
 
