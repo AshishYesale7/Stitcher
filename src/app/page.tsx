@@ -30,7 +30,7 @@ export default function Home() {
         <div className="blur"></div>
       </div>
       <div className="flex flex-col h-dvh overflow-hidden">
-        <nav className="relative">
+        <nav className="relative flex w-full items-center justify-between">
           <Link href="/" className="sitename flex items-center gap-2 text-black absolute left-5 top-4">
             <Logo />
             Stitcher
@@ -43,7 +43,7 @@ export default function Home() {
               Privacy Policy
             </Link>
           </div>
-          <div className="material-icons">
+          <div className="material-icons absolute right-5 top-4">
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button variant="ghost" size="icon">
