@@ -466,7 +466,7 @@ function OnboardingSlide3({ onFinish, onBack, defaultValues }: { onFinish: (data
     };
 
     return (
-        <Card className="w-full max-w-md mx-auto flex flex-col h-[800px]">
+        <Card className="w-full max-w-md mx-auto flex flex-col h-[600px]">
             <CardHeader>
                 <div className="flex justify-between items-center">
                     <div>
@@ -599,6 +599,8 @@ export default function OnboardingFlow() {
     
 
       
+
+    
 
     
 
