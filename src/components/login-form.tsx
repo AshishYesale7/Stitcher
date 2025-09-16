@@ -156,7 +156,8 @@ export default function LoginForm({ userType }: { userType: 'customer' | 'tailor
             'callback': () => {},
         });
         
-        const fullPhoneNumber = `${selectedCountry.dial_code}${phone}`;
+        const sanitizedPhone = phone.replace(/\D/g, '');
+        const fullPhoneNumber = `${selectedCountry.dial_code}${sanitizedPhone}`;
         const confirmationResult = await signInWithPhoneNumber(auth, fullPhoneNumber, window.recaptchaVerifier);
         window.confirmationResult = confirmationResult;
         setStep('otp');
