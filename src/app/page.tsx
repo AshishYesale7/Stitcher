@@ -30,17 +30,19 @@ export default function Home() {
         <div className="blur"></div>
       </div>
       <div className="flex flex-col h-dvh overflow-hidden">
-        <nav className="px-[10%]">
-          <Link href="/" className="sitename flex items-center gap-2 text-black -ml-4">
+        <nav className="relative">
+          <Link href="/" className="sitename flex items-center gap-2 text-black absolute left-5 top-4">
             <Logo />
             Stitcher
           </Link>
-          <Link href="/terms" className="menu">
-            Terms & Conditions
-          </Link>
-          <Link href="/privacy" className="menu">
-            Privacy Policy
-          </Link>
+          <div className="flex-1 flex justify-center items-center gap-8">
+            <Link href="/terms" className="menu">
+              Terms & Conditions
+            </Link>
+            <Link href="/privacy" className="menu">
+              Privacy Policy
+            </Link>
+          </div>
           <div className="material-icons">
             <DropdownMenu>
               <DropdownMenuTrigger asChild>

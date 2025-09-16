@@ -91,7 +91,7 @@
   }
   
   nav {
-    @apply flex flex-row items-center gap-8 text-[color:var(--textDim)] w-full py-4;
+    @apply flex flex-row items-center text-[color:var(--textDim)] w-full py-4;
     z-index: 9999;
   }
 
