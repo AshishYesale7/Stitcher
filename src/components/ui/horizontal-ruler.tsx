@@ -137,7 +137,10 @@ export function HorizontalRuler({
         <span className="text-lg font-bold text-primary">{unit}</span>
       </div>
       <div className="relative w-full h-24 flex items-center justify-center">
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-0 h-0 border-x-8 border-x-transparent border-t-8 border-t-primary" />
+         <div className="absolute top-1/2 -translate-y-[calc(50%+12px)] left-1/2 -translate-x-1/2 flex flex-col items-center gap-1 z-10 pointer-events-none">
+            <div className="w-px h-6 bg-primary" />
+            <div className="w-2 h-2 rounded-full bg-primary" />
+        </div>
         <div
           ref={rulerRef}
           onScroll={handleScroll}
