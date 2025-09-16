@@ -29,8 +29,8 @@ const points: MeasurementPoint[] = [
   { name: 'Sleeve', imageUrl: "https://i.imgur.com/YwDX6kL.png" },
 ];
 
-const leftPoints: Measurement[] = ['Shoulder', 'Waist', 'Inseam'];
-const rightPoints: Measurement[] = ['Chest', 'Hips', 'Sleeve'];
+const leftPoints: Measurement[] = ['Shoulder', 'Chest', 'Inseam'];
+const rightPoints: Measurement[] = ['Waist', 'Hips', 'Sleeve'];
 
 export default function MeasurementCard({ 
     measurements, 
