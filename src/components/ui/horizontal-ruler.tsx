@@ -1,7 +1,7 @@
 
 'use client';
 
-import { useRef, useEffect, useMemo } from 'react';
+import { useRef, useEffect, useMemo, useState } from 'react';
 import { cn } from '@/lib/utils';
 import { Input } from './input';
 
@@ -30,9 +30,17 @@ export function HorizontalRuler({
   const startX = useRef(0);
   const scrollLeftStart = useRef(0);
 
+  const [inputValue, setInputValue] = useState(value.toFixed(1));
+
   const effectiveStep = 0.1;
   const totalTicks = useMemo(() => Math.round((max - min) / effectiveStep), [min, max, effectiveStep]);
   const rulerWidth = useMemo(() => totalTicks * TICK_WIDTH, [totalTicks]);
+
+  useEffect(() => {
+    if (!isDragging.current) {
+        setInputValue(value.toFixed(1));
+    }
+  }, [value]);
 
   useEffect(() => {
     const ruler = rulerRef.current;
@@ -79,6 +87,7 @@ export function HorizontalRuler({
   };
 
   const handleDragEnd = () => {
+    if (!isDragging.current) return;
     isDragging.current = false;
     if (rulerRef.current) {
       rulerRef.current.style.cursor = 'grab';
@@ -88,16 +97,19 @@ export function HorizontalRuler({
 
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-      const newValue = parseFloat(e.target.value);
-      if (!isNaN(newValue)) {
-        if (newValue >= min && newValue <= max) {
-            onChange(newValue);
-        }
-      } else if (e.target.value === '') {
-        onChange(min);
-      }
-  }
+      setInputValue(e.target.value);
+  };
 
+  const handleInputBlur = () => {
+    let newValue = parseFloat(inputValue);
+    if (isNaN(newValue)) {
+        newValue = min;
+    }
+    const clampedValue = Math.max(min, Math.min(max, newValue));
+    onChange(clampedValue);
+    setInputValue(clampedValue.toFixed(1));
+  };
+  
   const renderTicks = () => {
     const ticks = [];
     for (let i = 0; i <= totalTicks; i++) {
@@ -126,29 +138,25 @@ export function HorizontalRuler({
     return ticks;
   };
   
-  const displayValue = typeof value === 'number' ? value.toFixed(1) : (min).toFixed(1);
-
   return (
     <div className={cn('relative w-full flex flex-col items-center justify-center gap-4', className)}>
       <div className="flex items-center gap-2">
         <Input 
-          type="number"
-          value={displayValue}
+          type="text"
+          value={inputValue}
           onChange={handleInputChange}
+          onBlur={handleInputBlur}
           className="w-24 text-center text-lg font-bold text-primary"
-          step={effectiveStep}
-          min={min}
-          max={max}
         />
         <span className="text-lg font-bold text-primary">{unit}</span>
       </div>
       <div className="relative w-full h-24 flex items-center justify-center">
          <div className="absolute top-1/2 -translate-y-[calc(50%+12px)] left-1/2 -translate-x-1/2 flex flex-col items-center gap-1 z-10 pointer-events-none">
-            <div className="w-px h-6 bg-primary" />
-            <div className="relative flex items-center justify-center">
-              <div className="w-1.5 h-1.5 rounded-full bg-primary z-10" />
+             <div className="relative flex items-center justify-center">
               <div className="absolute w-4 h-4 rounded-full bg-primary/20 animate-pulse" />
+              <div className="w-1.5 h-1.5 rounded-full bg-primary z-10" />
             </div>
+            <div className="w-px h-6 bg-primary" />
         </div>
         <div
           ref={rulerRef}
