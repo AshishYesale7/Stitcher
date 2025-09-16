@@ -230,7 +230,8 @@ const slide2Schema = z.object({
     age: z.coerce.number().min(10, { message: 'You must be at least 10 years old.' }).max(120),
     height: z.coerce.number().min(1, { message: 'Height must be a positive number.' }),
     heightUnit: z.enum(['cm', 'm', 'ft']),
-    weight: z.coerce.number().min(30, { message: 'Weight must be at least 30kg.' }),
+    weight: z.coerce.number().min(30, { message: 'Weight must be at least 30.' }),
+    weightUnit: z.enum(['kg', 'lbs']),
 });
 type Slide2Data = z.infer<typeof slide2Schema>;
 
@@ -240,10 +241,12 @@ function OnboardingSlide2({ onNext, onBack, defaultValues }: { onNext: (data: Sl
         defaultValues: {
             ...defaultValues,
             heightUnit: defaultValues.heightUnit || 'cm',
+            weightUnit: defaultValues.weightUnit || 'kg',
         },
     });
 
     const heightUnit = form.watch('heightUnit');
+    const weightUnit = form.watch('weightUnit');
 
     const onSubmit: SubmitHandler<Slide2Data> = (data) => {
         onNext(data);
@@ -354,19 +357,48 @@ function OnboardingSlide2({ onNext, onBack, defaultValues }: { onNext: (data: Sl
                              </div>
                         </div>
 
-                        <FormField
-                            control={form.control}
-                            name="weight"
-                            render={({ field }) => (
-                                <FormItem>
-                                <FormLabel>Weight (kg)</FormLabel>
-                                <FormControl>
-                                    <Input type="number" placeholder="70" {...field} value={field.value ?? ''} />
-                                </FormControl>
-                                <FormMessage />
-                                </FormItem>
-                            )}
-                        />
+                         <div className="space-y-2">
+                             <FormLabel>Weight ({weightUnit})</FormLabel>
+                             <div className="flex gap-2">
+                                <FormField
+                                    control={form.control}
+                                    name="weight"
+                                    render={({ field }) => (
+                                        <FormItem className="flex-1">
+                                        <FormControl>
+                                            <Input type="number" placeholder={weightUnit === 'kg' ? '70' : '154'} {...field} value={field.value ?? ''} />
+                                        </FormControl>
+                                        <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
+                                 <FormField
+                                    control={form.control}
+                                    name="weightUnit"
+                                    render={({ field }) => (
+                                        <FormItem className="space-y-3">
+                                            <FormControl>
+                                                <RadioGroup
+                                                onValueChange={field.onChange}
+                                                defaultValue={field.value}
+                                                className="flex h-10 items-center space-x-2 rounded-md border border-input px-3"
+                                                >
+                                                    <FormItem className="flex items-center space-x-1 space-y-0">
+                                                        <FormControl><RadioGroupItem value="kg" /></FormControl>
+                                                        <FormLabel className="font-normal text-xs">kg</FormLabel>
+                                                    </FormItem>
+                                                    <FormItem className="flex items-center space-x-1 space-y-0">
+                                                        <FormControl><RadioGroupItem value="lbs" /></FormControl>
+                                                        <FormLabel className="font-normal text-xs">lbs</FormLabel>
+                                                    </FormItem>
+                                                </RadioGroup>
+                                            </FormControl>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
+                             </div>
+                        </div>
                     </CardContent>
                     <CardFooter className="flex justify-between">
                         <Button type="button" variant="ghost" onClick={onBack}>Back</Button>
