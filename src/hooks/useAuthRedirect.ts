@@ -1,7 +1,7 @@
 
 'use client';
 
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
 import { onAuthStateChanged, type User } from 'firebase/auth';
 import { doc, getDoc, getFirestore } from 'firebase/firestore';
@@ -35,22 +35,44 @@ async function getUserProfile(user: User): Promise<UserProfile | null> {
 export function useAuthRedirect() {
   const router = useRouter();
   const pathname = usePathname();
+  const [checking, setChecking] = useState(true);
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, async (user) => {
+    const isAuthPage = pathname.includes('/login') || pathname === '/';
+    if (!isAuthPage) {
+        setChecking(false);
+        return;
+    }
+
+    // Immediately check if a user is already authenticated
+    if (auth.currentUser) {
+      handleRedirect(auth.currentUser);
+      setChecking(false);
+      return;
+    }
+
+    // If no user, set up the listener
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
       if (user) {
-        // If user is logged in, but not on a dashboard, redirect them.
-        // This handles cases where a logged-in user visits the homepage.
-        if (!pathname.includes('/dashboard')) {
-            const userProfile = await getUserProfile(user);
-            if (userProfile) {
-                const targetDashboard = `/${userProfile.role}/dashboard`;
-                router.push(targetDashboard);
-            }
-        }
+        handleRedirect(user);
       }
+      setChecking(false);
     });
 
     return () => unsubscribe();
-  }, [router, pathname]);
+  }, [pathname, router]);
+
+  const handleRedirect = async (user: User) => {
+    const userProfile = await getUserProfile(user);
+    if (userProfile) {
+        const targetDashboard = `/${userProfile.role}/dashboard`;
+        if (pathname !== targetDashboard) {
+            router.push(targetDashboard);
+        }
+    }
+    // If no profile, user will stay on login/home to be handled by other logic
+    // or to allow profile creation.
+  };
+
+  return checking;
 }
