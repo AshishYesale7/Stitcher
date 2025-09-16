@@ -19,7 +19,12 @@ import { auth } from '@/lib/firebase';
 import { signOut, onAuthStateChanged } from 'firebase/auth';
 import { useRouter } from 'next/navigation';
 
-export default function DashboardHeader() {
+type DashboardHeaderProps = {
+  showSidebarTrigger?: boolean;
+};
+
+
+export default function DashboardHeader({ showSidebarTrigger = true }: DashboardHeaderProps) {
   const [theme, setTheme] = useState('light');
   const [user, setUser] = useState(auth.currentUser);
   const router = useRouter();
@@ -62,7 +67,7 @@ export default function DashboardHeader() {
 
   return (
     <header className="sticky top-0 z-10 flex h-16 items-center gap-4 border-b bg-background/60 backdrop-blur-sm px-4 md:px-6 text-primary">
-      <SidebarTrigger className="md:hidden" />
+      {showSidebarTrigger && <SidebarTrigger className="md:hidden" />}
        <div className="flex w-full items-center justify-between">
         <h1 className="text-xl font-bold font-headline">Stitcher</h1>
         <div className="flex items-center gap-4">

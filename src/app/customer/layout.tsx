@@ -15,7 +15,7 @@ export default function CustomerLayout({ children }: { children: ReactNode }) {
 
   return (
     <div className="flex min-h-screen w-full flex-col">
-      <DashboardHeader />
+      <DashboardHeader showSidebarTrigger={false} />
       <main>
         {children}
       </main>

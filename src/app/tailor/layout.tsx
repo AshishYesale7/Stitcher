@@ -20,7 +20,7 @@ export default function TailorLayout({ children }: { children: ReactNode }) {
         <TailorSidebar />
       </Sidebar>
       <SidebarInset>
-        <DashboardHeader />
+        <DashboardHeader showSidebarTrigger={true} />
         <main className="p-4 sm:p-6 lg:p-8">
           {children}
         </main>
