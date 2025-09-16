@@ -1,5 +1,4 @@
 
-
 'use client';
 
 import { useState, useEffect } from 'react';
@@ -34,11 +33,12 @@ const slide1Schema = z.object({
 });
 type Slide1Data = z.infer<typeof slide1Schema>;
 
-function OnboardingSlide1({ onNext, defaultValues }: { onNext: (data: Slide1Data, fullPhoneNumber: string) => void; defaultValues: Partial<Slide1Data> }) {
+function OnboardingSlide1({ onNext, defaultValues }: { onNext: (data: Slide1Data, fullPhoneNumber: string) => Promise<void>; defaultValues: Partial<Slide1Data> }) {
   const form = useForm<Slide1Data>({
     resolver: zodResolver(slide1Schema),
     defaultValues,
   });
+  const [isSaving, setIsSaving] = useState(false);
 
   const [popoverOpen, setPopoverOpen] = useState(false);
   const [selectedCountry, setSelectedCountry] = useState<Country>(
@@ -53,9 +53,11 @@ function OnboardingSlide1({ onNext, defaultValues }: { onNext: (data: Slide1Data
   }, [selectedCountry]);
 
 
-  const onSubmit: SubmitHandler<Slide1Data> = (data) => {
+  const onSubmit: SubmitHandler<Slide1Data> = async (data) => {
+    setIsSaving(true);
     const fullPhoneNumber = `${selectedCountry.dial_code}${data.phoneNumber}`;
-    onNext(data, fullPhoneNumber);
+    await onNext(data, fullPhoneNumber);
+    setIsSaving(false);
   };
 
   return (
@@ -211,7 +213,8 @@ function OnboardingSlide1({ onNext, defaultValues }: { onNext: (data: Slide1Data
           </CardContent>
           <CardFooter className="flex justify-between">
             <p className="text-sm text-muted-foreground">Step 1 of 3</p>
-            <Button type="submit">
+            <Button type="submit" disabled={isSaving}>
+              {isSaving && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
               Next
             </Button>
           </CardFooter>
@@ -399,10 +402,31 @@ export default function OnboardingFlow() {
   const router = useRouter();
   const { toast } = useToast();
 
-  const handleSlide1Next = (data: Slide1Data, fullPhoneNumber: string) => {
-    const address = `${data.house}, ${data.street}, ${data.city}, ${data.state}, ${data.zip}`;
-    setOnboardingData(prev => ({ ...prev, ...data, address, phoneNumber: fullPhoneNumber }));
-    setStep(2);
+  const handleSlide1Next = async (data: Slide1Data, fullPhoneNumber: string) => {
+    const slide1Data = { ...data, phoneNumber: fullPhoneNumber };
+    setOnboardingData(prev => ({ ...prev, ...slide1Data }));
+    
+    const user = auth.currentUser;
+    if (!user) {
+        toast({
+            variant: 'destructive',
+            title: 'Error',
+            description: 'You must be logged in to save your profile.',
+        });
+        return;
+    }
+
+    try {
+        await updateUserProfile(user.uid, slide1Data);
+        setStep(2);
+    } catch (error) {
+        console.error("Failed to save slide 1 data:", error);
+        toast({
+            variant: 'destructive',
+            title: 'Save Failed',
+            description: 'There was a problem saving your information. Please try again.',
+        });
+    }
   };
 
   const handleSlide2Next = (data: Slide2Data) => {
@@ -411,8 +435,7 @@ export default function OnboardingFlow() {
   };
 
   const handleSlide3Finish = async (data: Slide3Data) => {
-      const { phoneNumber, house, street, city, state, zip, ...restData } = onboardingData;
-      const finalData = { ...restData, ...data, phoneNumber };
+      const finalData = { ...onboardingData, ...data, onboardingCompleted: true };
 
       const user = auth.currentUser;
 
@@ -459,11 +482,5 @@ export default function OnboardingFlow() {
         return <OnboardingSlide1 onNext={handleSlide1Next} defaultValues={onboardingData} />;
   }
 }
-
-    
-
-    
-
-      
 
     

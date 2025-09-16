@@ -64,23 +64,29 @@ export async function updateUserProfile(uid: string, data: any) {
         throw new Error('User UID is required to update profile.');
     }
 
+    // Construct address only if address fields are present
     const { house, street, city, state: st, zip, ...rest } = data;
-    const address = `${house}, ${street}, ${city}, ${st} ${zip}`;
+    const profileData: Record<string, any> = { ...rest };
+    
+    if (house && street && city && st && zip) {
+        profileData.address = `${house}, ${street}, ${city}, ${st} ${zip}`;
+        profileData.house = house;
+        profileData.street = street;
+        profileData.city = city;
+        profileData.state = st;
+        profileData.zip = zip;
+    }
+
+    if (data.onboardingCompleted) {
+        profileData.onboardingCompleted = true;
+    }
+
+    profileData.updatedAt = serverTimestamp();
 
     const userRef = doc(db, 'customers', uid);
 
     try {
-        await setDoc(userRef, {
-            ...rest,
-            address,
-            house,
-            street,
-            city,
-            state: st,
-            zip,
-            onboardingCompleted: true,
-            updatedAt: serverTimestamp(),
-        }, { merge: true });
+        await setDoc(userRef, profileData, { merge: true });
         console.log(`Successfully updated profile for user ${uid}`);
     } catch(error) {
         console.error('Error updating user profile:', error);
