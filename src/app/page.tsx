@@ -31,7 +31,7 @@ export default function Home() {
       </div>
       <div className="flex flex-col h-dvh overflow-hidden">
         <nav className="relative flex w-full items-center justify-between">
-          <Link href="/" className="sitename flex items-center gap-2 text-white absolute left-5 top-4">
+          <Link href="/" className="sitename flex items-center gap-2 text-black absolute left-5 top-4">
             <Logo />
             Stitcher
           </Link>
