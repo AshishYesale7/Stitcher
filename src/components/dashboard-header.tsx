@@ -15,23 +15,42 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Sun, Moon } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { auth } from '@/lib/firebase';
-import { signOut, onAuthStateChanged } from 'firebase/auth';
+import { auth, db } from '@/lib/firebase';
+import { signOut, onAuthStateChanged, type User } from 'firebase/auth';
 import { useRouter } from 'next/navigation';
+import { doc, getDoc } from 'firebase/firestore';
+import Logo from './logo';
 
 type DashboardHeaderProps = {
   showSidebarTrigger?: boolean;
 };
 
+async function getUserRole(user: User): Promise<'customer' | 'tailor' | null> {
+  const customerDoc = await getDoc(doc(db, 'customers', user.uid));
+  if (customerDoc.exists()) return 'customer';
+
+  const tailorDoc = await getDoc(doc(db, 'tailors', user.uid));
+  if (tailorDoc.exists()) return 'tailor';
+
+  return null;
+}
+
 
 export default function DashboardHeader({ showSidebarTrigger = true }: DashboardHeaderProps) {
   const [theme, setTheme] = useState('light');
   const [user, setUser] = useState(auth.currentUser);
+  const [dashboardUrl, setDashboardUrl] = useState('/');
   const router = useRouter();
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+    const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
       setUser(currentUser);
+      if (currentUser) {
+        const role = await getUserRole(currentUser);
+        if (role) {
+          setDashboardUrl(`/${role}/dashboard`);
+        }
+      }
     });
     return () => unsubscribe();
   }, []);
@@ -66,7 +85,10 @@ export default function DashboardHeader({ showSidebarTrigger = true }: Dashboard
     <header className="sticky top-0 z-10 flex h-16 items-center gap-4 border-b bg-background/60 backdrop-blur-sm px-4 md:px-6 text-primary">
       {showSidebarTrigger && <SidebarTrigger className="md:hidden" />}
        <div className="flex w-full items-center justify-between">
-        <h1 className="text-xl font-bold font-headline">Fabrova</h1>
+        <Link href={dashboardUrl} className="flex items-center gap-2">
+            <Logo />
+            <h1 className="text-xl font-bold font-headline text-foreground">Fabrova</h1>
+        </Link>
         <div className="flex items-center gap-4">
             <Button variant="ghost" size="icon" onClick={toggleTheme}>
             <Sun className="h-[1.2rem] w-[1.2rem] rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
