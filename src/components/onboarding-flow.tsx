@@ -489,7 +489,7 @@ function OnboardingSlide3({ onFinish, onBack, defaultValues }: { onFinish: (data
                     </RadioGroup>
                 </div>
             </CardHeader>
-            <CardContent className="flex-1 flex items-center">
+            <CardContent className="flex-1 flex items-center" style={{ zIndex: -1 }}>
                 <div className="-ml-4">
                     <MeasurementCard 
                         measurements={measurements} 
