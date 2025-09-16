@@ -28,8 +28,8 @@ const points: MeasurementPoint[] = [
   { name: 'Sleeve', imageUrl: "https://i.imgur.com/YwDX6kL.png" },
 ];
 
-const leftPoints: Measurement[] = ['Shoulder', 'Waist', 'Inseam'];
-const rightPoints: Measurement[] = ['Chest', 'Hips', 'Sleeve'];
+const leftPoints: Measurement[] = ['Shoulder', 'Chest', 'Inseam'];
+const rightPoints: Measurement[] = ['Waist', 'Hips', 'Sleeve'];
 
 export default function MeasurementCard({ 
     measurements, 
@@ -78,7 +78,7 @@ export default function MeasurementCard({
               onClick={() => setSelectedMeasurement(pointName)}
             >
               <div className="text-xs font-semibold">{pointName}</div>
-              <div className="text-xs font-bold">{measurements[pointName].toFixed(1)} {unit}</div>
+              <div className="text-xs font-bold">{measurements[pointName]?.toFixed(1) ?? '0.0'} {unit}</div>
             </div>
           </SheetTrigger>
           <SheetContent side="bottom">
@@ -89,7 +89,7 @@ export default function MeasurementCard({
               <HorizontalRuler
                 min={getSliderMinMax().min}
                 max={getSliderMinMax().max}
-                value={measurements[selectedMeasurement!]}
+                value={measurements[selectedMeasurement!] ?? 0}
                 onChange={handleValueChange}
                 unit={unit}
               />
@@ -124,3 +124,4 @@ export default function MeasurementCard({
   );
 }
     
+
