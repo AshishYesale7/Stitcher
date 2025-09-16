@@ -72,6 +72,22 @@ export async function updateUserProfile(uid: string, data: any) {
         profileData.address = `${house}, ${street}, ${city}, ${st} ${zip}`;
     }
 
+    // Explicitly handle fields from slide 2 and 3
+    const { 
+        gender, age, height, heightUnit, weight, weightUnit, 
+        measurements, measurementUnit, onboardingCompleted 
+    } = data;
+    
+    if (gender) profileData.gender = gender;
+    if (age) profileData.age = age;
+    if (height) profileData.height = height;
+    if (heightUnit) profileData.heightUnit = heightUnit;
+    if (weight) profileData.weight = weight;
+    if (weightUnit) profileData.weightUnit = weightUnit;
+    if (measurements) profileData.measurements = measurements;
+    if (measurementUnit) profileData.measurementUnit = measurementUnit;
+    if (onboardingCompleted) profileData.onboardingCompleted = onboardingCompleted;
+    
     profileData.updatedAt = serverTimestamp();
 
     const userRef = doc(db, 'customers', uid);
@@ -84,5 +100,3 @@ export async function updateUserProfile(uid: string, data: any) {
         throw new Error('Failed to update user profile.');
     }
 }
-
-    
