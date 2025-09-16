@@ -2,7 +2,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
 import Image from 'next/image';
 import { Label } from '@/components/ui/label';
 import { HorizontalRuler } from '@/components/ui/horizontal-ruler';
@@ -29,8 +29,8 @@ const points: MeasurementPoint[] = [
   { name: 'Sleeve', imageUrl: "https://i.imgur.com/YwDX6kL.png" },
 ];
 
-const leftPoints: Measurement[] = ['Shoulder', 'Chest', 'Inseam'];
-const rightPoints: Measurement[] = ['Waist', 'Hips', 'Sleeve'];
+const leftPoints: Measurement[] = ['Shoulder', 'Waist', 'Inseam'];
+const rightPoints: Measurement[] = ['Chest', 'Hips', 'Sleeve'];
 
 export default function MeasurementCard({ 
     measurements, 
@@ -68,8 +68,8 @@ export default function MeasurementCard({
   const selectedImageUrl = points.find(p => p.name === selectedMeasurement)?.imageUrl || "https://i.pinimg.com/736x/2d/07/2f/2d072f7858370dbb0ff1703d8e3c75f7.jpg";
   
   const renderMeasurementButton = (pointName: Measurement) => (
-      <Dialog key={pointName} open={selectedMeasurement === pointName && isOpen} onOpenChange={(open) => { setIsOpen(open); if (open) setSelectedMeasurement(pointName)}}>
-          <DialogTrigger asChild>
+      <Sheet key={pointName} open={selectedMeasurement === pointName && isOpen} onOpenChange={(open) => { setIsOpen(open); if (open) setSelectedMeasurement(pointName)}}>
+          <SheetTrigger asChild>
             <div
               className={`flex flex-col items-center justify-center p-2 rounded-lg cursor-pointer transition-all ${
                 selectedMeasurement === pointName
@@ -81,11 +81,11 @@ export default function MeasurementCard({
               <div className="text-xs font-semibold">{pointName}</div>
               <div className="text-xs font-bold">{measurements[pointName]} {unit}</div>
             </div>
-          </DialogTrigger>
-          <DialogContent>
-            <DialogHeader>
-              <DialogTitle>Set {selectedMeasurement} Measurement</DialogTitle>
-            </DialogHeader>
+          </SheetTrigger>
+          <SheetContent side="bottom">
+            <SheetHeader>
+              <SheetTitle>Set {selectedMeasurement} Measurement</SheetTitle>
+            </SheetHeader>
             <div className="py-8">
                <div className="flex justify-between items-center mb-4">
                 <Label className="text-lg">{selectedMeasurement}</Label>
@@ -100,8 +100,8 @@ export default function MeasurementCard({
                 unit={unit}
               />
             </div>
-          </DialogContent>
-        </Dialog>
+          </SheetContent>
+        </Sheet>
   );
 
   return (
