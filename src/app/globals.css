@@ -83,8 +83,11 @@
   }
   body {
     @apply bg-background text-foreground font-body;
-    background-color: var(--background-new);
-    color: var(--text);
+  }
+
+  .landing-page-dark {
+    background-color: #121212;
+    color: white;
   }
   
   nav {
@@ -101,7 +104,10 @@
     @apply text-2xl;
     font-weight: bold;
     margin-right: auto;
-    color: #000000;
+  }
+
+  .landing-page-dark .sitename {
+    color: white;
   }
 
   .grid {
@@ -266,7 +272,7 @@
       z-index: 1;
     }
 
-    .card {
+    .dashboard-grid .card {
       position: relative;
       z-index: 5;
       width: 100%;
@@ -275,11 +281,13 @@
       place-content: center;
       place-items: center;
       text-align: center;
-      box-shadow: 0.063em 0.75em 1.563em rgb(0 0 0 / 78%);
+      box-shadow: 0.063em 0.75em 1.563em rgb(0 0 0 / 20%);
       border-radius: 2.25rem;
+      border: 1px solid hsl(var(--border));
+      color: hsl(var(--card-foreground));
     }
 
-    .card::before {
+    .dashboard-grid .card::before {
       position: absolute;
       content: "";
       top: 0;
@@ -293,7 +301,7 @@
       mask-composite: exclude;
     }
 
-    .card-header {
+    .dashboard-grid .card-header {
       position: absolute;
       top: 0;
       left: 0;
@@ -305,17 +313,17 @@
       padding: 0.8em 1.5em 0em 1.5em;
     }
 
-    .card-header .date {
-      color: #ddd;
+    .dashboard-grid .card-header .date {
+      color: hsl(var(--muted-foreground));
     }
 
-    .card-header svg {
-      color: #fff;
+    .dashboard-grid .card-header svg {
+      color: hsl(var(--card-foreground));
       width: 1.5rem;
       cursor: pointer;
     }
 
-    .card-body {
+    .dashboard-grid .card-body {
       position: absolute;
       width: 100%;
       display: block;
@@ -325,8 +333,8 @@
       padding: 0.7em 1.25em 0.5em 1.5em;
     }
 
-    .card-body h3 {
-      color: #fff;
+    .dashboard-grid .card-body h3 {
+      color: hsl(var(--card-foreground));
       font-size: 1.1rem;
       margin-top: 0.625em;
       margin-bottom: 0.188em;
@@ -334,26 +342,26 @@
       font-weight: 600;
     }
 
-    .card-body p {
-      color: #ddd;
+    .dashboard-grid .card-body p {
+      color: hsl(var(--muted-foreground));
       font-size: 0.875rem;
       letter-spacing: 0.031rem;
     }
 
-    .card-body .progress {
+    .dashboard-grid .card-body .progress {
       margin-top: 0.938rem;
     }
 
-    .card-body .progress-bar {
+    .dashboard-grid .card-body .progress-bar {
       position: relative;
       width: 100%;
-      background: #363636;
+      background: hsl(var(--secondary));
       height: 0.313rem;
       display: block;
       border-radius: 3.125rem;
     }
 
-    .card-body .progress-bar::after {
+    .dashboard-grid .card-body .progress-bar::after {
       position: absolute;
       content: "";
       top: 0;
@@ -366,8 +374,8 @@
       width: var(--progress-width);
     }
     
-    .card-body .progress span:first-of-type {
-      color: #fff;
+    .dashboard-grid .card-body .progress span:first-of-type {
+      color: hsl(var(--card-foreground));
       text-align: left;
       font-weight: 600;
       width: 100%;
@@ -375,48 +383,48 @@
       margin-bottom: 0.313rem;
     }
 
-    .card-body .progress span {
+    .dashboard-grid .card-body .progress span {
       margin-top: 0.313rem;
       text-align: right;
       display: block;
-      color: #fff;
+      color: hsl(var(--card-foreground));
     }
 
-    .card-footer {
+    .dashboard-grid .card-footer {
       position: absolute;
       bottom: 0;
       left: 0;
       right: 0;
       width: 100%;
-      border-top: 0.063rem solid #292929;
+      border-top: 1px solid hsl(var(--border));
       display: flex;
       justify-content: center;
       align-items: center;
       padding: 0.7em 1.25em 0.5em 1.5em;
-      background: #151419;
+      background: hsl(var(--card));
       border-bottom-left-radius: 2.25rem;
       border-bottom-right-radius: 2.25rem;
     }
 
-    .card-footer ul {
+    .dashboard-grid .card-footer ul {
       display: flex;
       align-items: center;
     }
 
-    .card-footer ul li {
+    .dashboard-grid .card-footer ul li {
       list-style-type: none;
       display: flex;
       margin-right: -0.625rem;
     }
 
-    .card-footer ul li img {
+    .dashboard-grid .card-footer ul li img {
       border-radius: 50%;
       width: 1.875rem;
       height: 1.875rem;
       object-fit: cover;
     }
 
-    .card-footer .btn-add {
+    .dashboard-grid .card-footer .btn-add {
       width: 1.875rem;
       height: 1.875rem;
       border-radius: 50%;
@@ -427,9 +435,9 @@
       margin-left: 0.625rem;
     }
     
-    .card-footer .btn-countdown {
-      background: #222127;
-      color: #fff;
+    .dashboard-grid .card-footer .btn-countdown {
+      background: hsl(var(--secondary));
+      color: hsl(var(--secondary-foreground));
       border-radius: 2em;
       padding: 0.625rem 1.5rem;
       transition: background 0.2s ease-in-out;
@@ -437,124 +445,163 @@
     }
     
     .card.green {
-      background: radial-gradient(ellipse at right top, #107667ed 0%, #151419 47%, #151419 100%);
+      background: radial-gradient(ellipse at right top, #107667ed 0%, hsl(var(--card)) 47%, hsl(var(--card)) 100%);
+    }
+
+    .dark .card.green {
+       background: radial-gradient(ellipse at right top, #107667ed 0%, hsl(var(--card)) 47%, hsl(var(--card)) 100%);
     }
 
     .card.green::before {
-      background: linear-gradient(45deg, #232228, #232228, #232228, #232228, #01c3a8) border-box;
+      background: linear-gradient(45deg, hsl(var(--border)), hsl(var(--border)), hsl(var(--border)), hsl(var(--border)), #01c3a8) border-box;
     }
 
-    .card.green .btn-add {
+    .dark .card.green .btn-add, .card.green .btn-add {
       background: #01c3a8;
     }
 
-    .card.green .progress-bar::after {
+    .dark .card.green .progress-bar::after, .card.green .progress-bar::after {
       background: #01c3a8;
     }
     
-    .card.green .btn-countdown:hover {
+    .dark .card.green .btn-countdown:hover, .card.green .btn-countdown:hover {
       background: #01c3a8;
+      color: white;
     }
 
     .card.blue {
-      background: radial-gradient(ellipse at right top, #00458f8f 0%, #151419 45%, #151419 100%);
+      background: radial-gradient(ellipse at right top, #00458f8f 0%, hsl(var(--card)) 45%, hsl(var(--card)) 100%);
+    }
+
+    .dark .card.blue {
+      background: radial-gradient(ellipse at right top, #00458f8f 0%, hsl(var(--card)) 45%, hsl(var(--card)) 100%);
     }
 
     .card.blue::before {
-       background: linear-gradient(45deg, #232228, #232228, #232228, #232228, #1890ff) border-box;
+       background: linear-gradient(45deg, hsl(var(--border)), hsl(var(--border)), hsl(var(--border)), hsl(var(--border)), #1890ff) border-box;
     }
 
-    .card.blue .btn-add {
+    .dark .card.blue .btn-add, .card.blue .btn-add {
       background: #1890ff;
     }
 
-    .card.blue .progress-bar::after {
+    .dark .card.blue .progress-bar::after, .card.blue .progress-bar::after {
       background: #1890ff;
     }
 
-    .card.blue .btn-countdown:hover {
+    .dark .card.blue .btn-countdown:hover, .card.blue .btn-countdown:hover {
       background: #1890ff;
+      color: white;
     }
 
     .card.orange {
-      background: radial-gradient(ellipse at right top, #ffb74194 0%, #151419 47%, #151419 100%);
+      background: radial-gradient(ellipse at right top, #ffb74194 0%, hsl(var(--card)) 47%, hsl(var(--card)) 100%);
+    }
+    
+    .dark .card.orange {
+       background: radial-gradient(ellipse at right top, #ffb74194 0%, hsl(var(--card)) 47%, hsl(var(--card)) 100%);
     }
 
     .card.orange::before {
-      background: linear-gradient(45deg, #232228, #232228, #232228, #232228, #ffb741) border-box;
+      background: linear-gradient(45deg, hsl(var(--border)), hsl(var(--border)), hsl(var(--border)), hsl(var(--border)), #ffb741) border-box;
     }
 
-    .card.orange .btn-add {
+    .dark .card.orange .btn-add, .card.orange .btn-add {
       background: #ffb741;
     }
 
-    .card.orange .progress-bar::after {
+    .dark .card.orange .progress-bar::after, .card.orange .progress-bar::after {
       background: #ffb741;
     }
 
-    .card.orange .btn-countdown:hover {
+    .dark .card.orange .btn-countdown:hover, .card.orange .btn-countdown:hover {
       background: #ffb741;
+      color: white;
     }
 
     .card.red {
-      background: radial-gradient(ellipse at right top, #a63d2a82 0%, #151419 47%, #151419 100%);
+      background: radial-gradient(ellipse at right top, #a63d2a82 0%, hsl(var(--card)) 47%, hsl(var(--card)) 100%);
+    }
+    .dark .card.red {
+      background: radial-gradient(ellipse at right top, #a63d2a82 0%, hsl(var(--card)) 47%, hsl(var(--card)) 100%);
     }
 
     .card.red::before {
-      background: linear-gradient(45deg, #232228, #232228, #232228, #232228, #a63d2a) border-box;
+      background: linear-gradient(45deg, hsl(var(--border)), hsl(var(--border)), hsl(var(--border)), hsl(var(--border)), #a63d2a) border-box;
     }
     
-    .card.red .btn-add {
+    .dark .card.red .btn-add, .card.red .btn-add {
       background: #a63d2a;
     }
 
-    .card.red .progress-bar::after {
+    .dark .card.red .progress-bar::after, .card.red .progress-bar::after {
       background: #a63d2a;
     }
     
-    .card.red .btn-countdown:hover {
+    .dark .card.red .btn-countdown:hover, .card.red .btn-countdown:hover {
       background: #a63d2a;
+      color: white;
     }
 
     .card.purple {
-      background: radial-gradient(ellipse at right top, #80008082 0%, #151419 47%, #151419 100%);
+      background: radial-gradient(ellipse at right top, #80008082 0%, hsl(var(--card)) 47%, hsl(var(--card)) 100%);
+    }
+
+    .dark .card.purple {
+      background: radial-gradient(ellipse at right top, #80008082 0%, hsl(var(--card)) 47%, hsl(var(--card)) 100%);
     }
 
     .card.purple::before {
-      background: linear-gradient(45deg, #232228, #232228, #232228, #232228, #800080) border-box;
+      background: linear-gradient(45deg, hsl(var(--border)), hsl(var(--border)), hsl(var(--border)), hsl(var(--border)), #800080) border-box;
     }
 
-    .card.purple .btn-add {
+    .dark .card.purple .btn-add, .card.purple .btn-add {
       background: #800080;
     }
 
-    .card.purple .progress-bar::after {
+    .dark .card.purple .progress-bar::after, .card.purple .progress-bar::after {
       background: #800080;
     }
 
-    .card.purple .btn-countdown:hover {
+    .dark .card.purple .btn-countdown:hover, .card.purple .btn-countdown:hover {
       background: #800080;
+      color: white;
     }
 
     .card.pink {
-      background: radial-gradient(ellipse at right top, #ffc0cb82 0%, #151419 47%, #151419 100%);
+      background: radial-gradient(ellipse at right top, #ffc0cb82 0%, hsl(var(--card)) 47%, hsl(var(--card)) 100%);
+    }
+
+    .dark .card.pink {
+      background: radial-gradient(ellipse at right top, #ffc0cb82 0%, hsl(var(--card)) 47%, hsl(var(--card)) 100%);
     }
 
     .card.pink::before {
-      background: linear-gradient(45deg, #232228, #232228, #232228, #232228, #ffc0cb) border-box;
+      background: linear-gradient(45deg, hsl(var(--border)), hsl(var(--border)), hsl(var(--border)), hsl(var(--border)), #ffc0cb) border-box;
     }
 
-    .card.pink .btn-add {
+    .dark .card.pink .btn-add, .card.pink .btn-add {
       background: #ffc0cb;
     }
 
-    .card.pink .progress-bar::after {
+    .dark .card.pink .progress-bar::after, .card.pink .progress-bar::after {
       background: #ffc0cb;
     }
     
-    .card.pink .btn-countdown:hover {
+    .dark .card.pink .btn-countdown:hover, .card.pink .btn-countdown:hover {
       background: #ffc0cb;
+      color: white;
     }
+
+    .dark .dashboard-grid .card-body h3, .dark .dashboard-grid .card-body p, .dark .dashboard-grid .card-header .date, .dark .dashboard-grid .card-header svg, .dark .dashboard-grid .card-body .progress span  {
+        color: white;
+    }
+
+    .dark .dashboard-grid .card-footer {
+        background: #151419;
+    }
+
 }
 
     
+
