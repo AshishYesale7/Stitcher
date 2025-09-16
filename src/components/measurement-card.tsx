@@ -29,8 +29,8 @@ const points: MeasurementPoint[] = [
   { name: 'Sleeve', imageUrl: "https://i.imgur.com/YwDX6kL.png" },
 ];
 
-const leftPoints: Measurement[] = ['Shoulder', 'Waist', 'Inseam'];
-const rightPoints: Measurement[] = ['Chest', 'Hips', 'Sleeve'];
+const leftPoints: Measurement[] = ['Shoulder', 'Chest', 'Inseam'];
+const rightPoints: Measurement[] = ['Waist', 'Hips', 'Sleeve'];
 
 export default function MeasurementCard({ 
     measurements, 
@@ -58,9 +58,9 @@ export default function MeasurementCard({
 
   const getSliderMinMax = () => {
       const isCm = unit === 'cm';
-      // Based on common human measurements
+      // Based on common human measurements, starting from 0
       return {
-          min: isCm ? 20 : 8,
+          min: 0,
           max: isCm ? 200 : 80
       }
   }
@@ -79,7 +79,7 @@ export default function MeasurementCard({
               onClick={() => setSelectedMeasurement(pointName)}
             >
               <div className="text-xs font-semibold">{pointName}</div>
-              <div className="text-xs font-bold">{measurements[pointName]} {unit}</div>
+              <div className="text-xs font-bold">{measurements[pointName].toFixed(1)} {unit}</div>
             </div>
           </SheetTrigger>
           <SheetContent side="bottom">
@@ -94,7 +94,7 @@ export default function MeasurementCard({
               <HorizontalRuler
                 min={getSliderMinMax().min}
                 max={getSliderMinMax().max}
-                step={unit === 'cm' ? 1 : 0.1}
+                step={unit === 'cm' ? 0.1 : 0.1}
                 value={measurements[selectedMeasurement!]}
                 onChange={handleValueChange}
                 unit={unit}

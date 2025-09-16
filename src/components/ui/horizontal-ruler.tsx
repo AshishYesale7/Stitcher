@@ -1,7 +1,7 @@
 
 'use client';
 
-import { useRef, useEffect, useState, useMemo } from 'react';
+import { useRef, useEffect, useMemo } from 'react';
 import { cn } from '@/lib/utils';
 
 interface HorizontalRulerProps {
@@ -28,10 +28,8 @@ export function HorizontalRuler({
 }: HorizontalRulerProps) {
   const rulerRef = useRef<HTMLDivElement>(null);
   const isDragging = useRef(false);
-  const scrollStartPos = useRef(0);
-  const scrollStartValue = useRef(0);
   
-  const effectiveStep = unit === 'inch' ? 0.1 : step;
+  const effectiveStep = unit === 'inch' ? 0.1 : 0.1; // Allow decimals for both
   const totalTicks = useMemo(() => Math.round((max - min) / effectiveStep), [min, max, effectiveStep]);
   const rulerWidth = useMemo(() => totalTicks * TICK_WIDTH, [totalTicks]);
 
@@ -39,21 +37,31 @@ export function HorizontalRuler({
     const ruler = rulerRef.current;
     if (!ruler) return;
 
+    // Center the initial value
     const center = ruler.clientWidth / 2;
     const scrollPosition = ((value - min) / effectiveStep) * TICK_WIDTH - center;
-    ruler.scrollLeft = scrollPosition;
-  }, [value, min, effectiveStep, rulerWidth]);
+    
+    // Use a timeout to avoid scrolling issues on initial render
+    setTimeout(() => {
+       ruler.scrollLeft = scrollPosition;
+    }, 0);
+
+  }, [value, min, effectiveStep]);
   
   const handleScroll = () => {
     if (isDragging.current || !rulerRef.current) return;
+    
     const center = rulerRef.current.clientWidth / 2;
     const scrollLeft = rulerRef.current.scrollLeft;
+    
     const rawValue = ((scrollLeft + center) / TICK_WIDTH) * effectiveStep + min;
     const snappedValue = Math.round(rawValue / effectiveStep) * effectiveStep;
     const clampedValue = Math.max(min, Math.min(max, snappedValue));
     
-    if (Math.abs(clampedValue - value) > effectiveStep / 2) {
-       onChange(parseFloat(clampedValue.toFixed(1)));
+    const finalValue = parseFloat(clampedValue.toFixed(1));
+
+    if (finalValue !== value) {
+       onChange(finalValue);
     }
   };
 
