@@ -35,7 +35,7 @@ export default function Home() {
             <Logo />
             Stitcher
           </Link>
-          <div className="flex-1 flex justify-center items-center gap-8">
+          <div className="flex-1 flex justify-end items-center gap-8 pr-20">
             <Link href="/terms" className="menu">
               Terms & Conditions
             </Link>
