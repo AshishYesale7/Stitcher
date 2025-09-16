@@ -32,13 +32,9 @@ export default function DashboardHeader({ showSidebarTrigger = true }: Dashboard
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
       setUser(currentUser);
-      if (!currentUser) {
-        // User has logged out, redirect to home page.
-        router.push('/');
-      }
     });
     return () => unsubscribe();
-  }, [router]);
+  }, []);
 
 
   useEffect(() => {
@@ -59,7 +55,8 @@ export default function DashboardHeader({ showSidebarTrigger = true }: Dashboard
   const handleLogout = async () => {
     try {
       await signOut(auth);
-      // The onAuthStateChanged listener will handle the redirect.
+      // Explicitly redirect to the customer login page.
+      router.push('/customer/login');
     } catch (error) {
       console.error('Logout Error:', error);
     }
