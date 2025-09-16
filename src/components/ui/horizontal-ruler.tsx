@@ -1,8 +1,9 @@
 
 'use client';
 
-import { useRef, useEffect, useMemo } from 'react';
+import { useRef, useEffect, useMemo, useState } from 'react';
 import { cn } from '@/lib/utils';
+import { Input } from './input';
 
 interface HorizontalRulerProps {
   min?: number;
@@ -20,7 +21,6 @@ const MAJOR_TICK_EVERY = 10; // 10 small ticks form a major tick
 export function HorizontalRuler({
   min = 0,
   max = 100,
-  step = 1,
   value,
   onChange,
   unit = '',
@@ -28,42 +28,63 @@ export function HorizontalRuler({
 }: HorizontalRulerProps) {
   const rulerRef = useRef<HTMLDivElement>(null);
   const isDragging = useRef(false);
-  
-  const effectiveStep = unit === 'inch' ? 0.1 : 0.1; // Allow decimals for both
+  const [internalValue, setInternalValue] = useState(value);
+  const scrollTimeout = useRef<NodeJS.Timeout | null>(null);
+
+  const effectiveStep = 0.1;
   const totalTicks = useMemo(() => Math.round((max - min) / effectiveStep), [min, max, effectiveStep]);
   const rulerWidth = useMemo(() => totalTicks * TICK_WIDTH, [totalTicks]);
 
   useEffect(() => {
+    setInternalValue(value);
+  }, [value]);
+  
+  useEffect(() => {
     const ruler = rulerRef.current;
     if (!ruler) return;
-
-    // Center the initial value
-    const center = ruler.clientWidth / 2;
-    const scrollPosition = ((value - min) / effectiveStep) * TICK_WIDTH - center;
-    
-    // Use a timeout to avoid scrolling issues on initial render
-    setTimeout(() => {
-       ruler.scrollLeft = scrollPosition;
-    }, 0);
-
-  }, [value, min, effectiveStep]);
   
-  const handleScroll = () => {
-    if (isDragging.current || !rulerRef.current) return;
+    // Center the value
+    const center = ruler.clientWidth / 2;
+    const scrollPosition = ((internalValue - min) / effectiveStep) * TICK_WIDTH - center;
     
-    const center = rulerRef.current.clientWidth / 2;
-    const scrollLeft = rulerRef.current.scrollLeft;
-    
-    const rawValue = ((scrollLeft + center) / TICK_WIDTH) * effectiveStep + min;
-    const snappedValue = Math.round(rawValue / effectiveStep) * effectiveStep;
-    const clampedValue = Math.max(min, Math.min(max, snappedValue));
-    
-    const finalValue = parseFloat(clampedValue.toFixed(1));
+    // Smooth scroll to position
+    ruler.scrollTo({
+      left: scrollPosition,
+      behavior: 'smooth'
+    });
+  
+  }, [internalValue, min, effectiveStep]);
 
-    if (finalValue !== value) {
-       onChange(finalValue);
+  const handleScroll = () => {
+    if (!rulerRef.current) return;
+    if (isDragging.current) return;
+
+    if (scrollTimeout.current) {
+      clearTimeout(scrollTimeout.current);
     }
+    
+    scrollTimeout.current = setTimeout(() => {
+      const center = rulerRef.current!.clientWidth / 2;
+      const scrollLeft = rulerRef.current!.scrollLeft;
+      
+      const rawValue = ((scrollLeft + center) / TICK_WIDTH) * effectiveStep + min;
+      const snappedValue = Math.round(rawValue / effectiveStep) * effectiveStep;
+      const clampedValue = Math.max(min, Math.min(max, snappedValue));
+      
+      const finalValue = parseFloat(clampedValue.toFixed(1));
+  
+      if (finalValue !== value) {
+         onChange(finalValue);
+      }
+    }, 150); // debounce scroll event
   };
+  
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+      const newValue = parseFloat(e.target.value);
+      if (!isNaN(newValue) && newValue >= min && newValue <= max) {
+          onChange(newValue);
+      }
+  }
 
   const renderTicks = () => {
     const ticks = [];
@@ -94,15 +115,39 @@ export function HorizontalRuler({
   };
   
   return (
-    <div className={cn('relative w-full h-24 flex items-center justify-center', className)}>
-      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-0 h-0 border-x-8 border-x-transparent border-t-8 border-t-primary" />
-      <div
-        ref={rulerRef}
-        onScroll={handleScroll}
-        className="w-full overflow-x-scroll scroll-smooth snap-x snap-mandatory hide-scrollbar"
-      >
-        <div className="flex items-start" style={{ width: `${rulerWidth}px`, padding: `0 calc(50% - ${TICK_WIDTH/2}px)` }}>
-          {renderTicks()}
+    <div className={cn('relative w-full flex flex-col items-center justify-center gap-4', className)}>
+      <div className="flex items-center gap-2">
+        <Input 
+          type="number"
+          value={value.toFixed(1)}
+          onChange={handleInputChange}
+          className="w-24 text-center text-lg font-bold text-primary"
+          step={effectiveStep}
+          min={min}
+          max={max}
+        />
+        <span className="text-lg font-bold text-primary">{unit}</span>
+      </div>
+      <div className="relative w-full h-24 flex items-center justify-center">
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-0 h-0 border-x-8 border-x-transparent border-t-8 border-t-primary" />
+        <div
+          ref={rulerRef}
+          onScroll={handleScroll}
+          onMouseDown={() => { isDragging.current = true; }}
+          onMouseUp={() => { 
+            isDragging.current = false;
+            handleScroll();
+          }}
+          onTouchStart={() => { isDragging.current = true; }}
+          onTouchEnd={() => {
+            isDragging.current = false;
+            handleScroll();
+          }}
+          className="w-full overflow-x-scroll cursor-grab active:cursor-grabbing hide-scrollbar"
+        >
+          <div className="flex items-start" style={{ width: `${rulerWidth}px`, padding: `0 calc(50% - ${TICK_WIDTH/2}px)` }}>
+            {renderTicks()}
+          </div>
         </div>
       </div>
       <style jsx global>{`

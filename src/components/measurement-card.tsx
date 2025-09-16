@@ -4,7 +4,6 @@
 import { useState, useEffect } from 'react';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
 import Image from 'next/image';
-import { Label } from '@/components/ui/label';
 import { HorizontalRuler } from '@/components/ui/horizontal-ruler';
 
 type Measurement = 'Shoulder' | 'Chest' | 'Waist' | 'Hips' | 'Inseam' | 'Sleeve';
@@ -29,8 +28,8 @@ const points: MeasurementPoint[] = [
   { name: 'Sleeve', imageUrl: "https://i.imgur.com/YwDX6kL.png" },
 ];
 
-const leftPoints: Measurement[] = ['Shoulder', 'Chest', 'Inseam'];
-const rightPoints: Measurement[] = ['Waist', 'Hips', 'Sleeve'];
+const leftPoints: Measurement[] = ['Shoulder', 'Waist', 'Inseam'];
+const rightPoints: Measurement[] = ['Chest', 'Hips', 'Sleeve'];
 
 export default function MeasurementCard({ 
     measurements, 
@@ -87,14 +86,9 @@ export default function MeasurementCard({
               <SheetTitle>Set {selectedMeasurement} Measurement</SheetTitle>
             </SheetHeader>
             <div className="py-8">
-               <div className="flex justify-between items-center mb-4">
-                <Label className="text-lg">{selectedMeasurement}</Label>
-                <span className="text-lg font-bold text-primary">{measurements[selectedMeasurement!]?.toFixed(1)} {unit}</span>
-              </div>
               <HorizontalRuler
                 min={getSliderMinMax().min}
                 max={getSliderMinMax().max}
-                step={unit === 'cm' ? 0.1 : 0.1}
                 value={measurements[selectedMeasurement!]}
                 onChange={handleValueChange}
                 unit={unit}
