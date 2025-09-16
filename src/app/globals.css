@@ -83,10 +83,10 @@
   }
   body {
     @apply bg-background text-foreground font-body;
+    background-color: #121212;
   }
 
   .landing-page-dark {
-    background-color: #121212;
     color: white;
   }
   
