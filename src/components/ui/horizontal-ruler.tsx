@@ -39,7 +39,7 @@ export function HorizontalRuler({
     if (Math.abs(value - internalValue) > 0.01) {
         setInternalValue(value);
     }
-  }, [value]);
+  }, [value, internalValue]);
   
   useEffect(() => {
     const ruler = rulerRef.current;
@@ -53,10 +53,9 @@ export function HorizontalRuler({
       behavior: 'smooth'
     });
   
-  }, [internalValue, min, effectiveStep, max]);
+  }, [internalValue, min, effectiveStep]);
 
   const handleScroll = () => {
-    if (!rulerRef.current) return;
     if (isDragging.current) return;
 
     if (scrollTimeout.current) {
@@ -64,8 +63,9 @@ export function HorizontalRuler({
     }
     
     scrollTimeout.current = setTimeout(() => {
-      const center = rulerRef.current!.clientWidth / 2;
-      const scrollLeft = rulerRef.current!.scrollLeft;
+      if (!rulerRef.current) return; // Add check here
+      const center = rulerRef.current.clientWidth / 2;
+      const scrollLeft = rulerRef.current.scrollLeft;
       
       const rawValue = ((scrollLeft + center) / TICK_WIDTH) * effectiveStep + min;
       const snappedValue = Math.round(rawValue / effectiveStep) * effectiveStep;
