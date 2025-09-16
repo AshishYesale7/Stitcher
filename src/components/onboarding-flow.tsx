@@ -413,6 +413,7 @@ function OnboardingSlide2({ onNext, onBack, defaultValues }: { onNext: (data: Sl
 
 // --- Slide 3: Measurements ---
 type Measurement = 'Shoulder' | 'Chest' | 'Waist' | 'Hips' | 'Inseam' | 'Sleeve';
+type MeasurementUnit = 'cm' | 'inch';
 type MeasurementData = { [key in Measurement]: number };
 
 const slide3Schema = z.object({
@@ -423,7 +424,8 @@ const slide3Schema = z.object({
         Hips: z.number(),
         Inseam: z.number(),
         Sleeve: z.number(),
-    })
+    }),
+    measurementUnit: z.enum(['cm', 'inch']),
 });
 
 type Slide3Data = z.infer<typeof slide3Schema>;
@@ -435,25 +437,64 @@ function OnboardingSlide3({ onFinish, onBack, defaultValues }: { onFinish: (data
             Shoulder: 45, Chest: 98, Waist: 82, Hips: 104, Inseam: 78, Sleeve: 62
         }
     );
+    const [unit, setUnit] = useState<MeasurementUnit>(defaultValues.measurementUnit || 'cm');
     const [isSaving, setIsSaving] = useState(false);
 
     const handleMeasurementChange = (field: Measurement, value: number) => {
         setMeasurements(prev => ({ ...prev, [field]: value }));
     };
 
+    const handleUnitChange = (newUnit: MeasurementUnit) => {
+        if (newUnit === unit) return;
+
+        const conversionFactor = newUnit === 'inch' ? (1 / 2.54) : 2.54;
+        
+        const convertedMeasurements = Object.fromEntries(
+            Object.entries(measurements).map(([key, value]) => [
+                key,
+                Math.round((value * conversionFactor) * 10) / 10 // round to 1 decimal place
+            ])
+        ) as MeasurementData;
+        
+        setMeasurements(convertedMeasurements);
+        setUnit(newUnit);
+    };
+
     const handleFinishClick = () => {
         setIsSaving(true);
-        onFinish({ measurements });
+        onFinish({ measurements, measurementUnit: unit });
     };
 
     return (
         <Card className="w-full max-w-sm mx-auto">
             <CardHeader>
-                <CardTitle>Body Measurements</CardTitle>
-                <CardDescription>Tap on a label to adjust your measurements.</CardDescription>
+                <div className="flex justify-between items-center">
+                    <div>
+                        <CardTitle>Body Measurements</CardTitle>
+                        <CardDescription>Tap on a label to adjust.</CardDescription>
+                    </div>
+                     <RadioGroup
+                        defaultValue={unit}
+                        onValueChange={(val) => handleUnitChange(val as MeasurementUnit)}
+                        className="flex items-center space-x-2"
+                        >
+                        <FormItem className="flex items-center space-x-1 space-y-0">
+                            <FormControl><RadioGroupItem value="cm" id="cm" /></FormControl>
+                            <FormLabel htmlFor="cm" className="font-normal text-xs">cm</FormLabel>
+                        </FormItem>
+                        <FormItem className="flex items-center space-x-1 space-y-0">
+                            <FormControl><RadioGroupItem value="inch" id="inch" /></FormControl>
+                            <FormLabel htmlFor="inch" className="font-normal text-xs">inch</FormLabel>
+                        </FormItem>
+                    </RadioGroup>
+                </div>
             </CardHeader>
             <CardContent>
-                <MeasurementCard measurements={measurements} onMeasurementChange={handleMeasurementChange} />
+                <MeasurementCard 
+                    measurements={measurements} 
+                    onMeasurementChange={handleMeasurementChange}
+                    unit={unit}
+                />
             </CardContent>
             <CardFooter className="flex justify-between">
                 <Button type="button" variant="ghost" onClick={onBack} disabled={isSaving}>Back</Button>
@@ -554,5 +595,7 @@ export default function OnboardingFlow() {
         return <OnboardingSlide1 onNext={handleSlide1Next} defaultValues={onboardingData} />;
   }
 }
+
+    
 
     

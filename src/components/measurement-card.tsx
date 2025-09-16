@@ -9,6 +9,7 @@ import { Label } from '@/components/ui/label';
 import Image from 'next/image';
 
 type Measurement = 'Shoulder' | 'Chest' | 'Waist' | 'Hips' | 'Inseam' | 'Sleeve';
+type MeasurementUnit = 'cm' | 'inch';
 
 type MeasurementData = {
     [key in Measurement]: number;
@@ -31,10 +32,12 @@ const points: MeasurementPoint[] = [
 
 export default function MeasurementCard({ 
     measurements, 
-    onMeasurementChange 
+    onMeasurementChange,
+    unit = 'cm'
 }: { 
     measurements: MeasurementData,
     onMeasurementChange: (field: Measurement, value: number) => void;
+    unit: MeasurementUnit;
 }) {
   const [selectedMeasurement, setSelectedMeasurement] = useState<Measurement | null>(null);
 
@@ -43,6 +46,14 @@ export default function MeasurementCard({
       onMeasurementChange(selectedMeasurement, value[0]);
     }
   };
+
+  const getSliderMinMax = () => {
+      const isCm = unit === 'cm';
+      return {
+          min: isCm ? 20 : 8,
+          max: isCm ? 200 : 80
+      }
+  }
 
   return (
     <div className="relative w-full max-w-sm mx-auto aspect-[3/4]">
@@ -71,7 +82,7 @@ export default function MeasurementCard({
               }`}
             >
               <div className="text-xs font-semibold">{point.name}</div>
-              <div className="text-xs ml-2 font-bold">{measurements[point.name]} cm</div>
+              <div className="text-xs ml-2 font-bold">{measurements[point.name]} {unit}</div>
             </div>
           </SheetTrigger>
           <SheetContent side="bottom">
@@ -81,13 +92,13 @@ export default function MeasurementCard({
             <div className="py-8">
               <div className="flex justify-between items-center mb-4">
                 <Label htmlFor="measurement-slider" className="text-lg">{selectedMeasurement}</Label>
-                <span className="text-lg font-bold text-primary">{measurements[selectedMeasurement!]} cm</span>
+                <span className="text-lg font-bold text-primary">{measurements[selectedMeasurement!]} {unit}</span>
               </div>
               <Slider
                 id="measurement-slider"
-                min={50}
-                max={150}
-                step={1}
+                min={getSliderMinMax().min}
+                max={getSliderMinMax().max}
+                step={unit === 'cm' ? 1 : 0.1}
                 value={[measurements[selectedMeasurement!]]}
                 onValueChange={handleSliderChange}
               />
@@ -98,3 +109,5 @@ export default function MeasurementCard({
     </div>
   );
 }
+
+    
