@@ -66,14 +66,14 @@ export default function MeasurementCard({
             onClick={() => setSelectedMeasurement(pointName)}
           >
             <div
-              className={`flex items-center justify-between p-2 rounded-lg cursor-pointer transition-all ${
+              className={`flex flex-col items-center justify-center p-2 rounded-lg cursor-pointer transition-all ${
                 selectedMeasurement === pointName
                   ? 'bg-primary text-primary-foreground shadow-lg scale-105'
                   : 'bg-background/80 backdrop-blur-sm border shadow-md'
               }`}
             >
               <div className="text-xs font-semibold">{pointName}</div>
-              <div className="text-xs ml-2 font-bold">{measurements[pointName]} {unit}</div>
+              <div className="text-xs font-bold">{measurements[pointName]} {unit}</div>
             </div>
           </SheetTrigger>
           <SheetContent side="bottom">
