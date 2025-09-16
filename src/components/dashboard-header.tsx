@@ -55,8 +55,8 @@ export default function DashboardHeader({ showSidebarTrigger = true }: Dashboard
   const handleLogout = async () => {
     try {
       await signOut(auth);
-      // Explicitly redirect to the customer login page.
-      router.push('/customer/login');
+      // Explicitly redirect to the landing page.
+      router.push('/');
     } catch (error) {
       console.error('Logout Error:', error);
     }
