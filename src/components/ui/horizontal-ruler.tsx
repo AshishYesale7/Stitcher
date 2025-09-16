@@ -31,7 +31,8 @@ export function HorizontalRuler({
   const scrollStartPos = useRef(0);
   const scrollStartValue = useRef(0);
   
-  const totalTicks = useMemo(() => Math.round((max - min) / step), [min, max, step]);
+  const effectiveStep = unit === 'inch' ? 0.1 : step;
+  const totalTicks = useMemo(() => Math.round((max - min) / effectiveStep), [min, max, effectiveStep]);
   const rulerWidth = useMemo(() => totalTicks * TICK_WIDTH, [totalTicks]);
 
   useEffect(() => {
@@ -39,19 +40,19 @@ export function HorizontalRuler({
     if (!ruler) return;
 
     const center = ruler.clientWidth / 2;
-    const scrollPosition = ((value - min) / step) * TICK_WIDTH - center;
+    const scrollPosition = ((value - min) / effectiveStep) * TICK_WIDTH - center;
     ruler.scrollLeft = scrollPosition;
-  }, [value, min, step, rulerWidth]);
+  }, [value, min, effectiveStep, rulerWidth]);
   
   const handleScroll = () => {
     if (isDragging.current || !rulerRef.current) return;
     const center = rulerRef.current.clientWidth / 2;
     const scrollLeft = rulerRef.current.scrollLeft;
-    const rawValue = ((scrollLeft + center) / TICK_WIDTH) * step + min;
-    const snappedValue = Math.round(rawValue / step) * step;
+    const rawValue = ((scrollLeft + center) / TICK_WIDTH) * effectiveStep + min;
+    const snappedValue = Math.round(rawValue / effectiveStep) * effectiveStep;
     const clampedValue = Math.max(min, Math.min(max, snappedValue));
     
-    if (Math.abs(clampedValue - value) > step / 2) {
+    if (Math.abs(clampedValue - value) > effectiveStep / 2) {
        onChange(parseFloat(clampedValue.toFixed(1)));
     }
   };
@@ -61,7 +62,7 @@ export function HorizontalRuler({
     for (let i = 0; i <= totalTicks; i++) {
       const isMajorTick = i % MAJOR_TICK_EVERY === 0;
       const isHalfTick = i % (MAJOR_TICK_EVERY / 2) === 0;
-      const tickValue = parseFloat((min + i * step).toFixed(1));
+      const tickValue = parseFloat((min + i * effectiveStep).toFixed(1));
 
       ticks.push(
         <div
