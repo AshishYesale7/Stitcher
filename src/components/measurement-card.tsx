@@ -21,12 +21,12 @@ type MeasurementPoint = {
 
 // We can update these URLs later as you provide them
 const points: MeasurementPoint[] = [
-  { name: 'Shoulder', imageUrl: "https://media.istockphoto.com/id/176992048/photo/a-dressmakers-mannequin-with-a-yellow-tape-measure.jpg?s=612x612&w=0&k=20&c=vksMIhJQdtz2XrVwiqQNyL_Nmz1xBwvF9pMV90xWc60=" },
-  { name: 'Chest', imageUrl: "https://media.istockphoto.com/id/176992048/photo/a-dressmakers-mannequin-with-a-yellow-tape-measure.jpg?s=612x612&w=0&k=20&c=vksMIhJQdtz2XrVwiqQNyL_Nmz1xBwvF9pMV90xWc60=" },
-  { name: 'Waist', imageUrl: "https://media.istockphoto.com/id/176992048/photo/a-dressmakers-mannequin-with-a-yellow-tape-measure.jpg?s=612x612&w=0&k=20&c=vksMIhJQdtz2XrVwiqQNyL_Nmz1xBwvF9pMV90xWc60=" },
-  { name: 'Hips', imageUrl: "https://media.istockphoto.com/id/176992048/photo/a-dressmakers-mannequin-with-a-yellow-tape-measure.jpg?s=612x612&w=0&k=20&c=vksMIhJQdtz2XrVwiqQNyL_Nmz1xBwvF9pMV90xWc60=" },
-  { name: 'Inseam', imageUrl: "https://media.istockphoto.com/id/176992048/photo/a-dressmakers-mannequin-with-a-yellow-tape-measure.jpg?s=612x612&w=0&k=20&c=vksMIhJQdtz2XrVwiqQNyL_Nmz1xBwvF9pMV90xWc60=" },
-  { name: 'Sleeve', imageUrl: "https://media.istockphoto.com/id/176992048/photo/a-dressmakers-mannequin-with-a-yellow-tape-measure.jpg?s=612x612&w=0&k=20&c=vksMIhJQdtz2XrVwiqQNyL_Nmz1xBwvF9pMV90xWc60=" },
+  { name: 'Shoulder', imageUrl: "https://i.imgur.com/gEyA2XX.png" },
+  { name: 'Chest', imageUrl: "https://i.imgur.com/aGv43aP.png" },
+  { name: 'Waist', imageUrl: "https://i.imgur.com/JbocJ7d.png" },
+  { name: 'Hips', imageUrl: "https://i.imgur.com/Am15c0a.png" },
+  { name: 'Inseam', imageUrl: "https://i.imgur.com/kS9o2d1.png" },
+  { name: 'Sleeve', imageUrl: "https://i.imgur.com/YwDX6kL.png" },
 ];
 
 const leftPoints: Measurement[] = ['Shoulder', 'Waist', 'Inseam'];
@@ -57,7 +57,7 @@ export default function MeasurementCard({
       }
   }
 
-  const selectedImageUrl = points.find(p => p.name === selectedMeasurement)?.imageUrl || "https://media.istockphoto.com/id/176992048/photo/a-dressmakers-mannequin-with-a-yellow-tape-measure.jpg?s=612x612&w=0&k=20&c=vksMIhJQdtz2XrVwiqQNyL_Nmz1xBwvF9pMV90xWc60=";
+  const selectedImageUrl = points.find(p => p.name === selectedMeasurement)?.imageUrl || "https://i.imgur.com/gEyA2XX.png";
   
   const renderMeasurementButton = (pointName: Measurement) => (
       <Sheet key={pointName} onOpenChange={(isOpen) => !isOpen && setSelectedMeasurement(null)}>
@@ -111,7 +111,7 @@ export default function MeasurementCard({
           src={selectedImageUrl}
           alt="Tailor's dummy"
           fill
-          className="object-cover rounded-lg"
+          className="object-contain rounded-lg"
           priority
         />
       </div>
