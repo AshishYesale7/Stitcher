@@ -111,7 +111,7 @@ export default function MeasurementCard({
 
   return (
     <Card className="w-full max-w-md mx-auto flex flex-col min-h-[600px]">
-      <CardHeader>
+      <CardHeader className="relative z-10">
         <div className="flex justify-between items-center">
           <div>
             <CardTitle>Body Measurements</CardTitle>
@@ -133,37 +133,40 @@ export default function MeasurementCard({
           </RadioGroup>
         </div>
       </CardHeader>
-      <CardContent className="flex-1 flex items-center">
-        <div className="grid grid-cols-5 gap-4 items-center w-full">
-          {/* Left Column */}
-          <div className="col-span-1 flex flex-col space-y-8">
-            {leftPoints.map(renderMeasurementButton)}
-          </div>
-
-          {/* Center Image */}
-          <div className="col-span-3 relative aspect-[3/4]">
-            <Image
-              src={selectedImageUrl}
-              alt="Tailor's dummy"
-              fill
-              className="object-contain rounded-lg"
-              priority
-            />
-          </div>
-
-          {/* Right Column */}
-          <div className="col-span-1 flex flex-col space-y-8">
-            {rightPoints.map(renderMeasurementButton)}
-          </div>
-        </div>
+      <CardContent>
+        {/* Content is now moved to the footer */}
       </CardContent>
-      <CardFooter className="flex justify-between items-center">
-          <Button type="button" variant="ghost" onClick={onBack} disabled={isSaving}>Back</Button>
-          <p className="text-sm text-muted-foreground">Step 3 of 3</p>
-          <Button type="button" onClick={onFinish} disabled={isSaving}>
-              {isSaving ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
-              Finish
-          </Button>
+      <CardFooter className="flex flex-col flex-1 justify-between relative z-10 p-6 pt-0">
+        <div className="grid grid-cols-5 gap-4 items-center w-full mb-4">
+            {/* Left Column */}
+            <div className="col-span-1 flex flex-col space-y-8">
+                {leftPoints.map(renderMeasurementButton)}
+            </div>
+
+            {/* Center Image */}
+            <div className="col-span-3 relative aspect-[3/4]">
+                <Image
+                src={selectedImageUrl}
+                alt="Tailor's dummy"
+                fill
+                className="object-contain rounded-lg"
+                priority
+                />
+            </div>
+
+            {/* Right Column */}
+            <div className="col-span-1 flex flex-col space-y-8">
+                {rightPoints.map(renderMeasurementButton)}
+            </div>
+        </div>
+        <div className="w-full flex justify-between items-center border-t pt-4">
+            <Button type="button" variant="ghost" onClick={onBack} disabled={isSaving}>Back</Button>
+            <p className="text-sm text-muted-foreground">Step 3 of 3</p>
+            <Button type="button" onClick={onFinish} disabled={isSaving}>
+                {isSaving ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
+                Finish
+            </Button>
+        </div>
       </CardFooter>
     </Card>
   );
