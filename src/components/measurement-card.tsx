@@ -5,7 +5,7 @@ import { useState, useEffect } from 'react';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
 import Image from 'next/image';
 import { HorizontalRuler } from '@/components/ui/horizontal-ruler';
-import { CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Button } from './ui/button';
 import { Loader2 } from 'lucide-react';
@@ -111,7 +111,7 @@ export default function MeasurementCard({
   );
 
   return (
-    <>
+    <Card className="w-full max-w-md mx-auto flex flex-col min-h-[600px]">
       <CardHeader>
         <div className="flex justify-between items-center">
           <div>
@@ -134,8 +134,8 @@ export default function MeasurementCard({
           </RadioGroup>
         </div>
       </CardHeader>
-      <CardContent>
-        <div className="grid grid-cols-5 gap-4 items-center">
+      <CardContent className="flex-1 flex items-center">
+        <div className="grid grid-cols-5 gap-4 items-center w-full">
           {/* Left Column */}
           <div className="col-span-1 flex flex-col space-y-8 relative z-10">
             {leftPoints.map(renderMeasurementButton)}
@@ -166,6 +166,6 @@ export default function MeasurementCard({
               Finish
           </Button>
       </CardFooter>
-    </>
+    </Card>
   );
 }
