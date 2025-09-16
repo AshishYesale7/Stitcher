@@ -227,10 +227,10 @@ function OnboardingSlide1({ onNext, defaultValues }: { onNext: (data: Slide1Data
 // --- Slide 2: Physical Attributes ---
 const slide2Schema = z.object({
     gender: z.enum(['male', 'female', 'other'], { required_error: 'Please select a gender.' }),
-    age: z.coerce.number().min(10, { message: 'You must be at least 10 years old.' }).max(120),
-    height: z.coerce.number().min(1, { message: 'Height must be a positive number.' }),
+    age: z.coerce.number().positive({ message: "Please enter a valid age." }),
+    height: z.coerce.number().positive({ message: "Height must be a positive number." }),
     heightUnit: z.enum(['cm', 'm', 'ft']),
-    weight: z.coerce.number().min(30, { message: 'Weight must be at least 30.' }),
+    weight: z.coerce.number().positive({ message: "Weight must be a positive number." }),
     weightUnit: z.enum(['kg', 'lbs']),
 });
 type Slide2Data = z.infer<typeof slide2Schema>;
@@ -319,7 +319,7 @@ function OnboardingSlide2({ onNext, onBack, defaultValues }: { onNext: (data: Sl
                                     render={({ field }) => (
                                         <FormItem className="flex-1">
                                         <FormControl>
-                                            <Input type="number" placeholder={heightUnit === 'cm' ? '175' : heightUnit === 'm' ? '1.75' : '5.9'} {...field} value={field.value ?? ''} />
+                                            <Input type="number" step="any" placeholder={heightUnit === 'cm' ? '175' : heightUnit === 'm' ? '1.75' : '5.9'} {...field} value={field.value ?? ''} />
                                         </FormControl>
                                         <FormMessage />
                                         </FormItem>
@@ -366,7 +366,7 @@ function OnboardingSlide2({ onNext, onBack, defaultValues }: { onNext: (data: Sl
                                     render={({ field }) => (
                                         <FormItem className="flex-1">
                                         <FormControl>
-                                            <Input type="number" placeholder={weightUnit === 'kg' ? '70' : '154'} {...field} value={field.value ?? ''} />
+                                            <Input type="number" step="any" placeholder={weightUnit === 'kg' ? '70' : '154'} {...field} value={field.value ?? ''} />
                                         </FormControl>
                                         <FormMessage />
                                         </FormItem>
