@@ -112,7 +112,7 @@ export default function MeasurementCard({
 
   return (
     <Card className="w-full max-w-md mx-auto flex flex-col min-h-[600px]">
-      <CardHeader>
+      <CardHeader className="relative z-10">
         <div className="flex justify-between items-center">
           <div>
             <CardTitle>Body Measurements</CardTitle>
@@ -158,7 +158,7 @@ export default function MeasurementCard({
           </div>
         </div>
       </CardContent>
-      <CardFooter className="flex justify-between items-center">
+      <CardFooter className="flex justify-between items-center relative z-10">
           <Button type="button" variant="ghost" onClick={onBack} disabled={isSaving}>Back</Button>
           <p className="text-sm text-muted-foreground">Step 3 of 3</p>
           <Button type="button" onClick={onFinish} disabled={isSaving}>
