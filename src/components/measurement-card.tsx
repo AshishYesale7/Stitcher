@@ -21,7 +21,7 @@ type MeasurementPoint = {
 
 // We can update these URLs later as you provide them
 const points: MeasurementPoint[] = [
-  { name: 'Shoulder', imageUrl: "https://i.imgur.com/gEyA2XX.png" },
+  { name: 'Shoulder', imageUrl: "https://cdn.shopify.com/s/files/1/1540/9157/files/size_picture_large.png?v=1534362322" },
   { name: 'Chest', imageUrl: "https://i.imgur.com/aGv43aP.png" },
   { name: 'Waist', imageUrl: "https://i.imgur.com/JbocJ7d.png" },
   { name: 'Hips', imageUrl: "https://i.imgur.com/Am15c0a.png" },
@@ -57,7 +57,7 @@ export default function MeasurementCard({
       }
   }
 
-  const selectedImageUrl = points.find(p => p.name === selectedMeasurement)?.imageUrl || "https://i.imgur.com/gEyA2XX.png";
+  const selectedImageUrl = points.find(p => p.name === selectedMeasurement)?.imageUrl || "https://i.pinimg.com/736x/2d/07/2f/2d072f7858370dbb0ff1703d8e3c75f7.jpg";
   
   const renderMeasurementButton = (pointName: Measurement) => (
       <Sheet key={pointName} onOpenChange={(isOpen) => !isOpen && setSelectedMeasurement(null)}>
