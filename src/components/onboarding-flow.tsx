@@ -1,7 +1,7 @@
 
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useForm, type SubmitHandler } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
@@ -10,12 +10,15 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Input } from '@/components/ui/input';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
-import { Loader2 } from 'lucide-react';
+import { Loader2, ChevronsUpDown } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { auth } from '@/lib/firebase';
 import { updateUserProfile } from '@/app/actions/user';
 import { useToast } from '@/hooks/use-toast';
 import MeasurementCard from './measurement-card';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from '@/components/ui/command';
+import { countries, type Country } from '@/lib/countries';
 
 
 // --- Slide 1: Basic Information ---
@@ -26,14 +29,28 @@ const slide1Schema = z.object({
 });
 type Slide1Data = z.infer<typeof slide1Schema>;
 
-function OnboardingSlide1({ onNext, defaultValues }: { onNext: (data: Slide1Data) => void; defaultValues: Partial<Slide1Data> }) {
+function OnboardingSlide1({ onNext, defaultValues }: { onNext: (data: Slide1Data, fullPhoneNumber: string) => void; defaultValues: Partial<Slide1Data> }) {
   const form = useForm<Slide1Data>({
     resolver: zodResolver(slide1Schema),
     defaultValues,
   });
 
+  const [popoverOpen, setPopoverOpen] = useState(false);
+  const [selectedCountry, setSelectedCountry] = useState<Country>(
+    countries.find(c => c.code === 'IN')!
+  );
+
+  useEffect(() => {
+    // Set default country to India if not already set.
+    if (!selectedCountry) {
+        setSelectedCountry(countries.find(c => c.code === 'IN')!);
+    }
+  }, [selectedCountry]);
+
+
   const onSubmit: SubmitHandler<Slide1Data> = (data) => {
-    onNext(data);
+    const fullPhoneNumber = `${selectedCountry.dial_code}${data.phoneNumber}`;
+    onNext(data, fullPhoneNumber);
   };
 
   return (
@@ -81,9 +98,51 @@ function OnboardingSlide1({ onNext, defaultValues }: { onNext: (data: Slide1Data
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Phone Number</FormLabel>
-                  <FormControl>
-                    <Input type="tel" placeholder="e.g. 9876543210" {...field} value={field.value ?? ''} />
-                  </FormControl>
+                  <div className="flex items-center">
+                     <Popover open={popoverOpen} onOpenChange={setPopoverOpen}>
+                        <PopoverTrigger asChild>
+                            <Button
+                                variant="outline"
+                                role="combobox"
+                                className="w-[130px] justify-between rounded-r-none border-r-0"
+                            >
+                                <span className="truncate">{selectedCountry.flag} {selectedCountry.dial_code}</span>
+                                <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                            </Button>
+                        </PopoverTrigger>
+                        <PopoverContent className="w-[300px] p-0">
+                            <Command>
+                                <CommandInput placeholder="Search country..." />
+                                <CommandList>
+                                    <CommandEmpty>No country found.</CommandEmpty>
+                                    <CommandGroup>
+                                        {countries.map((country) => (
+                                            <CommandItem
+                                                key={country.code}
+                                                value={`${country.name} (${country.dial_code})`}
+                                                onSelect={() => {
+                                                    setSelectedCountry(country);
+                                                    setPopoverOpen(false);
+                                                }}
+                                            >
+                                                {country.flag} {country.name} ({country.dial_code})
+                                            </CommandItem>
+                                        ))}
+                                    </CommandGroup>
+                                </CommandList>
+                            </Command>
+                        </PopoverContent>
+                    </Popover>
+                    <FormControl>
+                        <Input
+                            type="tel"
+                            placeholder="9876543210"
+                            className="rounded-l-none"
+                            {...field}
+                            value={field.value ?? ''}
+                        />
+                    </FormControl>
+                  </div>
                   <FormMessage />
                 </FormItem>
               )}
@@ -275,12 +334,12 @@ function OnboardingSlide3({ onFinish, onBack, defaultValues }: { onFinish: (data
 
 export default function OnboardingFlow() {
   const [step, setStep] = useState(1);
-  const [onboardingData, setOnboardingData] = useState<Partial<Slide1Data & Slide2Data & Slide3Data>>({});
+  const [onboardingData, setOnboardingData] = useState<Partial<Slide1Data & Slide2Data & Slide3Data & { phoneNumber: string }>>({});
   const router = useRouter();
   const { toast } = useToast();
 
-  const handleSlide1Next = (data: Slide1Data) => {
-    setOnboardingData(prev => ({ ...prev, ...data }));
+  const handleSlide1Next = (data: Slide1Data, fullPhoneNumber: string) => {
+    setOnboardingData(prev => ({ ...prev, ...data, phoneNumber: fullPhoneNumber }));
     setStep(2);
   };
 
@@ -290,7 +349,9 @@ export default function OnboardingFlow() {
   };
 
   const handleSlide3Finish = async (data: Slide3Data) => {
-      const finalData = { ...onboardingData, ...data };
+      const { phoneNumber, ...restData } = onboardingData;
+      const finalData = { ...restData, ...data, phoneNumber };
+
       const user = auth.currentUser;
 
       if (!user) {
@@ -336,3 +397,5 @@ export default function OnboardingFlow() {
         return <OnboardingSlide1 onNext={handleSlide1Next} defaultValues={onboardingData} />;
   }
 }
+
+    
