@@ -56,6 +56,7 @@ export function HorizontalRuler({
     scrollLeftStart.current = rulerRef.current?.scrollLeft ?? 0;
     if (rulerRef.current) {
       rulerRef.current.style.cursor = 'grabbing';
+      rulerRef.current.style.scrollBehavior = 'auto';
     }
   };
 
@@ -74,15 +75,14 @@ export function HorizontalRuler({
     const clampedValue = Math.max(min, Math.min(max, snappedValue));
     const finalValue = parseFloat(clampedValue.toFixed(1));
 
-    if (finalValue !== value) {
-       onChange(finalValue);
-    }
+    onChange(finalValue);
   };
 
   const handleDragEnd = () => {
     isDragging.current = false;
     if (rulerRef.current) {
       rulerRef.current.style.cursor = 'grab';
+      rulerRef.current.style.scrollBehavior = 'smooth';
     }
   };
 
