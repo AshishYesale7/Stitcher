@@ -10,7 +10,7 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Input } from '@/components/ui/input';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
-import { Loader2, ChevronsUpDown } from 'lucide-react';
+import { Loader2, ChevronsUpDown, Save } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { auth } from '@/lib/firebase';
 import { updateUserProfile } from '@/app/actions/user';
@@ -428,20 +428,77 @@ type Slide3Data = z.infer<typeof slide3Schema>;
 
 
 function OnboardingSlide3({ onFinish, onBack, defaultValues }: { onFinish: (data: Slide3Data) => void; onBack: () => void; defaultValues: Partial<Slide3Data>}) {
+    const [isSaving, setIsSaving] = useState(false);
+    const [measurements, setMeasurements] = useState<MeasurementData>(defaultValues.measurements || {
+        Shoulder: 45, Chest: 98, Waist: 82, Hips: 104, Inseam: 78, Sleeve: 62
+    });
+    const [unit, setUnit] = useState<MeasurementUnit>(defaultValues.measurementUnit || 'cm');
 
-    const handleFinishClick = (data: Slide3Data) => {
-        onFinish(data);
+    const handleMeasurementChange = (field: Measurement, value: number) => {
+        setMeasurements(prev => ({ ...prev, [field]: value }));
+    };
+
+    const handleUnitChange = (newUnit: MeasurementUnit) => {
+        if (newUnit === unit) return;
+
+        const conversionFactor = newUnit === 'inch' ? (1 / 2.54) : 2.54;
+        
+        const convertedMeasurements = Object.fromEntries(
+            Object.entries(measurements).map(([key, value]) => [
+                key,
+                Math.round((value * conversionFactor) * 10) / 10
+            ])
+        ) as MeasurementData;
+        
+        setMeasurements(convertedMeasurements);
+        setUnit(newUnit);
+    };
+
+    const handleFinishClick = () => {
+        setIsSaving(true);
+        onFinish({ measurements, measurementUnit: unit });
     };
 
     return (
-        <MeasurementCard 
-            defaultMeasurements={defaultValues.measurements || {
-                Shoulder: 45, Chest: 98, Waist: 82, Hips: 104, Inseam: 78, Sleeve: 62
-            }}
-            defaultUnit={defaultValues.measurementUnit || 'cm'}
-            onBack={onBack}
-            onFinish={handleFinishClick}
-        />
+        <Card className="w-full max-w-sm mx-auto flex flex-col min-h-[600px]">
+            <CardHeader>
+                <div className="flex justify-between items-center">
+                    <div>
+                        <CardTitle>Body Measurements</CardTitle>
+                        <CardDescription>Tap on a label to adjust.</CardDescription>
+                    </div>
+                     <RadioGroup
+                        defaultValue={unit}
+                        onValueChange={(val) => handleUnitChange(val as MeasurementUnit)}
+                        className="flex items-center space-x-2"
+                        >
+                        <div className="flex items-center space-x-1 space-y-0">
+                            <RadioGroupItem value="cm" id="cm" />
+                            <Label htmlFor="cm" className="font-normal text-xs">cm</Label>
+                        </div>
+                        <div className="flex items-center space-x-1 space-y-0">
+                            <RadioGroupItem value="inch" id="inch" />
+                            <Label htmlFor="inch" className="font-normal text-xs">inch</Label>
+                        </div>
+                    </RadioGroup>
+                </div>
+            </CardHeader>
+            <CardContent className="flex-1 flex items-center">
+                <MeasurementCard 
+                    measurements={measurements}
+                    onMeasurementChange={handleMeasurementChange}
+                    unit={unit}
+                />
+            </CardContent>
+            <CardFooter className="flex justify-between">
+                <Button type="button" variant="ghost" onClick={onBack} disabled={isSaving}>Back</Button>
+                <p className="text-sm text-muted-foreground">Step 3 of 3</p>
+                <Button type="button" onClick={handleFinishClick} disabled={isSaving}>
+                    {isSaving ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Save className="mr-2 h-4 w-4" />}
+                    Finish
+                </Button>
+            </CardFooter>
+        </Card>
     );
 }
 
@@ -482,12 +539,11 @@ export default function OnboardingFlow() {
       try {
         await updateUserProfile(user.uid, finalData);
         toast({
-            title: 'Data saved',
+            title: 'Profile Saved!',
+            description: "Your onboarding is complete. Welcome to Fabrova!",
         });
-        router.push('/customer/dashboard');
-        setTimeout(() => {
-          window.location.reload();
-        }, 1000);
+        // We need to reload to force the dashboard to re-evaluate the onboarding status
+        window.location.reload();
       } catch (error) {
         console.error("Failed to save onboarding data:", error);
         toast({
@@ -516,3 +572,5 @@ export default function OnboardingFlow() {
         return <OnboardingSlide1 onNext={handleSlide1Next} defaultValues={onboardingData} />;
   }
 }
+
+    

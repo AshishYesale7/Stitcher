@@ -17,6 +17,12 @@ type MeasurementPoint = {
   imageUrl: string; 
 };
 
+type MeasurementCardProps = {
+    measurements: MeasurementData;
+    onMeasurementChange: (field: Measurement, value: number) => void;
+    unit: 'cm' | 'inch';
+};
+
 const points: MeasurementPoint[] = [
   { name: 'Shoulder', imageUrl: "https://cdn.shopify.com/s/files/1/1540/9157/files/size_picture_large.png?v=1534362322" },
   { name: 'Waist', imageUrl: "https://i.imgur.com/JbocJ7d.png" },
@@ -33,11 +39,7 @@ export default function MeasurementCard({
     measurements,
     onMeasurementChange,
     unit
-}: { 
-    measurements: MeasurementData,
-    onMeasurementChange: (field: Measurement, value: number) => void;
-    unit: 'cm' | 'inch';
-}) {
+}: MeasurementCardProps) {
   const [selectedMeasurement, setSelectedMeasurement] = useState<Measurement | null>(null);
   const [isOpen, setIsOpen] = useState(false);
 
@@ -119,3 +121,5 @@ export default function MeasurementCard({
     </div>
   );
 }
+
+    
