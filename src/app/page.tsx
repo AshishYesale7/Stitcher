@@ -1,3 +1,4 @@
+
 'use client';
 
 import Link from 'next/link';
@@ -30,7 +31,7 @@ export default function Home() {
       </div>
       <div className="flex flex-col h-dvh px-[10%] overflow-hidden">
         <nav>
-          <Link href="/" className="sitename flex items-center gap-2">
+          <Link href="/" className="sitename flex items-center gap-2 text-white">
             <Logo />
             Stitcher
           </Link>
