@@ -485,14 +485,12 @@ function OnboardingSlide3({ onFinish, onBack, defaultValues }: { onFinish: (data
                     </RadioGroup>
                 </div>
             </CardHeader>
-            <CardContent className="flex-1 flex items-center" style={{ zIndex: 1 }}>
-                <div className="-ml-4">
-                    <MeasurementCard 
-                        measurements={measurements} 
-                        onMeasurementChange={handleMeasurementChange}
-                        unit={unit}
-                    />
-                </div>
+            <CardContent className="flex-1 flex flex-col justify-center">
+                <MeasurementCard 
+                    measurements={measurements} 
+                    onMeasurementChange={handleMeasurementChange}
+                    unit={unit}
+                />
             </CardContent>
             <CardFooter className="flex justify-between items-center">
                 <Button type="button" variant="ghost" onClick={onBack} disabled={isSaving}>Back</Button>
@@ -571,5 +569,7 @@ export default function OnboardingFlow() {
         return <OnboardingSlide1 onNext={handleSlide1Next} defaultValues={onboardingData} />;
   }
 }
+
+    
 
     
