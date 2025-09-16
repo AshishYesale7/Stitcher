@@ -485,7 +485,9 @@ export default function OnboardingFlow() {
             title: 'Data saved',
         });
         router.push('/customer/dashboard');
-        router.refresh();
+        setTimeout(() => {
+          window.location.reload();
+        }, 1000);
       } catch (error) {
         console.error("Failed to save onboarding data:", error);
         toast({
