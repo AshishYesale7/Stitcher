@@ -41,7 +41,7 @@ function RootLayoutContent({
     return (
         <html lang="en" suppressHydrationWarning>
             <head>
-                <title>Stitcher</title>
+                <title>Fabrova</title>
                 <meta name="description" content="Connecting you with the perfect tailor." />
                 <link rel="icon" href={faviconDataUrl} />
                 <meta httpEquiv="Permissions-Policy" content="otp-credentials=(self)" />

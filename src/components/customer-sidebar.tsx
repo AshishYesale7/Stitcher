@@ -32,7 +32,7 @@ export default function CustomerSidebar() {
         <Link href="/" className="flex items-center gap-2" prefetch={false}>
           <Logo />
           <span className="text-xl font-bold font-headline text-primary-foreground group-data-[collapsible=icon]:hidden">
-            Stitcher
+            Fabrova
           </span>
         </Link>
       </SidebarHeader>

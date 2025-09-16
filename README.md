@@ -1,11 +1,11 @@
 <!-- ─────────────────────────────────────────────────────────────────────────────
-   fabrova— Copyright (c) 2025 Ashish Vasant Yesale (ashishyesale007@gmail.com)
+Stitcher— Copyright (c) 2025 Ashish Vasant Yesale (ashishyesale007@gmail.com)
    SPDX-License-Identifier: BSD-3-Clause OR Proprietary
-   fabrova is dual-licensed under the BSD 3-Clause License and a Commercial License.
+   Stitcher is dual-licensed under the BSD 3-Clause License and a Commercial License.
    - 📜 [License (BSD 3-Clause)](https://github.com/AshishYesale7/Stitcher/LICENSE)
 - ⚖️ [Commercial Use Terms](https://github.com/AshishYesale7/Stitcher/COMMERCIAL_TERMS.md)
   
-   This file is part of the "fabrova" Project.
+   This file is part of the "Stitcher" Project.
   
    ─────────────────────────────────────────────────────────────────────────────
    Licensing:
@@ -73,15 +73,15 @@
 -->
  
 
-# fabrova: Your Personal Tailoring Connection
+# Stitcher: Your Personal Tailoring Connection
 
-Welcome to fabrova, a modern platform designed to seamlessly connect customers with skilled tailors. Our vision is to eliminate the hassle of finding the right tailor and to provide a smooth, transparent, and enjoyable experience for creating custom-fit clothing.
-[![Netlify Status](https://api.netlify.com/api/v1/badges/961b94d7-0974-4510-87fa-c73863fc63a1/deploy-status)](https://app.netlify.com/sites/fabrova-ai/deploys)
-[![Deploy to Netlify](https://www.netlify.com/img/deploy/button.svg)](https://app.netlify.com/start/deploy?repository=https://github.com/AshishYesale7/fabrova&env=NEXT_PUBLIC_FIREBASE_API_KEY,NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN,NEXT_PUBLIC_FIREBASE_PROJECT_ID,NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET,NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID,NEXT_PUBLIC_FIREBASE_APP_ID,GEMINI_API_KEY)
+Welcome to Stitcher, a modern platform designed to seamlessly connect customers with skilled tailors. Our vision is to eliminate the hassle of finding the right tailor and to provide a smooth, transparent, and enjoyable experience for creating custom-fit clothing.
+[![Netlify Status](https://api.netlify.com/api/v1/badges/961b94d7-0974-4510-87fa-c73863fc63a1/deploy-status)](https://app.netlify.com/sites/Stitcher-ai/deploys)
+[![Deploy to Netlify](https://www.netlify.com/img/deploy/button.svg)](https://app.netlify.com/start/deploy?repository=https://github.com/AshishYesale7/Stitcher&env=NEXT_PUBLIC_FIREBASE_API_KEY,NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN,NEXT_PUBLIC_FIREBASE_PROJECT_ID,NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET,NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID,NEXT_PUBLIC_FIREBASE_APP_ID,GEMINI_API_KEY)
 
 ## Our Vision
 
-In a world of fast fashion, we believe in the value of personalization and craftsmanship. fabrova aims to be the go-to digital destination for anyone looking to get clothes made to their exact specifications. We empower customers to find the perfect artisan for their needs and provide tailors with the tools to manage their business and reach a wider audience.
+In a world of fast fashion, we believe in the value of personalization and craftsmanship. Stitcher aims to be the go-to digital destination for anyone looking to get clothes made to their exact specifications. We empower customers to find the perfect artisan for their needs and provide tailors with the tools to manage their business and reach a wider audience.
 
 ---
 
@@ -134,7 +134,7 @@ Netlify will automatically build and deploy your application.
     -   Built-in system for deposits and final payments.
 
 
-"fabrova" is dual-licensed under the BSD 3-Clause License and a Commercial License.
+"Stitcher" is dual-licensed under the BSD 3-Clause License and a Commercial License.
 
 You may use this project under the terms of the BSD 3-Clause License as stated in the LICENSE file.  
 Alternatively, commercial use with extended rights is available — contact the author for commercial licensing.

@@ -62,7 +62,7 @@ function OnboardingSlide1({ onNext, defaultValues }: { onNext: (data: Slide1Data
       <form onSubmit={form.handleSubmit(onSubmit)}>
         <Card className="w-full max-w-lg mx-auto">
           <CardHeader>
-            <CardTitle>Welcome to Stitcher</CardTitle>
+            <CardTitle>Welcome to Fabrova</CardTitle>
             <CardDescription>Let's get your profile set up in a few quick steps.</CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">

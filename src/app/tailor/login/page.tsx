@@ -16,7 +16,7 @@ export default function TailorLoginPage() {
             <Link href="/" className="flex items-center gap-2 justify-center mb-4">
                 <Logo />
                 <span className="text-2xl font-bold font-headline text-primary">
-                    Stitcher
+                    Fabrova
                 </span>
             </Link>
           <h1 className="text-2xl font-semibold tracking-tight text-foreground">

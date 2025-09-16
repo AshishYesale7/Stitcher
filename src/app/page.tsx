@@ -33,7 +33,7 @@ export default function Home() {
         <nav className="relative flex w-full items-center justify-between">
           <Link href="/" className="sitename flex items-center gap-2 text-black absolute left-5 top-4">
             <Logo />
-            Stitcher
+            Fabrova
           </Link>
           <div className="flex-1 flex justify-end items-center gap-8 pr-20">
             <Link href="/terms" className="menu">
