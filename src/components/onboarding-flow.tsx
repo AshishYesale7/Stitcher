@@ -33,13 +33,12 @@ const slide1Schema = z.object({
 });
 type Slide1Data = z.infer<typeof slide1Schema>;
 
-function OnboardingSlide1({ onNext, defaultValues }: { onNext: (data: Slide1Data, fullPhoneNumber: string) => Promise<void>; defaultValues: Partial<Slide1Data> }) {
+function OnboardingSlide1({ onNext, defaultValues }: { onNext: (data: Slide1Data, fullPhoneNumber: string) => void; defaultValues: Partial<Slide1Data> }) {
   const form = useForm<Slide1Data>({
     resolver: zodResolver(slide1Schema),
     defaultValues,
   });
-  const [isSaving, setIsSaving] = useState(false);
-
+  
   const [popoverOpen, setPopoverOpen] = useState(false);
   const [selectedCountry, setSelectedCountry] = useState<Country>(
     countries.find(c => c.code === 'IN')!
@@ -53,11 +52,9 @@ function OnboardingSlide1({ onNext, defaultValues }: { onNext: (data: Slide1Data
   }, [selectedCountry]);
 
 
-  const onSubmit: SubmitHandler<Slide1Data> = async (data) => {
-    setIsSaving(true);
+  const onSubmit: SubmitHandler<Slide1Data> = (data) => {
     const fullPhoneNumber = `${selectedCountry.dial_code}${data.phoneNumber}`;
-    await onNext(data, fullPhoneNumber);
-    setIsSaving(false);
+    onNext(data, fullPhoneNumber);
   };
 
   return (
@@ -213,8 +210,7 @@ function OnboardingSlide1({ onNext, defaultValues }: { onNext: (data: Slide1Data
           </CardContent>
           <CardFooter className="flex justify-between">
             <p className="text-sm text-muted-foreground">Step 1 of 3</p>
-            <Button type="submit" disabled={isSaving}>
-              {isSaving && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+            <Button type="submit">
               Next
             </Button>
           </CardFooter>
@@ -489,7 +485,7 @@ function OnboardingSlide3({ onFinish, onBack, defaultValues }: { onFinish: (data
                     </RadioGroup>
                 </div>
             </CardHeader>
-            <CardContent className="flex-1 flex items-center" style={{ zIndex: -1 }}>
+            <CardContent className="flex-1 flex items-center" style={{ zIndex: 1 }}>
                 <div className="-ml-4">
                     <MeasurementCard 
                         measurements={measurements} 
@@ -517,31 +513,9 @@ export default function OnboardingFlow() {
   const router = useRouter();
   const { toast } = useToast();
 
-  const handleSlide1Next = async (data: Slide1Data, fullPhoneNumber: string) => {
-    const slide1Data = { ...data, phoneNumber: fullPhoneNumber };
-    setOnboardingData(prev => ({ ...prev, ...slide1Data }));
-    
-    const user = auth.currentUser;
-    if (!user) {
-        toast({
-            variant: 'destructive',
-            title: 'Error',
-            description: 'You must be logged in to save your profile.',
-        });
-        return;
-    }
-
-    try {
-        await updateUserProfile(user.uid, slide1Data);
-        setStep(2);
-    } catch (error) {
-        console.error("Failed to save slide 1 data:", error);
-        toast({
-            variant: 'destructive',
-            title: 'Save Failed',
-            description: 'There was a problem saving your information. Please try again.',
-        });
-    }
+  const handleSlide1Next = (data: Slide1Data, fullPhoneNumber: string) => {
+    setOnboardingData(prev => ({ ...prev, ...data, phoneNumber: fullPhoneNumber }));
+    setStep(2);
   };
 
   const handleSlide2Next = (data: Slide2Data) => {
