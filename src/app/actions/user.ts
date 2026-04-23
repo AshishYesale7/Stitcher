@@ -35,15 +35,27 @@ export async function createUserProfile(userData: UserProfilePayload, role: User
   try {
     // Use setDoc with merge: true to create or update without overwriting
     // if the document already exists from a different sign-in method.
-    await setDoc(userRef, {
+    const profileData: Record<string, any> = {
       uid: userData.uid,
       email: userData.email,
-      displayName: userData.displayName,
+      displayName: userData.displayName || userData.phoneNumber || 'User',
       photoURL: userData.photoURL,
       phoneNumber: userData.phoneNumber,
       createdAt: serverTimestamp(),
       role: role,
-    }, { merge: true });
+    };
+
+    // Add default tailor fields so they appear in Find Tailors
+    if (role === 'tailor') {
+      profileData.shopName = profileData.displayName + "'s Shop";
+      profileData.location = '';
+      profileData.specialties = [];
+      profileData.rating = 0;
+      profileData.bio = '';
+      profileData.onboardingCompleted = true;
+    }
+
+    await setDoc(userRef, profileData, { merge: true });
 
     console.log(`User profile created/updated for ${userData.uid} in ${collectionName}`);
   } catch (error) {

@@ -1,5 +1,5 @@
 
-import { Search, Package, Notebook, User, Ruler, Palette } from 'lucide-react';
+import { Search, Package, MessageCircle, User, Ruler, Palette } from 'lucide-react';
 import Link from 'next/link';
 
 export default function DashboardCards() {
@@ -65,14 +65,14 @@ export default function DashboardCards() {
         <div className="card red">
           
           <div className="card-body">
-            <h3>Book Order</h3>
-            <Notebook className="w-8 h-8 mx-auto my-2 text-black dark:text-white" />
-            <p>Create a new order</p>
+            <h3>Messages</h3>
+            <MessageCircle className="w-8 h-8 mx-auto my-2 text-black dark:text-white" />
+            <p>Chat with your tailors</p>
             <div className="progress">
             </div>
           </div>
           <div className="card-footer">
-            <Link href="/customer/book-order" className="btn-countdown">Book Now</Link>
+            <Link href="/customer/messages" className="btn-countdown">View Chats</Link>
           </div>
         </div>
 

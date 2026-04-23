@@ -16,19 +16,19 @@ interface UserProfile {
   onboardingCompleted?: boolean;
 }
 
-async function getUserProfile(user: User): Promise<UserProfile | null> {
-  const customerDocRef = doc(db, 'customers', user.uid);
-  const customerDocSnap = await getDoc(customerDocRef);
-  if (customerDocSnap.exists()) {
-    return { role: 'customer', ...customerDocSnap.data() } as UserProfile;
-  }
+async function getUserProfile(user: User, preferredRole?: UserRole): Promise<UserProfile | null> {
+  // Check preferred role first to avoid wrong redirects
+  const checks: UserRole[] = preferredRole === 'tailor'
+    ? ['tailor', 'customer']
+    : ['customer', 'tailor'];
 
-  const tailorDocRef = doc(db, 'tailors', user.uid);
-  const tailorDocSnap = await getDoc(tailorDocRef);
-  if (tailorDocSnap.exists()) {
-    return { role: 'tailor', ...tailorDocSnap.data() } as UserProfile;
+  for (const role of checks) {
+    const col = role === 'customer' ? 'customers' : 'tailors';
+    const snap = await getDoc(doc(db, col, user.uid));
+    if (snap.exists()) {
+      return { role, ...snap.data() } as UserProfile;
+    }
   }
-
   return null;
 }
 
@@ -37,8 +37,15 @@ export function useAuthRedirect() {
   const pathname = usePathname();
   const [checking, setChecking] = useState(true);
 
+  // Determine which role this login page is for
+  const getPreferredRole = (): UserRole | undefined => {
+    if (pathname.includes('/tailor')) return 'tailor';
+    if (pathname.includes('/customer')) return 'customer';
+    return undefined;
+  };
+
   useEffect(() => {
-    const isAuthPage = pathname.includes('/login') || pathname === '/';
+    const isAuthPage = pathname.includes('/login');
     if (!isAuthPage) {
         setChecking(false);
         return;
@@ -63,9 +70,14 @@ export function useAuthRedirect() {
   }, [pathname, router]);
 
   const handleRedirect = async (user: User) => {
-    const userProfile = await getUserProfile(user);
+    const preferredRole = getPreferredRole();
+    const userProfile = await getUserProfile(user, preferredRole);
     if (userProfile) {
-        const targetDashboard = `/${userProfile.role}/dashboard`;
+        // If on a specific login page, redirect to that role's dashboard
+        const role = preferredRole && userProfile.role !== preferredRole
+          ? preferredRole  // Stay with the page's intended role
+          : userProfile.role;
+        const targetDashboard = `/${role}/dashboard`;
         if (pathname !== targetDashboard) {
             router.push(targetDashboard);
         }

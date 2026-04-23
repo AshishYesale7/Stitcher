@@ -19,6 +19,7 @@ const menuItems = [
   { href: '/customer/orders', label: 'Order Tracker', icon: Package },
   { href: '/customer/book-order', label: 'Book Order', icon: Notebook },
   { href: '/customer/archive', label: 'Archive Order', icon: Archive },
+  { href: '/customer/messages', label: 'Messages', icon: MessageCircle },
   { href: '/customer/measurement', label: 'Measurement', icon: Ruler },
   { href: '/customer/profile', label: 'Profile', icon: User },
 ];

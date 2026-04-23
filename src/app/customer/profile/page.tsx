@@ -68,7 +68,7 @@ export default function CustomerProfilePage() {
           const data = userDocSnap.data();
           setUser({
             uid: firebaseUser.uid,
-            fullName: data.fullName || data.displayName || 'New User',
+            fullName: data.fullName || data.displayName || firebaseUser.displayName || firebaseUser.phoneNumber || 'New User',
             address: data.address || '',
             height: data.height || 175,
             weight: data.weight || 70,
@@ -79,6 +79,27 @@ export default function CustomerProfilePage() {
             inseam: data.inseam || 78,
             email: data.email || firebaseUser.email || '',
             avatarUrl: data.photoURL || firebaseUser.photoURL || `https://picsum.photos/seed/${firebaseUser.uid}/100/100`,
+            role: 'Fashion Enthusiast',
+          });
+        } else {
+          // Auto-create profile for phone auth users
+          const newProfile = {
+            uid: firebaseUser.uid,
+            fullName: firebaseUser.displayName || firebaseUser.phoneNumber || 'New User',
+            address: '',
+            email: firebaseUser.email || '',
+            phoneNumber: firebaseUser.phoneNumber || '',
+            photoURL: firebaseUser.photoURL || `https://picsum.photos/seed/${firebaseUser.uid}/100/100`,
+            height: 175, weight: 70, measurementUnit: 'cm',
+            chest: 98, waist: 82, hips: 104, inseam: 78,
+            role: 'customer',
+            onboardingCompleted: false,
+            createdAt: new Date(),
+          };
+          await setDoc(doc(db, 'customers', firebaseUser.uid), newProfile);
+          setUser({
+            ...newProfile,
+            avatarUrl: newProfile.photoURL,
             role: 'Fashion Enthusiast',
           });
         }
